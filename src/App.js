@@ -45,13 +45,23 @@ const authService = {
       
       if (data.success && data.token) {
         // Store session in localStorage
-        localStorage.setItem('clientToken', data.token);
+        const token = data.token;
+        console.log('Login successful, storing token:', token);
+        console.log('Token length:', token.length);
+        console.log('Full token:', token);
+        
+        localStorage.setItem('clientToken', token);
         localStorage.setItem('clientInfo', JSON.stringify({
           email: data.email,
           clientCompanyName: data.clientCompanyName,
           fullName: data.fullName
         }));
-        console.log('Login successful, token stored:', data.token.substring(0, 10) + '...');
+        
+        // Verify token was stored
+        const storedToken = localStorage.getItem('clientToken');
+        console.log('Token stored verification:', storedToken === token ? 'SUCCESS' : 'FAILED');
+        console.log('Stored token:', storedToken);
+        
         return { success: true, data };
       } else {
         console.error('Login failed:', data.error || 'Unknown error');
@@ -126,6 +136,8 @@ const apiService = {
     // Add a small delay to ensure session is stored (Apps Script can be slow)
     await new Promise(resolve => setTimeout(resolve, 100));
     
+    console.log('Making API request:', { action, token: session.token.substring(0, 20) + '...', url: url.toString().substring(0, 100) + '...' });
+    
     const response = await fetch(url.toString(), {
       method: 'GET',
       mode: 'cors',
@@ -136,22 +148,57 @@ const apiService = {
     });
     
     if (!response.ok) {
+      console.error('HTTP error:', response.status, response.statusText);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     
     let data;
+    let text;
     try {
-      const text = await response.text();
-      data = JSON.parse(text);
+      text = await response.text();
+      console.log('API response text (full):', text);
+      console.log('Response length:', text.length);
+      console.log('Response starts with:', text.substring(0, 50));
+      
+      // Google Apps Script Web Apps sometimes wrap JSON in HTML comments
+      // Try to extract JSON if wrapped
+      let jsonText = text.trim();
+      if (jsonText.startsWith('<!--') && jsonText.includes('-->')) {
+        const jsonMatch = jsonText.match(/<!--([\s\S]*?)-->/);
+        if (jsonMatch) {
+          jsonText = jsonMatch[1].trim();
+          console.log('Extracted JSON from HTML comment:', jsonText.substring(0, 100));
+        }
+      }
+      
+      data = JSON.parse(jsonText);
     } catch (error) {
       console.error('Failed to parse response:', error);
-      throw new Error('Invalid response from server');
+      console.error('Response text that failed to parse:', text);
+      console.error('Response type:', typeof text);
+      throw new Error('Invalid response from server: ' + error.message);
+    }
+    
+    console.log('API response data:', data);
+    console.log('Response success:', data.success);
+    console.log('Response error:', data.error);
+    
+    if (!data || typeof data !== 'object') {
+      console.error('Invalid response format:', data);
+      throw new Error('Invalid response format from server');
     }
     
     if (!data.success) {
       // Log the error for debugging
-      console.error('API Error:', data.error, 'Action:', action, 'Token:', session.token.substring(0, 10) + '...');
-      throw new Error(data.error || 'Request failed');
+      const errorMsg = data.error || data.message || data.toString() || 'Request failed';
+      console.error('API Error Details:', {
+        error: errorMsg,
+        action: action,
+        token: session.token.substring(0, 10) + '...',
+        fullResponse: data,
+        responseKeys: Object.keys(data)
+      });
+      throw new Error(errorMsg);
     }
     
     return data;
@@ -737,7 +784,28 @@ function DashboardView({ clientInfo, onLogout }) {
       // Add a longer delay on first fetch to ensure Apps Script session is ready
       if (retryCount === 0) {
         console.log('Waiting for session to be ready...');
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        const session = authService.getSession();
+        console.log('Current session from localStorage:', {
+          token: session?.token?.substring(0, 20) + '...',
+          hasToken: !!session?.token,
+          clientInfo: session?.clientInfo
+        });
+        
+        await new Promise(resolve => setTimeout(resolve, 3000)); // Increased delay
+        
+        // First, validate the session before fetching data
+        try {
+          console.log('Validating session before fetching data...');
+          const validationResult = await apiService.validateSession();
+          console.log('Session validated successfully:', validationResult);
+        } catch (validationError) {
+          console.error('Session validation failed:', validationError);
+          console.error('Validation error details:', {
+            message: validationError.message,
+            stack: validationError.stack
+          });
+          throw validationError;
+        }
       }
       
       console.log('Fetching proposals and spend data...');
