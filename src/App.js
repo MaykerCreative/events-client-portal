@@ -15,20 +15,34 @@ const authService = {
   // Login
   async login(email, password) {
     try {
+      const loginData = {
+        action: 'login',
+        email: email,
+        password: password
+      };
+      
+      console.log('Making login POST request to:', CLIENT_API_URL);
+      console.log('Login data:', { ...loginData, password: '***' });
+      
       const response = await fetch(CLIENT_API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({
-          action: 'login',
-          email: email,
-          password: password
-        }),
-        mode: 'cors'
+        headers: { 
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(loginData),
+        mode: 'cors',
+        redirect: 'follow'
       });
       
+      console.log('Login response status:', response.status);
+      console.log('Login response statusText:', response.statusText);
+      console.log('Login response headers:', Object.fromEntries(response.headers.entries()));
+      
       if (!response.ok) {
+        const errorText = await response.text();
         console.error('Login HTTP error:', response.status, response.statusText);
-        return { success: false, error: `Server error: ${response.status}` };
+        console.error('Error response text:', errorText);
+        return { success: false, error: `Server error: ${response.status} - ${errorText}` };
       }
       
       let data;
