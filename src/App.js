@@ -322,11 +322,24 @@ export default function App() {
   
   useEffect(() => {
     // Check if user is already logged in
-    if (authService.isAuthenticated()) {
-      const session = authService.getSession();
-      setClientInfo(session.clientInfo);
-      setIsAuthenticated(true);
-    }
+    const checkAuth = () => {
+      if (authService.isAuthenticated()) {
+        const session = authService.getSession();
+        if (session && session.clientInfo) {
+          console.log('Session found on mount:', session.clientInfo);
+          setClientInfo(session.clientInfo);
+          setIsAuthenticated(true);
+        } else {
+          console.log('Session invalid on mount, clearing...');
+          authService.logout();
+        }
+      } else {
+        console.log('No session found on mount');
+      }
+    };
+    
+    // Small delay to ensure localStorage is ready
+    setTimeout(checkAuth, 100);
   }, []);
   
   const handleLogin = async (email, password) => {
@@ -508,41 +521,54 @@ function DashboardView({ clientInfo, onLogout }) {
       setLoading(true);
       setError(null);
       
-      // Add a small delay on first fetch to ensure session is ready
+      // Add a longer delay on first fetch to ensure Apps Script session is ready
       if (retryCount === 0) {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        console.log('Waiting for session to be ready...');
+        await new Promise(resolve => setTimeout(resolve, 1500));
       }
       
+      console.log('Fetching proposals and spend data...');
       // Fetch proposals and spend data in parallel
       const [proposalsResult, spendResult] = await Promise.all([
         apiService.getProposals(),
         apiService.getSpend(new Date().getFullYear())
       ]);
       
+      console.log('Data fetched successfully:', { 
+        proposalsCount: proposalsResult.proposals?.length || 0,
+        spendTotal: spendResult.totalSpend 
+      });
+      
       setProposals(proposalsResult.proposals || []);
       setSpendData(spendResult);
     } catch (err) {
       console.error('Error fetching data:', err);
       
-      // If session expired or invalid, try once more after a delay
+      // If session expired or invalid, try once more after a longer delay
       if (err.message && (err.message.includes('Invalid or expired session') || err.message.includes('Not authenticated'))) {
         if (retryCount === 0) {
-          // Retry once after a delay
-          console.log('Session error, retrying after delay...');
-          setTimeout(() => fetchData(1), 1000);
+          // Retry once after a longer delay
+          console.log('Session error, retrying after longer delay...');
+          setTimeout(() => {
+            console.log('Retrying fetch...');
+            fetchData(1);
+          }, 2000);
           return;
         } else {
-          // Second failure - redirect to login
-          console.error('Session invalid after retry, redirecting to login');
-          authService.logout();
-          window.location.reload();
+          // Second failure - show error instead of redirecting
+          console.error('Session invalid after retry');
+          setError('Session expired. Please log out and log back in.');
+          setLoading(false);
           return;
         }
       }
       
       setError(err.message || 'Failed to load data');
     } finally {
-      setLoading(false);
+      // Only set loading to false if we're not retrying
+      if (retryCount > 0 || !err.message?.includes('Invalid or expired session')) {
+        setLoading(false);
+      }
     }
   };
   
