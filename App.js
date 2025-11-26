@@ -111,7 +111,16 @@ const apiService = {
       cache: 'no-cache'
     });
     
-    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    let data;
+    try {
+      data = await response.json();
+    } catch (error) {
+      throw new Error('Invalid response from server');
+    }
     
     if (!data.success) {
       throw new Error(data.error || 'Request failed');
@@ -293,14 +302,18 @@ export default function App() {
   }, []);
   
   const handleLogin = async (email, password) => {
-    const result = await authService.login(email, password);
-    if (result.success) {
-      setClientInfo(result.data);
-      setIsAuthenticated(true);
-      return { success: true };
-    } else {
-      return { success: false, error: result.error };
-    }
+      const result = await authService.login(email, password);
+      if (result.success) {
+        setClientInfo({
+          email: result.data.email,
+          clientCompanyName: result.data.clientCompanyName,
+          fullName: result.data.fullName
+        });
+        setIsAuthenticated(true);
+        return { success: true };
+      } else {
+        return { success: false, error: result.error };
+      }
   };
   
   const handleLogout = () => {
