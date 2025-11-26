@@ -117,7 +117,14 @@ const authService = {
   
   // Check if logged in
   isAuthenticated() {
-    return !!localStorage.getItem('clientToken');
+    const token = localStorage.getItem('clientToken');
+    console.log('Checking authentication, token in localStorage:', token ? token.substring(0, 20) + '...' : 'null');
+    return !!token;
+  },
+  
+  // Get current token (for debugging)
+  getCurrentToken() {
+    return localStorage.getItem('clientToken');
   }
 };
 
@@ -133,9 +140,14 @@ const apiService = {
       throw new Error('Not authenticated');
     }
     
+    console.log('Making API request with token:', session.token ? session.token.substring(0, 20) + '...' : 'null');
+    console.log('Full token:', session.token);
+    
     const url = new URL(CLIENT_API_URL);
     url.searchParams.set('action', action);
     url.searchParams.set('token', session.token);
+    
+    console.log('Request URL:', url.toString().substring(0, 150) + '...');
     
     Object.keys(params).forEach(key => {
       url.searchParams.set(key, params[key]);
@@ -557,48 +569,30 @@ function LoginView({ onLogin }) {
         <div style={{ maxWidth: '400px', width: '100%' }}>
           {/* Brand Mark */}
           <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-            {/* Icon/Brand Mark */}
-            <img 
-              src="/mayker_icon-black.png" 
-              alt="MAYKER Reserve" 
-              style={{ height: '60px', width: 'auto', marginBottom: '24px' }}
-              onError={(e) => {
-                // Fallback if image not found
-                e.target.style.display = 'none';
-              }}
-            />
-            {/* Logo Text */}
+            {/* Mayker Reserve Logo */}
             <img 
               src="/Mayker Reserve - Black - 2.png" 
-              alt="MAYKER Reserve" 
-              style={{ height: '50px', width: 'auto', marginBottom: '16px' }}
+              alt="Mayker Reserve" 
+              style={{ height: '60px', width: 'auto', marginBottom: '16px', display: 'block', margin: '0 auto 16px auto' }}
               onError={(e) => {
-                // Fallback to text if image not found
-                e.target.style.display = 'none';
-                const fallback = e.target.nextElementSibling;
-                if (fallback) fallback.style.display = 'block';
+                // Try alternative path if image not found
+                if (!e.target.src.includes('/assets/')) {
+                  e.target.src = '/assets/Mayker Reserve - Black - 2.png';
+                } else {
+                  e.target.style.display = 'none';
+                }
               }}
             />
-            <h1 style={{ 
-              fontSize: '32px', 
-              fontWeight: '600', 
-              color: brandCharcoal, 
-              margin: '0 0 8px 0',
-              letterSpacing: '0.5px',
-              display: 'none', // Hidden by default, shown as fallback
-              fontFamily: "'Domaine Text', serif"
-            }}>
-              Mayker Reserve
-            </h1>
             <p style={{ 
               fontSize: '16px', 
               color: '#666', 
               margin: '0',
               fontWeight: '400',
-              textTransform: 'lowercase',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
               fontFamily: "'NeueHaasUnica', sans-serif"
             }}>
-              Client portal
+              CLIENT PORTAL
             </p>
           </div>
           
