@@ -136,92 +136,120 @@ const apiService = {
   // Make authenticated request
   async request(action, params = {}) {
     const session = authService.getSession();
-    if (!session) {
+    if (!session || !session.token) {
+      console.error('No session found in request');
       throw new Error('Not authenticated');
     }
     
-    console.log('Making API request with token:', session.token ? session.token.substring(0, 20) + '...' : 'null');
-    console.log('Full token:', session.token);
+    // Ensure token is clean (trim whitespace)
+    const cleanToken = String(session.token).trim();
+    if (!cleanToken) {
+      console.error('Token is empty after trimming');
+      throw new Error('Not authenticated');
+    }
+    
+    console.log('Making API request:', {
+      action: action,
+      tokenLength: cleanToken.length,
+      tokenPreview: cleanToken.substring(0, 20) + '...',
+      params: params
+    });
     
     const url = new URL(CLIENT_API_URL);
     url.searchParams.set('action', action);
-    url.searchParams.set('token', session.token);
-    
-    console.log('Request URL:', url.toString().substring(0, 150) + '...');
+    url.searchParams.set('token', cleanToken); // Use cleaned token
     
     Object.keys(params).forEach(key => {
       url.searchParams.set(key, params[key]);
     });
     
-    // Add a small delay to ensure session is stored (Apps Script can be slow)
-    await new Promise(resolve => setTimeout(resolve, 100));
+    // Log the URL (without full token for security)
+    const urlForLogging = url.toString().replace(/token=[^&]+/, 'token=***');
+    console.log('Request URL:', urlForLogging);
     
-    console.log('Making API request:', { action, token: session.token.substring(0, 20) + '...', url: url.toString().substring(0, 100) + '...' });
-    
-    const response = await fetch(url.toString(), {
-      method: 'GET',
-      mode: 'cors',
-      cache: 'no-cache',
-      headers: {
-        'Accept': 'application/json'
-      }
-    });
-    
-    if (!response.ok) {
-      console.error('HTTP error:', response.status, response.statusText);
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    let data;
-    let text;
     try {
-      text = await response.text();
-      console.log('API response text (full):', text);
-      console.log('Response length:', text.length);
-      console.log('Response starts with:', text.substring(0, 50));
-      
-      // Google Apps Script Web Apps sometimes wrap JSON in HTML comments
-      // Try to extract JSON if wrapped
-      let jsonText = text.trim();
-      if (jsonText.startsWith('<!--') && jsonText.includes('-->')) {
-        const jsonMatch = jsonText.match(/<!--([\s\S]*?)-->/);
-        if (jsonMatch) {
-          jsonText = jsonMatch[1].trim();
-          console.log('Extracted JSON from HTML comment:', jsonText.substring(0, 100));
+      const response = await fetch(url.toString(), {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'no-cache',
+        headers: {
+          'Accept': 'application/json'
         }
+      });
+      
+      console.log('Response status:', response.status, response.statusText);
+      
+      if (!response.ok) {
+        console.error('HTTP error:', response.status, response.statusText);
+        const errorText = await response.text();
+        console.error('Error response text:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      data = JSON.parse(jsonText);
+      let data;
+      let text;
+      try {
+        text = await response.text();
+        console.log('API response text length:', text.length);
+        console.log('Response starts with:', text.substring(0, 100));
+        
+        // Google Apps Script Web Apps sometimes wrap JSON in HTML comments
+        // Try to extract JSON if wrapped
+        let jsonText = text.trim();
+        if (jsonText.startsWith('<!--') && jsonText.includes('-->')) {
+          const jsonMatch = jsonText.match(/<!--([\s\S]*?)-->/);
+          if (jsonMatch) {
+            jsonText = jsonMatch[1].trim();
+            console.log('Extracted JSON from HTML comment');
+          }
+        }
+        
+        data = JSON.parse(jsonText);
+      } catch (error) {
+        console.error('Failed to parse response:', error);
+        console.error('Response text that failed to parse:', text?.substring(0, 500));
+        throw new Error('Invalid response from server: ' + error.message);
+      }
+      
+      console.log('API response success:', data.success);
+      if (data.error) {
+        console.error('API response error:', data.error);
+      }
+      
+      if (!data || typeof data !== 'object') {
+        console.error('Invalid response format:', data);
+        throw new Error('Invalid response format from server');
+      }
+      
+      if (!data.success) {
+        // Log the error for debugging
+        const errorMsg = data.error || data.message || 'Request failed';
+        console.error('API Error Details:', {
+          error: errorMsg,
+          action: action,
+          tokenLength: cleanToken.length,
+          tokenPreview: cleanToken.substring(0, 10) + '...',
+          fullResponse: data
+        });
+        
+        // If it's a session error, provide more context
+        if (errorMsg.includes('Invalid or expired session') || errorMsg.includes('No session token')) {
+          console.error('Session validation failed. Token being used:', cleanToken.substring(0, 20) + '...');
+          console.error('Check if this token exists in the Clients sheet, column J');
+        }
+        
+        throw new Error(errorMsg);
+      }
+      
+      return data;
     } catch (error) {
-      console.error('Failed to parse response:', error);
-      console.error('Response text that failed to parse:', text);
-      console.error('Response type:', typeof text);
-      throw new Error('Invalid response from server: ' + error.message);
+      // Re-throw with more context if it's a network error
+      if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+        console.error('Network error:', error);
+        throw new Error('Network error. Please check your internet connection and try again.');
+      }
+      throw error;
     }
-    
-    console.log('API response data:', data);
-    console.log('Response success:', data.success);
-    console.log('Response error:', data.error);
-    
-    if (!data || typeof data !== 'object') {
-      console.error('Invalid response format:', data);
-      throw new Error('Invalid response format from server');
-    }
-    
-    if (!data.success) {
-      // Log the error for debugging
-      const errorMsg = data.error || data.message || data.toString() || 'Request failed';
-      console.error('API Error Details:', {
-        error: errorMsg,
-        action: action,
-        token: session.token.substring(0, 10) + '...',
-        fullResponse: data,
-        responseKeys: Object.keys(data)
-      });
-      throw new Error(errorMsg);
-    }
-    
-    return data;
   },
   
   // Get client proposals
@@ -420,8 +448,21 @@ export default function App() {
       const result = await authService.login(email, password);
       console.log('Login result:', result);
       
-      if (result.success) {
+      if (result.success && result.data.token) {
+        console.log('Login successful, token received:', result.data.token.substring(0, 20) + '...');
+        
+        // Verify token was stored in localStorage
+        const storedToken = localStorage.getItem('clientToken');
+        if (!storedToken || storedToken !== result.data.token) {
+          console.error('Token storage verification failed!');
+          console.error('Expected:', result.data.token);
+          console.error('Stored:', storedToken);
+          return { success: false, error: 'Failed to store session. Please try again.' };
+        }
+        
+        console.log('Token stored successfully in localStorage');
         console.log('Setting authentication state');
+        
         setClientInfo({
           email: result.data.email,
           clientCompanyName: result.data.clientCompanyName,
@@ -430,16 +471,36 @@ export default function App() {
         setIsAuthenticated(true);
         console.log('Authentication state set, isAuthenticated should be true');
         
-        // Wait a moment, then validate the session to ensure it's stored
-        setTimeout(async () => {
+        // Wait longer for Apps Script to write the session to the sheet
+        // Apps Script can be slow, especially on first write
+        console.log('Waiting for Apps Script to store session in sheet...');
+        await new Promise(resolve => setTimeout(resolve, 2000)); // 2 second delay
+        
+        // Try to validate the session (with retries)
+        let validationSuccess = false;
+        for (let attempt = 0; attempt < 3; attempt++) {
           try {
-            console.log('Validating session...');
+            console.log(`Validating session (attempt ${attempt + 1}/3)...`);
             await apiService.validateSession();
             console.log('Session validated successfully');
+            validationSuccess = true;
+            break;
           } catch (err) {
-            console.error('Session validation failed:', err);
+            console.error(`Session validation attempt ${attempt + 1} failed:`, err);
+            if (attempt < 2) {
+              // Wait before retrying (exponential backoff)
+              const delay = 1000 * (attempt + 1);
+              console.log(`Retrying validation in ${delay}ms...`);
+              await new Promise(resolve => setTimeout(resolve, delay));
+            }
           }
-        }, 500);
+        }
+        
+        if (!validationSuccess) {
+          console.warn('Session validation failed after retries, but login was successful');
+          console.warn('The session may still work - Apps Script might be slow');
+          // Don't fail the login, just warn - the session might still work
+        }
         
         return { success: true };
       } else {
@@ -577,18 +638,20 @@ function LoginView({ onLogin }) {
               src="/mayker_icon-black.png" 
               alt="Mayker Reserve" 
               style={{ height: '60px', width: 'auto', marginBottom: '24px', display: 'block', margin: '0 auto 24px auto' }}
+              onLoad={() => console.log('✅ Icon loaded:', '/mayker_icon-black.png')}
               onError={(e) => {
+                console.error('❌ Icon failed to load:', e.target.src);
                 // Try alternative path if image not found
                 if (!e.target.src.includes('/assets/')) {
                   e.target.src = '/assets/mayker_icon-black.png';
                 } else {
-                  console.error('Icon image not found');
+                  console.error('Icon image not found - all paths failed');
                 }
               }}
             />
             {/* Mayker Reserve Logo */}
             <img 
-              src="/Mayker Reserve - Black – 2.png" 
+              src={encodeURI('/Mayker Reserve - Black – 2.png')}
               alt="Mayker Reserve" 
               style={{ 
                 maxHeight: '50px', 
@@ -600,18 +663,18 @@ function LoginView({ onLogin }) {
                 margin: '0 auto 16px auto',
                 objectFit: 'contain'
               }}
+              onLoad={() => console.log('✅ Logo loaded')}
               onError={(e) => {
-                console.error('Logo image failed to load:', e.target.src);
-                // Try alternative paths if image not found (including URL-encoded version)
+                console.error('❌ Logo failed to load:', e.target.src);
+                // Try alternative paths if image not found
                 const alternatives = [
-                  '/Mayker%20Reserve%20-%20Black%20%E2%80%93%202.png', // URL-encoded en dash
-                  '/Mayker Reserve - Black - 2.png', // Try with regular hyphen
-                  '/assets/Mayker Reserve - Black – 2.png',
-                  '/assets/Mayker%20Reserve%20-%20Black%20%E2%80%93%202.png'
+                  '/Mayker Reserve - Black - 2.png', // Regular hyphen
+                  '/mayker_icon-black.png', // Icon as fallback
                 ];
                 const currentSrc = e.target.src;
-                const triedIndex = alternatives.findIndex(alt => currentSrc.includes(alt.replace(/%20/g, ' ').replace(/ /g, '%20')));
+                const triedIndex = alternatives.findIndex(alt => currentSrc.includes(alt.replace(/\s+/g, ' ')));
                 if (triedIndex < alternatives.length - 1) {
+                  console.log('Trying alternative:', alternatives[triedIndex + 1]);
                   e.target.src = alternatives[triedIndex + 1];
                 } else {
                   console.error('All logo paths failed');
@@ -1914,36 +1977,59 @@ function DashboardView({ clientInfo, onLogout }) {
   }, []);
   
   const fetchData = async (retryCount = 0) => {
-    let isRetrying = false;
-    
     try {
       setLoading(true);
       setError(null);
       
-      // Add a longer delay on first fetch to ensure Apps Script session is ready
+      // Get current session from localStorage
+      const session = authService.getSession();
+      if (!session || !session.token) {
+        console.error('No session found in localStorage');
+        setError('Not authenticated. Please log in again.');
+        setLoading(false);
+        // Clear invalid session
+        authService.logout();
+        return;
+      }
+      
+      console.log('Current session from localStorage:', {
+        token: session.token.substring(0, 20) + '...',
+        tokenLength: session.token.length,
+        hasToken: !!session.token,
+        clientInfo: session.clientInfo
+      });
+      
+      // Add delay on first fetch to ensure Apps Script has written the session
       if (retryCount === 0) {
-        console.log('Waiting for session to be ready...');
-        const session = authService.getSession();
-        console.log('Current session from localStorage:', {
-          token: session?.token?.substring(0, 20) + '...',
-          hasToken: !!session?.token,
-          clientInfo: session?.clientInfo
-        });
-        
-        await new Promise(resolve => setTimeout(resolve, 3000)); // Increased delay
-        
-        // First, validate the session before fetching data
+        console.log('Waiting for session to be ready in Apps Script...');
+        await new Promise(resolve => setTimeout(resolve, 2000)); // 2 second delay
+      }
+      
+      // Validate session first (with retry logic)
+      let validationSuccess = false;
+      let validationAttempts = 0;
+      const maxValidationAttempts = 3;
+      
+      while (!validationSuccess && validationAttempts < maxValidationAttempts) {
         try {
-          console.log('Validating session before fetching data...');
+          console.log(`Validating session (attempt ${validationAttempts + 1}/${maxValidationAttempts})...`);
           const validationResult = await apiService.validateSession();
           console.log('Session validated successfully:', validationResult);
+          validationSuccess = true;
         } catch (validationError) {
-          console.error('Session validation failed:', validationError);
-          console.error('Validation error details:', {
-            message: validationError.message,
-            stack: validationError.stack
-          });
-          throw validationError;
+          validationAttempts++;
+          console.error(`Session validation failed (attempt ${validationAttempts}):`, validationError);
+          
+          if (validationAttempts < maxValidationAttempts) {
+            // Wait before retrying (exponential backoff)
+            const delay = Math.min(1000 * Math.pow(2, validationAttempts), 5000);
+            console.log(`Retrying validation in ${delay}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+          } else {
+            // All validation attempts failed
+            console.error('All session validation attempts failed');
+            throw new Error('Session validation failed. Please log out and log back in.');
+          }
         }
       }
       
@@ -1966,21 +2052,22 @@ function DashboardView({ clientInfo, onLogout }) {
       console.error('Error fetching data:', err);
       
       // If session expired or invalid, try once more after a longer delay
-      if (err.message && (err.message.includes('Invalid or expired session') || err.message.includes('Not authenticated'))) {
+      if (err.message && (err.message.includes('Invalid or expired session') || err.message.includes('Not authenticated') || err.message.includes('Session validation failed'))) {
         if (retryCount === 0) {
           // Retry once after a longer delay
-          isRetrying = true;
           console.log('Session error, retrying after longer delay...');
           setTimeout(() => {
             console.log('Retrying fetch...');
             fetchData(1);
-          }, 2000);
+          }, 3000);
           return;
         } else {
-          // Second failure - show error instead of redirecting
+          // Second failure - show error and clear session
           console.error('Session invalid after retry');
           setError('Session expired. Please log out and log back in.');
           setLoading(false);
+          // Clear invalid session
+          authService.logout();
           return;
         }
       }
@@ -2069,15 +2156,7 @@ function DashboardView({ clientInfo, onLogout }) {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#fafaf8', display: 'flex', flexDirection: 'column' }}>
-      {/* Fonts are loaded in index.html - keeping styles here for application */}
-      <style dangerouslySetInnerHTML={{ __html: `
-        body, * {
-          font-family: 'NeueHaasUnica', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif !important;
-        }
-        h1, h2, h3, h4, h5, h6 {
-          font-family: 'Domaine Text', 'Georgia', serif !important;
-        }
-      ` }} />
+      {/* Fonts are loaded via index.css */}
       
       {/* Header */}
       <div style={{ backgroundColor: 'white', borderBottom: '1px solid #e5e7eb', padding: '20px 32px' }}>
@@ -2096,14 +2175,35 @@ function DashboardView({ clientInfo, onLogout }) {
               </div>
             ) : (
               <img 
-                src="/Mayker Reserve - Black - 2.png"
+                src={encodeURI('/Mayker Reserve - Black – 2.png')}
                 alt="MAYKER reserve" 
                 style={{ 
                   height: '32px', 
                   width: 'auto',
-                  maxWidth: '200px'
+                  maxWidth: '200px',
+                  display: 'block'
                 }}
-                onError={() => setLogoError(true)}
+                onLoad={() => {
+                  console.log('✅ Logo loaded successfully');
+                }}
+                onError={(e) => {
+                  console.error('❌ Logo failed to load:', e.target.src);
+                  console.log('Trying fallback paths...');
+                  // Try alternative paths
+                  const alternatives = [
+                    '/Mayker Reserve - Black - 2.png', // Regular hyphen
+                    '/mayker_icon-black.png', // Icon as fallback
+                  ];
+                  const currentSrc = e.target.src;
+                  const triedIndex = alternatives.findIndex(alt => currentSrc.includes(alt.replace(/\s+/g, ' ')));
+                  if (triedIndex < alternatives.length - 1) {
+                    e.target.src = alternatives[triedIndex + 1];
+                    console.log('Trying:', alternatives[triedIndex + 1]);
+                  } else {
+                    console.log('All logo paths failed, showing text fallback');
+                    setLogoError(true);
+                  }
+                }}
               />
             )}
           </div>
