@@ -1907,6 +1907,7 @@ function DashboardView({ clientInfo, onLogout }) {
   const [selectedProposal, setSelectedProposal] = useState(null);
   const [profileData, setProfileData] = useState(null);
   const [editingProfile, setEditingProfile] = useState(false);
+  const [logoError, setLogoError] = useState(false);
   
   useEffect(() => {
     fetchData();
@@ -2069,8 +2070,82 @@ function DashboardView({ clientInfo, onLogout }) {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#fafaf8', display: 'flex', flexDirection: 'column' }}>
       <style dangerouslySetInnerHTML={{ __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
-        * { font-family: 'Inter', sans-serif; }
+        @font-face {
+          font-family: 'NeueHaasUnica';
+          src: url('/NeueHaasUnica-Regular.woff2') format('woff2');
+          font-weight: 400;
+          font-style: normal;
+          font-display: swap;
+        }
+        @font-face {
+          font-family: 'NeueHaasUnica';
+          src: url('/NeueHaasUnica-Light.woff2') format('woff2');
+          font-weight: 300;
+          font-style: normal;
+          font-display: swap;
+        }
+        @font-face {
+          font-family: 'NeueHaasUnica';
+          src: url('/NeueHaasUnica-Medium.woff2') format('woff2');
+          font-weight: 500;
+          font-style: normal;
+          font-display: swap;
+        }
+        @font-face {
+          font-family: 'NeueHaasUnica';
+          src: url('/NeueHaasUnica-Bold.woff2') format('woff2');
+          font-weight: 600;
+          font-style: normal;
+          font-display: swap;
+        }
+        @font-face {
+          font-family: 'Domaine Text';
+          src: url('/test-domaine-text-light.woff2') format('woff2');
+          font-weight: 300;
+          font-style: normal;
+          font-display: swap;
+        }
+        @font-face {
+          font-family: 'Domaine Text';
+          src: url('/test-domaine-text-medium.woff2') format('woff2');
+          font-weight: 400;
+          font-style: normal;
+          font-display: swap;
+        }
+        @font-face {
+          font-family: 'Domaine Text';
+          src: url('/test-domaine-text-bold.woff2') format('woff2');
+          font-weight: 600;
+          font-style: normal;
+          font-display: swap;
+        }
+        @font-face {
+          font-family: 'Domaine Text';
+          src: url('/test-domaine-text-light-italic.woff2') format('woff2');
+          font-weight: 300;
+          font-style: italic;
+          font-display: swap;
+        }
+        @font-face {
+          font-family: 'Domaine Text';
+          src: url('/test-domaine-text-medium-italic.woff2') format('woff2');
+          font-weight: 400;
+          font-style: italic;
+          font-display: swap;
+        }
+        @font-face {
+          font-family: 'Domaine Text';
+          src: url('/test-domaine-text-bold-italic.woff2') format('woff2');
+          font-weight: 600;
+          font-style: italic;
+          font-display: swap;
+        }
+        body, * {
+          font-family: 'NeueHaasUnica', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif !important;
+        }
+        h1, h2, h3, h4, h5, h6 {
+          font-family: 'Domaine Text', 'Georgia', serif !important;
+        }
       ` }} />
       
       {/* Header */}
@@ -2078,15 +2153,28 @@ function DashboardView({ clientInfo, onLogout }) {
         <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
             {/* Mayker Reserve Logo */}
-            <div style={{ 
-              fontSize: '18px', 
-              fontWeight: '400', 
-              color: brandCharcoal,
-              fontFamily: "'NeueHaasUnica', sans-serif",
-              letterSpacing: '-0.01em'
-            }}>
-              MAYKER <span style={{ fontStyle: 'italic', fontFamily: "'Domaine Text', serif" }}>reserve</span>
-            </div>
+            {logoError ? (
+              <div style={{ 
+                fontSize: '18px', 
+                fontWeight: '400', 
+                color: brandCharcoal,
+                fontFamily: "'NeueHaasUnica', sans-serif",
+                letterSpacing: '-0.01em'
+              }}>
+                MAYKER <span style={{ fontStyle: 'italic', fontFamily: "'Domaine Text', serif" }}>reserve</span>
+              </div>
+            ) : (
+              <img 
+                src="/Mayker Reserve - Black - 2.png" 
+                alt="MAYKER reserve" 
+                style={{ 
+                  height: '32px', 
+                  width: 'auto',
+                  maxWidth: '200px'
+                }}
+                onError={() => setLogoError(true)}
+              />
+            )}
           </div>
           <div style={{ 
             fontSize: '16px', 
