@@ -800,6 +800,23 @@ function LoginView({ onLogin }) {
 // ============================================
 
 function ProfileSection({ clientInfo, profileData, editingProfile, setEditingProfile, brandCharcoal = '#2C2C2C' }) {
+  // Generate Member ID from email hash (or use existing ID if available)
+  const generateMemberID = () => {
+    if (clientInfo?.memberId) return clientInfo.memberId;
+    if (clientInfo?.email) {
+      // Simple hash-based ID generation (in production, this should come from backend)
+      let hash = 0;
+      for (let i = 0; i < clientInfo.email.length; i++) {
+        hash = ((hash << 5) - hash) + clientInfo.email.charCodeAt(i);
+        hash = hash & hash;
+      }
+      return 'MR' + Math.abs(hash).toString().padStart(6, '0');
+    }
+    return 'MR000000';
+  };
+
+  const memberId = generateMemberID();
+
   const [formData, setFormData] = useState({
     fullName: clientInfo?.fullName || '',
     companyName: clientInfo?.clientCompanyName || '',
@@ -807,6 +824,10 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
     phone: '',
     mailingAddress: '',
     birthday: '',
+    favoriteRestaurant: '',
+    favoriteBrand: '',
+    favoriteFlower: '',
+    favoriteColor: '',
     photo: null
   });
 
@@ -817,7 +838,14 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
         ...prev,
         fullName: clientInfo.fullName || prev.fullName,
         companyName: clientInfo.clientCompanyName || prev.companyName,
-        email: clientInfo.email || prev.email
+        email: clientInfo.email || prev.email,
+        phone: clientInfo.phone || prev.phone,
+        mailingAddress: clientInfo.mailingAddress || prev.mailingAddress,
+        birthday: clientInfo.birthday || prev.birthday,
+        favoriteRestaurant: clientInfo.favoriteRestaurant || prev.favoriteRestaurant,
+        favoriteBrand: clientInfo.favoriteBrand || prev.favoriteBrand,
+        favoriteFlower: clientInfo.favoriteFlower || prev.favoriteFlower,
+        favoriteColor: clientInfo.favoriteColor || prev.favoriteColor
       }));
     }
   }, [clientInfo]);
@@ -828,39 +856,276 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
     setEditingProfile(false);
   };
 
+  const InputField = ({ label, value, onChange, type = 'text', readOnly = false, placeholder = '', displayValue }) => {
+    const inputStyle = {
+      width: '100%',
+      padding: '8px 0',
+      border: 'none',
+      borderBottom: editingProfile && !readOnly ? '1px solid #d1d5db' : '1px solid #e5e7eb',
+      borderRadius: '0',
+      fontSize: '15px',
+      fontFamily: "'NeueHaasUnica', sans-serif",
+      backgroundColor: 'transparent',
+      color: readOnly ? '#999' : brandCharcoal,
+      boxSizing: 'border-box',
+      outline: 'none',
+      transition: 'border-color 0.2s'
+    };
+
+    return (
+      <div style={{ marginBottom: '24px' }}>
+        <label style={{ 
+          display: 'block', 
+          fontSize: '13px', 
+          fontWeight: '600', 
+          marginBottom: '8px', 
+          color: brandCharcoal,
+          fontFamily: "'NeueHaasUnica', sans-serif",
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em'
+        }}>
+          {label}
+        </label>
+        {editingProfile && !readOnly ? (
+          type === 'textarea' ? (
+            <textarea
+              value={value || ''}
+              onChange={onChange}
+              rows={3}
+              style={{
+                ...inputStyle,
+                resize: 'vertical',
+                minHeight: '60px'
+              }}
+              placeholder={placeholder}
+            />
+          ) : (
+            <input
+              type={type}
+              value={value || ''}
+              onChange={onChange}
+              style={inputStyle}
+              placeholder={placeholder}
+            />
+          )
+        ) : (
+          <div style={{ 
+            fontSize: '15px', 
+            color: readOnly ? '#999' : brandCharcoal, 
+            padding: '8px 0',
+            borderBottom: '1px solid #e5e7eb',
+            minHeight: '23px',
+            whiteSpace: type === 'textarea' ? 'pre-line' : 'normal'
+          }}>
+            {displayValue !== undefined ? displayValue : (value || (readOnly ? memberId : 'Not set'))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: '600', color: brandCharcoal }}>Profile</h2>
+      <div style={{ display: 'flex', gap: '48px', marginTop: '24px' }}>
+        {/* Left Column - Profile Icon */}
+        <div style={{ flex: '0 0 200px' }}>
+          <h2 style={{ 
+            fontSize: '20px', 
+            fontWeight: '600', 
+            color: brandCharcoal,
+            fontFamily: "'NeueHaasUnica', sans-serif",
+            marginBottom: '24px',
+            letterSpacing: '-0.01em'
+          }}>
+            Your Account
+          </h2>
+          <div style={{ 
+            width: '200px', 
+            height: '200px', 
+            borderRadius: '12px', 
+            backgroundColor: '#f3f4f6',
+            border: '2px solid #e5e7eb',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden'
+          }}>
+            {formData.photo ? (
+              <img src={formData.photo} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="120" height="120" rx="8" fill="#f3f4f6"/>
+                <circle cx="60" cy="45" r="18" stroke="#999" strokeWidth="2" fill="none"/>
+                <path d="M30 95 Q30 75 60 75 Q90 75 90 95" stroke="#999" strokeWidth="2" fill="none"/>
+              </svg>
+            )}
+          </div>
+          {editingProfile && (
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onload = (event) => {
+                    setFormData({ ...formData, photo: event.target.result });
+                  };
+                  reader.readAsDataURL(file);
+                }
+              }}
+              style={{ 
+                fontSize: '13px', 
+                marginTop: '16px',
+                fontFamily: "'NeueHaasUnica', sans-serif"
+              }}
+            />
+          )}
+        </div>
+
+        {/* Right Column - Form Fields */}
+        <div style={{ flex: '1' }}>
+          {/* Reserve Member Details Section */}
+          <div style={{ marginBottom: '48px' }}>
+            <h3 style={{ 
+              fontSize: '13px', 
+              fontWeight: '600', 
+              color: brandCharcoal,
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+              marginBottom: '24px'
+            }}>
+              RESERVE MEMBER DETAILS
+            </h3>
+            
+            <InputField
+              label="Member ID"
+              value={memberId}
+              readOnly={true}
+              displayValue={memberId}
+            />
+            
+            <InputField
+              label="Full Name"
+              value={formData.fullName}
+              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+            />
+            
+            <InputField
+              label="Company Name"
+              value={formData.companyName}
+              onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+            />
+            
+            <InputField
+              label="Email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              type="email"
+            />
+            
+            <InputField
+              label="Phone"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              type="tel"
+            />
+            
+            <InputField
+              label="Mailing Address"
+              value={formData.mailingAddress}
+              onChange={(e) => setFormData({ ...formData, mailingAddress: e.target.value })}
+              type="textarea"
+            />
+            
+            <InputField
+              label="Birthday"
+              value={formData.birthday}
+              onChange={(e) => setFormData({ ...formData, birthday: e.target.value })}
+              type="date"
+            />
+          </div>
+
+          {/* Personal Interests Section */}
+          <div>
+            <h3 style={{ 
+              fontSize: '13px', 
+              fontWeight: '600', 
+              color: brandCharcoal,
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+              marginBottom: '24px'
+            }}>
+              PERSONAL INTERESTS
+            </h3>
+            
+            <InputField
+              label="Favorite Restaurant"
+              value={formData.favoriteRestaurant}
+              onChange={(e) => setFormData({ ...formData, favoriteRestaurant: e.target.value })}
+            />
+            
+            <InputField
+              label="Favorite Brand / Shop"
+              value={formData.favoriteBrand}
+              onChange={(e) => setFormData({ ...formData, favoriteBrand: e.target.value })}
+            />
+            
+            <InputField
+              label="Favorite Flower"
+              value={formData.favoriteFlower}
+              onChange={(e) => setFormData({ ...formData, favoriteFlower: e.target.value })}
+            />
+            
+            <InputField
+              label="Favorite Color"
+              value={formData.favoriteColor}
+              onChange={(e) => setFormData({ ...formData, favoriteColor: e.target.value })}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Edit/Save Buttons */}
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'flex-end', 
+        gap: '12px', 
+        marginTop: '48px',
+        paddingTop: '32px',
+        borderTop: '1px solid #e5e7eb'
+      }}>
         {!editingProfile ? (
-            <button
-              onClick={() => setEditingProfile(true)}
-              style={{
-                padding: '12px 24px',
-                backgroundColor: brandCharcoal,
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: '600',
-                fontFamily: "'NeueHaasUnica', sans-serif",
-                letterSpacing: '-0.01em',
-                transition: 'all 0.2s'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.opacity = '0.9';
-                e.currentTarget.style.transform = 'translateY(-1px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = '1';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-            >
-              Edit Profile
-            </button>
+          <button
+            onClick={() => setEditingProfile(true)}
+            style={{
+              padding: '12px 24px',
+              backgroundColor: brandCharcoal,
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              letterSpacing: '-0.01em',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.opacity = '0.9';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.opacity = '1';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            Edit Profile
+          </button>
         ) : (
-          <div style={{ display: 'flex', gap: '12px' }}>
+          <>
             <button
               onClick={() => {
                 setEditingProfile(false);
@@ -870,7 +1135,12 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
                   email: clientInfo?.email || '',
                   phone: clientInfo?.phone || '',
                   mailingAddress: clientInfo?.mailingAddress || '',
-                  birthday: clientInfo?.birthday || ''
+                  birthday: clientInfo?.birthday || '',
+                  favoriteRestaurant: clientInfo?.favoriteRestaurant || '',
+                  favoriteBrand: clientInfo?.favoriteBrand || '',
+                  favoriteFlower: clientInfo?.favoriteFlower || '',
+                  favoriteColor: clientInfo?.favoriteColor || '',
+                  photo: formData.photo
                 });
               }}
               style={{
@@ -923,280 +1193,8 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
             >
               Save Changes
             </button>
-          </div>
+          </>
         )}
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '32px' }}>
-        {/* Left Column - Photo */}
-        <div>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '13px', 
-              fontWeight: '600', 
-              marginBottom: '12px', 
-              color: brandCharcoal,
-              fontFamily: "'NeueHaasUnica', sans-serif",
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em'
-            }}>
-              Photo
-            </label>
-          <div style={{ 
-            width: '150px', 
-            height: '150px', 
-            borderRadius: '8px', 
-            backgroundColor: '#f3f4f6',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: '16px',
-            overflow: 'hidden'
-          }}>
-            {formData.photo ? (
-              <img src={formData.photo} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            ) : (
-              <div style={{ color: '#999', fontSize: '48px' }}>👤</div>
-            )}
-          </div>
-          {editingProfile && (
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = (event) => {
-                    setFormData({ ...formData, photo: event.target.result });
-                  };
-                  reader.readAsDataURL(file);
-                }
-              }}
-              style={{ fontSize: '14px' }}
-            />
-          )}
-        </div>
-
-        {/* Right Column - Form Fields */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <div>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '13px', 
-              fontWeight: '600', 
-              marginBottom: '10px', 
-              color: brandCharcoal,
-              fontFamily: "'NeueHaasUnica', sans-serif",
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em'
-            }}>
-              Full Name
-            </label>
-            {editingProfile ? (
-              <input
-                type="text"
-                value={formData.fullName}
-                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '15px',
-                  boxSizing: 'border-box'
-                }}
-              />
-            ) : (
-              <div style={{ fontSize: '16px', color: brandCharcoal, padding: '12px 0' }}>{formData.fullName || 'Not set'}</div>
-            )}
-          </div>
-
-          <div>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '13px', 
-              fontWeight: '600', 
-              marginBottom: '10px', 
-              color: brandCharcoal,
-              fontFamily: "'NeueHaasUnica', sans-serif",
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em'
-            }}>
-              Company Name
-            </label>
-            {editingProfile ? (
-              <input
-                type="text"
-                value={formData.companyName}
-                onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '15px',
-                  boxSizing: 'border-box'
-                }}
-              />
-            ) : (
-              <div style={{ fontSize: '16px', color: brandCharcoal, padding: '12px 0' }}>{formData.companyName || 'Not set'}</div>
-            )}
-          </div>
-
-          <div>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '13px', 
-              fontWeight: '600', 
-              marginBottom: '10px', 
-              color: brandCharcoal,
-              fontFamily: "'NeueHaasUnica', sans-serif",
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em'
-            }}>
-              Email
-            </label>
-            {editingProfile ? (
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '15px',
-                  boxSizing: 'border-box'
-                }}
-              />
-            ) : (
-              <div style={{ fontSize: '16px', color: brandCharcoal, padding: '12px 0' }}>{formData.email || 'Not set'}</div>
-            )}
-          </div>
-
-          <div>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '13px', 
-              fontWeight: '600', 
-              marginBottom: '10px', 
-              color: brandCharcoal,
-              fontFamily: "'NeueHaasUnica', sans-serif",
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em'
-            }}>
-              Phone
-            </label>
-            {editingProfile ? (
-              <input
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '15px',
-                  boxSizing: 'border-box'
-                }}
-              />
-            ) : (
-              <div style={{ fontSize: '16px', color: brandCharcoal, padding: '12px 0' }}>{formData.phone || 'Not set'}</div>
-            )}
-          </div>
-
-          <div>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '13px', 
-              fontWeight: '600', 
-              marginBottom: '10px', 
-              color: brandCharcoal,
-              fontFamily: "'NeueHaasUnica', sans-serif",
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em'
-            }}>
-              Mailing Address
-            </label>
-            {editingProfile ? (
-              <textarea
-                value={formData.mailingAddress}
-                onChange={(e) => setFormData({ ...formData, mailingAddress: e.target.value })}
-                rows={3}
-                style={{
-                  width: '100%',
-                  padding: '14px 16px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '8px',
-                  fontSize: '15px',
-                  fontFamily: "'NeueHaasUnica', sans-serif",
-                  boxSizing: 'border-box',
-                  resize: 'vertical',
-                  transition: 'all 0.2s'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = brandCharcoal;
-                  e.target.style.boxShadow = '0 0 0 3px rgba(44, 44, 44, 0.1)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = '#d1d5db';
-                  e.target.style.boxShadow = 'none';
-                }}
-              />
-            ) : (
-              <div style={{ fontSize: '16px', color: brandCharcoal, padding: '12px 0', whiteSpace: 'pre-line' }}>
-                {formData.mailingAddress || 'Not set'}
-              </div>
-            )}
-          </div>
-
-          <div>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '13px', 
-              fontWeight: '600', 
-              marginBottom: '10px', 
-              color: brandCharcoal,
-              fontFamily: "'NeueHaasUnica', sans-serif",
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em'
-            }}>
-              Birthday
-            </label>
-            {editingProfile ? (
-              <input
-                type="date"
-                value={formData.birthday}
-                onChange={(e) => setFormData({ ...formData, birthday: e.target.value })}
-                style={{
-                  width: '100%',
-                  padding: '14px 16px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '8px',
-                  fontSize: '15px',
-                  fontFamily: "'NeueHaasUnica', sans-serif",
-                  boxSizing: 'border-box',
-                  transition: 'all 0.2s'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = brandCharcoal;
-                  e.target.style.boxShadow = '0 0 0 3px rgba(44, 44, 44, 0.1)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = '#d1d5db';
-                  e.target.style.boxShadow = 'none';
-                }}
-              />
-            ) : (
-              <div style={{ fontSize: '16px', color: brandCharcoal, padding: '12px 0' }}>
-                {formData.birthday ? new Date(formData.birthday).toLocaleDateString() : 'Not set'}
-              </div>
-            )}
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -1905,7 +1903,7 @@ function DashboardView({ clientInfo, onLogout }) {
   const [spendData, setSpendData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeSection, setActiveSection] = useState('performance'); // 'profile', 'performance', 'proposals', 'resources'
+  const [activeSection, setActiveSection] = useState('profile'); // 'profile', 'performance', 'proposals', 'resources', 'activity', 'contact'
   const [proposalTab, setProposalTab] = useState('active'); // For proposals section
   const [selectedProposal, setSelectedProposal] = useState(null);
   const [profileData, setProfileData] = useState(null);
@@ -2039,134 +2037,121 @@ function DashboardView({ clientInfo, onLogout }) {
     );
   }
   
+  // Map navigation sections
+  const navigationSections = [
+    { key: 'overview', label: 'OVERVIEW', section: 'performance' },
+    { key: 'activity', label: 'ACTIVITY', section: 'activity' },
+    { key: 'projects', label: 'PROJECTS', section: 'proposals' },
+    { key: 'account', label: 'ACCOUNT', section: 'profile' },
+    { key: 'resources', label: 'RESOURCES', section: 'resources' },
+    { key: 'contact', label: 'CONTACT', section: 'contact' }
+  ];
+
+  const getCurrentNavKey = () => {
+    const navItem = navigationSections.find(nav => nav.section === activeSection);
+    return navItem ? navItem.key : 'account';
+  };
+
+  const handleNavClick = (section) => {
+    if (section === 'contact') {
+      // TODO: Implement contact section
+      alert('Contact section coming soon');
+      return;
+    }
+    if (section === 'activity') {
+      // TODO: Implement activity section
+      alert('Activity section coming soon');
+      return;
+    }
+    setActiveSection(section);
+  };
+
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#fafaf8' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#fafaf8', display: 'flex', flexDirection: 'column' }}>
       <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
         * { font-family: 'Inter', sans-serif; }
       ` }} />
       
       {/* Header */}
-      <div style={{ backgroundColor: 'white', borderBottom: '2px solid #e5e7eb', padding: '20px 32px' }}>
+      <div style={{ backgroundColor: 'white', borderBottom: '1px solid #e5e7eb', padding: '20px 32px' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
             {/* Mayker Reserve Logo */}
-            <img 
-              src="/Mayker Reserve - Black – 2.png" 
-              alt="Mayker Reserve" 
-              style={{ height: '40px', width: 'auto' }}
-              onError={(e) => {
-                if (!e.target.src.includes('/assets/')) {
-                  e.target.src = '/assets/Mayker Reserve - Black – 2.png';
-                } else {
-                  e.target.style.display = 'none';
-                }
-              }}
-            />
-            <div style={{ height: '40px', width: '1px', backgroundColor: '#e5e7eb' }} />
-            <div>
-              <div style={{ 
-                fontSize: '20px', 
-                fontWeight: '600', 
-                color: brandCharcoal,
-                fontFamily: "'NeueHaasUnica', sans-serif",
-                letterSpacing: '-0.01em',
-                marginBottom: '2px'
-              }}>
-                {clientInfo?.clientCompanyName}
-              </div>
-              <div style={{ 
-                fontSize: '13px', 
-                color: '#666',
-                fontFamily: "'NeueHaasUnica', sans-serif",
-                fontWeight: '400'
-              }}>
-                Welcome, {clientInfo?.fullName}
-              </div>
+            <div style={{ 
+              fontSize: '18px', 
+              fontWeight: '400', 
+              color: brandCharcoal,
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              letterSpacing: '-0.01em'
+            }}>
+              MAYKER <span style={{ fontStyle: 'italic', fontFamily: "'Domaine Text', serif" }}>reserve</span>
             </div>
           </div>
-          <button 
-            onClick={onLogout}
-            style={{ 
-              padding: '10px 20px', 
-              backgroundColor: 'transparent', 
-              color: brandCharcoal, 
-              border: '1px solid #d1d5db', 
-              borderRadius: '6px', 
-              cursor: 'pointer', 
-              fontSize: '13px',
-              fontWeight: '500',
-              fontFamily: "'NeueHaasUnica', sans-serif",
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = brandCharcoal;
-              e.currentTarget.style.backgroundColor = '#f9fafb';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = '#d1d5db';
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
-          >
-            Sign Out
-          </button>
+          <div style={{ 
+            fontSize: '16px', 
+            fontWeight: '500', 
+            color: brandCharcoal,
+            fontFamily: "'NeueHaasUnica', sans-serif",
+            letterSpacing: '0.05em',
+            textTransform: 'uppercase'
+          }}>
+            MEMBER PORTAL
+          </div>
         </div>
       </div>
       
       {/* Main Content */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '32px 24px' }}>
-        {/* Navigation Tabs */}
+      <div style={{ flex: '1', maxWidth: '1400px', margin: '0 auto', width: '100%', padding: '48px 32px' }}>
+        {/* Navigation Buttons */}
         <div style={{ 
-          backgroundColor: 'white', 
-          borderRadius: '12px 12px 0 0', 
-          borderBottom: '2px solid #e5e7eb',
-          display: 'flex',
-          overflowX: 'flex',
-          overflowX: 'auto',
-          padding: '0 8px'
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: '12px',
+          marginBottom: '48px',
+          maxWidth: '800px'
         }}>
-          {['profile', 'performance', 'proposals', 'resources'].map((section) => (
-            <button
-              key={section}
-              onClick={() => setActiveSection(section)}
-              style={{
-                padding: '18px 28px',
-                backgroundColor: activeSection === section ? '#f9fafb' : 'transparent',
-                border: 'none',
-                borderBottom: activeSection === section ? '3px solid ' + brandCharcoal : '3px solid transparent',
-                cursor: 'pointer',
-                fontSize: '15px',
-                fontWeight: activeSection === section ? '600' : '500',
-                fontFamily: "'NeueHaasUnica', sans-serif",
-                color: activeSection === section ? brandCharcoal : '#666',
-                textTransform: 'capitalize',
-                whiteSpace: 'nowrap',
-                transition: 'all 0.2s',
-                letterSpacing: '-0.01em'
-              }}
-              onMouseEnter={(e) => {
-                if (activeSection !== section) {
-                  e.currentTarget.style.color = brandCharcoal;
-                  e.currentTarget.style.backgroundColor = '#f9fafb';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (activeSection !== section) {
-                  e.currentTarget.style.color = '#666';
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                }
-              }}
-            >
-              {section === 'performance' ? 'Performance' : section === 'proposals' ? 'Proposals' : section === 'resources' ? 'Resources' : 'Profile'}
-            </button>
-          ))}
+          {navigationSections.map((nav) => {
+            const isActive = getCurrentNavKey() === nav.key;
+            return (
+              <button
+                key={nav.key}
+                onClick={() => handleNavClick(nav.section)}
+                style={{
+                  padding: '16px 24px',
+                  backgroundColor: isActive ? '#a8b8c8' : '#e8eef4',
+                  color: brandCharcoal,
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  fontFamily: "'NeueHaasUnica', sans-serif",
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.backgroundColor = '#d4dfe8';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.backgroundColor = '#e8eef4';
+                  }
+                }}
+              >
+                {nav.label}
+              </button>
+            );
+          })}
         </div>
 
         {/* Content Area */}
         <div style={{ 
           backgroundColor: 'white', 
-          borderRadius: '0 0 12px 12px', 
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)', 
+          borderRadius: '0', 
           padding: '48px', 
           minHeight: '500px' 
         }}>
@@ -2201,6 +2186,53 @@ function DashboardView({ clientInfo, onLogout }) {
           {activeSection === 'resources' && (
             <ResourcesSection brandCharcoal={brandCharcoal} />
           )}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div style={{ 
+        backgroundColor: '#545142',
+        padding: '32px',
+        marginTop: 'auto'
+      }}>
+        <div style={{ 
+          maxWidth: '1400px', 
+          margin: '0 auto', 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center' 
+        }}>
+          <div style={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            gap: '8px',
+            color: 'white',
+            fontFamily: "'NeueHaasUnica', sans-serif",
+            fontSize: '14px',
+            fontWeight: '500'
+          }}>
+            <div>EVENTS@MAYKER.COM</div>
+            <div>(615) 970-1244</div>
+          </div>
+          <div style={{ 
+            width: '60px', 
+            height: '60px', 
+            backgroundColor: 'white',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            {/* Logo placeholder - you can replace with actual logo */}
+            <div style={{ 
+              fontSize: '24px', 
+              fontWeight: '600', 
+              color: '#545142',
+              fontFamily: "'Domaine Text', serif"
+            }}>
+              M
+            </div>
+          </div>
         </div>
       </div>
     </div>
