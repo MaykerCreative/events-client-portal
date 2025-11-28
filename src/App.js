@@ -2385,46 +2385,116 @@ function ContactSection({ brandCharcoal = '#2C2C2C' }) {
       name: 'Megan Proby',
       title: 'Founder & CEO',
       email: 'Megan@Mayker.com',
-      photo: '/team/megan-proby.jpg'
+      photo: '/team/megan-proby.jpg',
+      firstName: 'Megan'
     },
     {
       name: 'Noelle Powell',
       title: 'Client Services Director',
       email: 'Noelle@Mayker.com',
-      photo: '/team/noelle-powell.jpg'
+      photo: '/team/noelle-powell.jpg',
+      firstName: 'Noelle'
     },
     {
       name: 'Constance Farro',
       title: 'Partnerships Manager',
       email: 'Constance@Mayker.com',
-      photo: '/team/constance-farro.jpg'
+      photo: '/team/constance-farro.jpg',
+      firstName: 'Constance'
     },
     {
       name: 'Lindsey Soklin',
       title: 'Client Coordinator',
       email: 'Lindsey@Mayker.com',
-      photo: '/team/lindsey-soklin.jpg'
+      photo: '/team/lindsey-soklin.jpg',
+      firstName: 'Lindsey'
     },
     {
       name: 'Mara Meisberger',
       title: 'Administrative Associate',
       email: 'Mara@Mayker.com',
-      photo: '/team/mara-meisberger.jpg'
+      photo: '/team/mara-meisberger.jpg',
+      firstName: 'Mara'
     }
   ];
 
+  // Helper to get initials
+  const getInitials = (name) => {
+    return name.split(' ').map(n => n[0]).join('');
+  };
+
   return (
     <div>
-      <h2 style={{ 
-        fontSize: '32px', 
-        fontWeight: '300', 
-        color: brandCharcoal,
-        fontFamily: "'Domaine Text', serif",
-        marginBottom: '48px',
-        letterSpacing: '-0.02em'
+      {/* Image Banner */}
+      <div style={{
+        width: '100%',
+        height: '320px',
+        marginBottom: '56px',
+        borderRadius: '12px',
+        overflow: 'hidden',
+        position: 'relative',
+        backgroundColor: '#1a1a1a',
+        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)'
       }}>
-        Contact
-      </h2>
+        <img 
+          src="/contact-banner.jpg" 
+          alt="Contact" 
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            filter: 'brightness(0.7) contrast(1.1) saturate(1.2)',
+            opacity: '0.9'
+          }}
+          onError={(e) => {
+            // Fallback if image doesn't exist yet
+            e.target.style.display = 'none';
+          }}
+        />
+        {/* Dark overlay for richer look */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5))'
+        }} />
+        {/* Text Overlay */}
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          color: 'white',
+          zIndex: 1
+        }}>
+          <h1 style={{
+            fontSize: '56px',
+            fontWeight: '300',
+            fontFamily: "'Domaine Text', serif",
+            marginBottom: '16px',
+            letterSpacing: '-0.02em',
+            textShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'
+          }}>
+            Contact
+          </h1>
+          <p style={{
+            fontSize: '18px',
+            fontWeight: '400',
+            fontFamily: "'NeueHaasUnica', sans-serif",
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            color: 'rgba(255, 255, 255, 0.9)',
+            textAlign: 'center',
+            lineHeight: '1.6',
+            textShadow: '0 1px 4px rgba(0, 0, 0, 0.3)'
+          }}>
+            Your dedicated Mayker Reserve team is here to support your projects, partnerships, and events.
+          </p>
+        </div>
+      </div>
 
       {/* Team Section */}
       <div style={{ marginBottom: '64px' }}>
@@ -2445,123 +2515,190 @@ function ContactSection({ brandCharcoal = '#2C2C2C' }) {
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
           gap: '32px'
         }}>
-          {teamMembers.map((member, index) => (
-            <div
-              key={index}
-              style={{
-                backgroundColor: '#fafaf8',
-                borderRadius: '16px',
-                padding: '32px',
-                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
-                border: '1px solid #e8e8e3',
-                transition: 'all 0.3s ease',
-                textAlign: 'center'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.08)';
-                e.currentTarget.style.transform = 'translateY(-2px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.04)';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-            >
-              {/* Photo */}
-              <div style={{
-                width: '160px',
-                height: '160px',
-                borderRadius: '50%',
-                margin: '0 auto 24px',
-                overflow: 'hidden',
-                backgroundColor: '#f3f4f6',
-                border: '2px solid #e8e8e3',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <img
-                  src={member.photo}
-                  alt={member.name}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover'
-                  }}
-                  onError={(e) => {
-                    // Fallback to initials if image doesn't load
-                    e.target.style.display = 'none';
-                    const parent = e.target.parentElement;
-                    if (!parent.querySelector('.initials-fallback')) {
-                      const initials = member.name.split(' ').map(n => n[0]).join('');
-                      const fallback = document.createElement('div');
-                      fallback.className = 'initials-fallback';
-                      fallback.style.cssText = `
-                        width: 100%;
-                        height: 100%;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        font-size: 48px;
-                        font-weight: 300;
-                        color: #8b8b8b;
-                        font-family: 'Domaine Text', serif;
-                      `;
-                      fallback.textContent = initials;
-                      parent.appendChild(fallback);
-                    }
-                  }}
-                />
-              </div>
-
-              {/* Name */}
-              <div style={{
-                fontSize: '20px',
-                fontWeight: '300',
-                color: brandCharcoal,
-                fontFamily: "'Domaine Text', serif",
-                marginBottom: '8px',
-                letterSpacing: '-0.01em'
-              }}>
-                {member.name}
-              </div>
-
-              {/* Title */}
-              <div style={{
-                fontSize: '13px',
-                fontWeight: '400',
-                color: '#8b8b8b',
-                fontFamily: "'NeueHaasUnica', sans-serif",
-                marginBottom: '16px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em'
-              }}>
-                {member.title}
-              </div>
-
-              {/* Email */}
-              <a
-                href={`mailto:${member.email}`}
+          {teamMembers.map((member, index) => {
+            const initials = getInitials(member.name);
+            return (
+              <div
+                key={index}
                 style={{
-                  fontSize: '14px',
-                  fontWeight: '400',
-                  color: brandCharcoal,
-                  fontFamily: "'NeueHaasUnica', sans-serif",
-                  textDecoration: 'none',
-                  borderBottom: '1px solid transparent',
-                  transition: 'border-color 0.2s',
-                  display: 'inline-block'
+                  backgroundColor: '#fafaf8',
+                  borderRadius: '16px',
+                  padding: '40px 32px',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.04)',
+                  border: '1px solid #e8e8e3',
+                  transition: 'all 0.4s ease',
+                  textAlign: 'center',
+                  position: 'relative'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderBottomColor = brandCharcoal;
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.06)';
+                  e.currentTarget.style.transform = 'translateY(-4px)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderBottomColor = 'transparent';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.04)';
+                  e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
-                {member.email}
-              </a>
-            </div>
-          ))}
+                {/* Photo Container with Low-Opacity Initials Background */}
+                <div style={{
+                  width: '180px',
+                  height: '180px',
+                  borderRadius: '50%',
+                  margin: '0 auto 28px',
+                  overflow: 'hidden',
+                  backgroundColor: '#f5f4f0',
+                  border: '2px solid #e8e8e3',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'relative',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
+                }}>
+                  {/* Low-opacity initials background (Soho vibe) */}
+                  <div 
+                    className="bg-initials"
+                    style={{
+                      position: 'absolute',
+                      width: '100%',
+                      height: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '120px',
+                      fontWeight: '300',
+                      color: 'rgba(139, 139, 139, 0.15)',
+                      fontFamily: "'Domaine Text', serif",
+                      zIndex: 0,
+                      pointerEvents: 'none'
+                    }}
+                  >
+                    {initials}
+                  </div>
+                  
+                  {/* Photo */}
+                  <img
+                    src={encodeURI(member.photo)}
+                    alt={member.name}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      position: 'relative',
+                      zIndex: 1,
+                      borderRadius: '50%'
+                    }}
+                    onError={(e) => {
+                      // Hide image and show initials prominently if it fails
+                      e.target.style.display = 'none';
+                      const parent = e.target.parentElement;
+                      const bgInitials = parent.querySelector('.bg-initials');
+                      if (bgInitials) {
+                        bgInitials.style.color = 'rgba(139, 139, 139, 0.4)';
+                        bgInitials.style.fontSize = '80px';
+                        bgInitials.style.zIndex = '2';
+                      }
+                    }}
+                  />
+                </div>
+
+                {/* Name */}
+                <div style={{
+                  fontSize: '22px',
+                  fontWeight: '300',
+                  color: brandCharcoal,
+                  fontFamily: "'Domaine Text', serif",
+                  marginBottom: '10px',
+                  letterSpacing: '-0.01em'
+                }}>
+                  {member.name}
+                </div>
+
+                {/* Title */}
+                <div style={{
+                  fontSize: '12px',
+                  fontWeight: '400',
+                  color: '#8b8b8b',
+                  fontFamily: "'NeueHaasUnica', sans-serif",
+                  marginBottom: '24px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em'
+                }}>
+                  {member.title}
+                </div>
+
+                {/* Contact Buttons */}
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '10px',
+                  marginTop: '24px'
+                }}>
+                  <a
+                    href={`mailto:${member.email}`}
+                    style={{
+                      padding: '12px 20px',
+                      backgroundColor: '#f5f4f0',
+                      color: brandCharcoal,
+                      border: '1px solid #e8e8e3',
+                      borderRadius: '10px',
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      fontFamily: "'NeueHaasUnica', sans-serif",
+                      textDecoration: 'none',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      transition: 'all 0.3s ease',
+                      display: 'block',
+                      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = brandCharcoal;
+                      e.currentTarget.style.color = '#fafaf8';
+                      e.currentTarget.style.borderColor = brandCharcoal;
+                      e.currentTarget.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.08)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#f5f4f0';
+                      e.currentTarget.style.color = brandCharcoal;
+                      e.currentTarget.style.borderColor = '#e8e8e3';
+                      e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.04)';
+                    }}
+                  >
+                    Email {member.firstName}
+                  </a>
+                  
+                  <a
+                    href={`mailto:${member.email}?subject=Schedule a Call`}
+                    style={{
+                      padding: '12px 20px',
+                      backgroundColor: 'transparent',
+                      color: brandCharcoal,
+                      border: '1px solid #e8e8e3',
+                      borderRadius: '10px',
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      fontFamily: "'NeueHaasUnica', sans-serif",
+                      textDecoration: 'none',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      transition: 'all 0.3s ease',
+                      display: 'block'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#f5f4f0';
+                      e.currentTarget.style.borderColor = brandCharcoal;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                      e.currentTarget.style.borderColor = '#e8e8e3';
+                    }}
+                  >
+                    Schedule a Call
+                  </a>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
