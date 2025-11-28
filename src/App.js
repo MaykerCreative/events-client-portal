@@ -1832,68 +1832,141 @@ function ProposalsSection({ proposals, proposalTab, setProposalTab, setSelectedP
             No {proposalTab} proposals found.
           </div>
         ) : (
-          <div style={{ display: 'grid', gap: '16px' }}>
-            {getProposalsForTab().map((proposal) => (
-              <div
-                key={proposal.id}
-                onClick={() => setSelectedProposal(proposal)}
-                style={{
-                  padding: '24px',
+          <div style={{ 
+            overflowX: 'auto',
+            border: '1px solid #e5e7eb',
+            borderRadius: '8px',
+            backgroundColor: 'white'
+          }}>
+            <table style={{ 
+              width: '100%', 
+              borderCollapse: 'collapse',
+              fontFamily: "'NeueHaasUnica', sans-serif"
+            }}>
+              <thead>
+                <tr style={{ 
                   backgroundColor: '#f9fafb',
-                  borderRadius: '12px',
-                  border: '1px solid #e5e7eb',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = brandCharcoal;
-                  e.currentTarget.style.backgroundColor = '#f3f4f6';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = '#e5e7eb';
-                  e.currentTarget.style.backgroundColor = '#f9fafb';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                  <div>
-                    <div style={{ 
-                      fontSize: '20px', 
-                      fontWeight: '600', 
-                      color: brandCharcoal, 
-                      marginBottom: '8px',
-                      fontFamily: "'NeueHaasUnica', sans-serif",
-                      letterSpacing: '-0.01em'
-                    }}>
-                      {proposal.venueName || 'Untitled Proposal'}
-                    </div>
-                    <div style={{ 
-                      fontSize: '14px', 
-                      color: '#666',
-                      fontFamily: "'NeueHaasUnica', sans-serif"
-                    }}>
-                      {proposal.startDate ? new Date(proposal.startDate).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      }) : 'No date'}
-                    </div>
-                  </div>
-                  <div style={{ 
-                    fontSize: '24px', 
-                    fontWeight: '700', 
+                  borderBottom: '2px solid #e5e7eb'
+                }}>
+                  <th style={{ 
+                    padding: '14px 16px', 
+                    textAlign: 'left', 
+                    fontSize: '12px',
+                    fontWeight: '600',
                     color: brandCharcoal,
-                    fontFamily: "'Domaine Text', serif",
-                    letterSpacing: '-0.02em'
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em'
                   }}>
-                    ${proposal.total ? proposal.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
-                  </div>
-                </div>
-              </div>
-            ))}
+                    Project Date(s)
+                  </th>
+                  <th style={{ 
+                    padding: '14px 16px', 
+                    textAlign: 'left', 
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    color: brandCharcoal,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em'
+                  }}>
+                    Venue
+                  </th>
+                  <th style={{ 
+                    padding: '14px 16px', 
+                    textAlign: 'right', 
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    color: brandCharcoal,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em'
+                  }}>
+                    Project Total
+                  </th>
+                  <th style={{ 
+                    padding: '14px 16px', 
+                    textAlign: 'left', 
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    color: brandCharcoal,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em'
+                  }}>
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {getProposalsForTab().map((proposal, index) => {
+                  const total = calculateTotal(proposal);
+                  const dateRange = formatDateRange(proposal);
+                  return (
+                    <tr 
+                      key={proposal.id || index}
+                      onClick={() => setSelectedProposal(proposal)}
+                      style={{ 
+                        borderBottom: index < getProposalsForTab().length - 1 ? '1px solid #e5e7eb' : 'none',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = '#f9fafb';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'white';
+                      }}
+                    >
+                      <td style={{ 
+                        padding: '14px 16px', 
+                        fontSize: '14px',
+                        color: brandCharcoal
+                      }}>
+                        {dateRange || (proposal.startDate ? new Date(proposal.startDate).toLocaleDateString('en-US', { 
+                          year: 'numeric', 
+                          month: 'short', 
+                          day: 'numeric' 
+                        }) : 'N/A')}
+                      </td>
+                      <td style={{ 
+                        padding: '14px 16px', 
+                        fontSize: '14px',
+                        color: brandCharcoal,
+                        fontWeight: '500'
+                      }}>
+                        {proposal.venueName || 'N/A'}
+                      </td>
+                      <td style={{ 
+                        padding: '14px 16px', 
+                        fontSize: '14px',
+                        color: brandCharcoal,
+                        textAlign: 'right',
+                        fontFamily: "'NeueHaasUnica', sans-serif"
+                      }}>
+                        ${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </td>
+                      <td style={{ 
+                        padding: '14px 16px', 
+                        fontSize: '14px'
+                      }}>
+                        <span style={{ 
+                          display: 'inline-block',
+                          padding: '6px 12px',
+                          borderRadius: '4px',
+                          fontSize: '12px',
+                          fontWeight: '500',
+                          backgroundColor: proposal.status === 'Approved' || proposal.status === 'Confirmed' ? '#d1fae5' : 
+                                         proposal.status === 'Pending' ? '#fef3c7' : 
+                                         proposal.status === 'Cancelled' ? '#fee2e2' : '#e5e7eb',
+                          color: proposal.status === 'Approved' || proposal.status === 'Confirmed' ? '#065f46' :
+                                 proposal.status === 'Pending' ? '#92400e' : 
+                                 proposal.status === 'Cancelled' ? '#991b1b' : '#666'
+                        }}>
+                          {proposal.status || 'Pending'}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
@@ -2232,9 +2305,9 @@ function DashboardView({ clientInfo, onLogout }) {
                 src={encodeURI('/Mayker Reserve - Black – 2.png')}
                 alt="MAYKER reserve" 
                 style={{ 
-                  height: '32px', 
+                  height: '48px', 
                   width: 'auto',
-                  maxWidth: '200px',
+                  maxWidth: '300px',
                   display: 'block'
                 }}
                 onLoad={() => {
