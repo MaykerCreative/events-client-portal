@@ -1010,14 +1010,14 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: '64px', marginTop: '0' }}>
+      <div style={{ display: 'flex', gap: '64px', marginTop: '0', justifyContent: 'flex-start' }}>
         {/* Left Column - Profile Icon */}
-        <div style={{ flex: '0 0 240px' }}>
+        <div style={{ flex: '0 0 240px', flexShrink: 0 }}>
           <h2 style={{ 
             fontSize: '20px', 
-            fontWeight: '600', 
+            fontWeight: '300', 
             color: brandCharcoal,
-            fontFamily: "'NeueHaasUnica', sans-serif",
+            fontFamily: "'Domaine Text', serif",
             marginBottom: '32px',
             letterSpacing: '-0.01em'
           }}>
@@ -1068,7 +1068,7 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
         </div>
 
         {/* Right Column - Form Fields */}
-        <div style={{ flex: '1', maxWidth: '600px' }}>
+        <div style={{ flex: '1', maxWidth: '600px', marginLeft: '120px' }}>
           {/* Reserve Member Details Section */}
           <div style={{ marginBottom: '48px' }}>
             <h3 style={{ 
