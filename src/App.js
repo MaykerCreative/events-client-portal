@@ -1010,38 +1010,6 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
 
   return (
     <div>
-      {/* Image Banner */}
-      <div style={{
-        width: '100%',
-        height: '300px',
-        marginBottom: '48px',
-        borderRadius: '8px',
-        overflow: 'hidden',
-        position: 'relative'
-      }}>
-        <img 
-          src="/account-banner.jpg" 
-          alt="Your Reserve Status" 
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover'
-          }}
-          onError={(e) => {
-            // Fallback if image doesn't exist yet
-            e.target.style.display = 'none';
-            e.target.parentElement.style.backgroundColor = '#f5f5f0';
-            e.target.parentElement.style.display = 'flex';
-            e.target.parentElement.style.alignItems = 'center';
-            e.target.parentElement.style.justifyContent = 'center';
-            const fallback = document.createElement('div');
-            fallback.style.cssText = 'text-align: center; color: #666; font-family: "NeueHaasUnica", sans-serif;';
-            fallback.innerHTML = '<div style="font-size: 24px; font-weight: 300; font-family: \'Domaine Text\', serif; margin-bottom: 8px;">Your Reserve Status</div><div style="width: 60px; height: 1px; background: #2C2C2C; margin: 0 auto 12px;"></div><div style="font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;">A LOOK AT YOUR COLLABORATION, EXCLUSIVES, AND MEMBER BENEFITS.</div>';
-            e.target.parentElement.appendChild(fallback);
-          }}
-        />
-      </div>
-      
       <div style={{ display: 'flex', gap: '64px', marginTop: '0', justifyContent: 'flex-start' }}>
         {/* Left Column - Profile Icon */}
         <div style={{ flex: '0 0 240px', flexShrink: 0 }}>
@@ -1396,6 +1364,82 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
 
   return (
     <div>
+      {/* Image Banner */}
+      <div style={{
+        width: '100%',
+        height: '300px',
+        marginBottom: '48px',
+        borderRadius: '8px',
+        overflow: 'hidden',
+        position: 'relative',
+        backgroundColor: '#f5f5f0'
+      }}>
+        <img 
+          src="/account-banner.jpg" 
+          alt="Your Reserve Status" 
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover'
+          }}
+          onError={(e) => {
+            // Fallback if image doesn't exist yet - show styled text overlay
+            e.target.style.display = 'none';
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px;';
+            overlay.innerHTML = `
+              <div style="font-size: 48px; font-weight: 300; font-family: 'Domaine Text', serif; color: #2C2C2C; margin-bottom: 16px; text-align: center; letter-spacing: -0.02em;">Your Reserve Status</div>
+              <div style="width: 60px; height: 1px; background: #2C2C2C; margin: 0 auto 20px;"></div>
+              <div style="font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: #666; font-family: 'NeueHaasUnica', sans-serif; text-align: center; line-height: 1.6;">A LOOK AT YOUR COLLABORATION, EXCLUSIVES, AND MEMBER BENEFITS.</div>
+            `;
+            e.target.parentElement.appendChild(overlay);
+          }}
+        />
+        {/* Text Overlay */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '40px',
+          backgroundColor: 'rgba(250, 250, 248, 0.85)'
+        }}>
+          <div style={{
+            fontSize: '48px',
+            fontWeight: '300',
+            fontFamily: "'Domaine Text', serif",
+            color: brandCharcoal,
+            marginBottom: '16px',
+            textAlign: 'center',
+            letterSpacing: '-0.02em'
+          }}>
+            Your Reserve Status
+          </div>
+          <div style={{
+            width: '60px',
+            height: '1px',
+            background: brandCharcoal,
+            margin: '0 auto 20px'
+          }} />
+          <div style={{
+            fontSize: '11px',
+            letterSpacing: '0.15em',
+            textTransform: 'uppercase',
+            color: '#666',
+            fontFamily: "'NeueHaasUnica', sans-serif",
+            textAlign: 'center',
+            lineHeight: '1.6'
+          }}>
+            A LOOK AT YOUR COLLABORATION, EXCLUSIVES, AND MEMBER BENEFITS.
+          </div>
+        </div>
+      </div>
+      
       <h2 style={{ 
         fontSize: '28px', 
         fontWeight: '300', 
