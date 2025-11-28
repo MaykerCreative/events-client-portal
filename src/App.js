@@ -2785,6 +2785,379 @@ function ContactSection({ brandCharcoal = '#2C2C2C' }) {
   );
 }
 
+function FAQSection({ brandCharcoal = '#2C2C2C' }) {
+  const [openItems, setOpenItems] = useState({});
+  const maykerOlive = '#6b7d47';
+  const warmIvory = '#FAF8F3';
+  const warmCharcoal = '#2A2925';
+  const warmGrey = '#8D8A81';
+
+  const faqData = {
+    'reserve-membership': {
+      title: 'Reserve Membership',
+      intro: 'Everything you need to know about tiers, benefits, and how your membership grows with you.',
+      items: [
+        {
+          question: 'How do I qualify for Inner Circle?',
+          answer: 'Inner Circle status is achieved when you reach 50,000 points in product spend within a calendar year. Product spend includes rental products, product care fees, and service fees, but excludes delivery and tax. Your tier status is calculated annually, and once achieved, your discount percentage applies to all future proposals within that year.'
+        },
+        {
+          question: 'When are my benefits calculated each year?',
+          answer: 'Your tier status and benefits are calculated on a calendar year basis (January 1 through December 31). Points reset at the beginning of each new year, but your tier status from the previous year carries over. For example, if you achieved Inner Circle (20% off) in 2025, you\'ll maintain that discount in 2026 while your points start fresh for the new year.'
+        },
+        {
+          question: 'What is the difference between House Member, Inner Circle, and Founders Estate?',
+          answer: 'House Member (15% off) is our starting tier, available to all Reserve members. Inner Circle (20% off) is achieved at 50,000 points annually, and Founders Estate (25% off) is our highest tier, achieved at 100,000 points annually. Each tier offers increasing discounts on all rental products, product care, and service fees.'
+        },
+        {
+          question: 'How are points calculated?',
+          answer: 'Points are calculated as 1 point = $1 USD. Your points are based on your product spend, which includes: rental product totals (after rental multipliers), product care fees (10% of extended product total), and service fees (5% of rental total + product care). Delivery fees and taxes are not included in point calculations.'
+        },
+        {
+          question: 'Do points roll over to the next year?',
+          answer: 'Points reset annually on January 1st. However, your tier status (and corresponding discount percentage) carries over from the previous year. This means if you achieved a higher tier in 2025, you\'ll maintain that tier\'s benefits in 2026, even as your points start fresh.'
+        }
+      ]
+    },
+    'services-products': {
+      title: 'Mayker Services & Products',
+      intro: 'Details on inventory, styling, custom requests, and how we support your events.',
+      items: [
+        {
+          question: 'What types of products does Mayker Reserve offer?',
+          answer: 'Mayker Reserve offers a curated collection of premium furniture, decor, tableware, linens, and specialty items for events and installations. Our inventory includes both vintage and contemporary pieces, carefully selected to elevate any occasion. Browse our full catalog in the Resources section of your portal.'
+        },
+        {
+          question: 'Can I request custom or special-order items?',
+          answer: 'Yes, we welcome custom requests and special orders. Please reach out to your dedicated team member or email events@mayker.com with your specific needs. We\'ll work with you to source or create items that align with your vision, subject to availability and timeline considerations.'
+        },
+        {
+          question: 'How far in advance should I book products?',
+          answer: 'We recommend booking at least 4-6 weeks in advance for standard events, and 8-12 weeks for large-scale installations or custom requests. Popular items and peak season dates (holidays, summer months) may require even more advance notice. Contact your team member to discuss availability and timelines.'
+        },
+        {
+          question: 'What is included in product care fees?',
+          answer: 'Product care fees (10% of extended product total) cover handling, cleaning, maintenance, and quality assurance for all rental items. This ensures that every piece you receive is in pristine condition and ready for your event.'
+        },
+        {
+          question: 'Do you offer styling or design consultation services?',
+          answer: 'Yes, our team can provide styling guidance and design consultation for your events. We work closely with planners and designers to create cohesive, elevated experiences. Contact your dedicated team member to discuss your vision and how we can support your creative process.'
+        }
+      ]
+    },
+    'billing-policies': {
+      title: 'Billing & Policies',
+      intro: 'Clarity around invoices, payments, adjustments, and our rental policies.',
+      items: [
+        {
+          question: 'When will I receive my invoice?',
+          answer: 'Invoices are typically sent within 5-7 business days after your event concludes. The invoice will include all rental products, product care fees, service fees, delivery charges, and applicable taxes. You can view and download invoices from your portal\'s Projects section.'
+        },
+        {
+          question: 'What payment methods do you accept?',
+          answer: 'We accept all major credit cards, ACH transfers, and wire transfers. Payment terms are typically net 30 days from invoice date, unless otherwise arranged. Please contact your team member if you need to discuss alternative payment arrangements.'
+        },
+        {
+          question: 'How are rental multipliers calculated?',
+          answer: 'Rental multipliers are based on event duration: 1 day = 1x, 2-3 days = 1.5x, 4-7 days = 2x, 8+ days = 2.5x. Custom multipliers may be applied for extended rentals or special circumstances. Your proposal will clearly indicate the multiplier used for each item.'
+        },
+        {
+          question: 'What is your cancellation policy?',
+          answer: 'Cancellations made more than 30 days before the event date receive a full refund minus a 10% processing fee. Cancellations 14-30 days before receive a 50% refund. Cancellations within 14 days are non-refundable. Please contact your team member as soon as possible if you need to modify or cancel your reservation.'
+        },
+        {
+          question: 'What happens if a product is damaged during my event?',
+          answer: 'Normal wear and tear is expected and covered. However, significant damage, loss, or theft of items will result in replacement or repair charges. We\'ll work with you to assess any issues and determine appropriate charges. All items are inspected before and after each event.'
+        },
+        {
+          question: 'Are there delivery and setup fees?',
+          answer: 'Yes, delivery and setup fees are calculated based on location, event size, and complexity. These fees are separate from product spend and do not count toward your tier points. Your proposal will include a detailed breakdown of all delivery-related charges.'
+        }
+      ]
+    },
+    'support-scheduling': {
+      title: 'Support & Scheduling',
+      intro: 'How to reach our team, request changes, and coordinate timelines.',
+      items: [
+        {
+          question: 'How do I contact my dedicated team member?',
+          answer: 'You can reach your dedicated team member directly via email (listed on the Contact page) or through the "Email [Name]" button on their profile card. For general inquiries, email events@mayker.com or call (615) 970-1244 during business hours (Monday-Friday, 9am-5pm CST).'
+        },
+        {
+          question: 'How do I request changes to an existing proposal?',
+          answer: 'To request changes, simply email your team member or reply to the proposal email thread. Include the proposal number and specific items you\'d like to add, remove, or modify. We\'ll provide an updated proposal within 2-3 business days, depending on the complexity of changes.'
+        },
+        {
+          question: 'What is the typical response time for inquiries?',
+          answer: 'We aim to respond to all inquiries within 24 hours during business days. For urgent matters (within 48 hours of an event), please call directly or mark your email as urgent. Your dedicated team member will prioritize time-sensitive requests.'
+        },
+        {
+          question: 'Can I schedule a call to discuss my event?',
+          answer: 'Absolutely. Use the "Schedule a Call" button on any team member\'s profile card, or email your team member with your preferred dates and times. We\'re happy to discuss your vision, answer questions, and help plan your perfect event.'
+        },
+        {
+          question: 'How do I access my proposal details and invoices?',
+          answer: 'All proposals and invoices are available in your client portal. Navigate to the "Projects" section to view active and completed proposals. Click on any proposal to see detailed line items, pricing, and download PDF versions. Invoices are also accessible from completed projects.'
+        },
+        {
+          question: 'What should I do if I have a question about my tier status or points?',
+          answer: 'Your current tier status and points are displayed on the Overview page. If you have questions about calculations or believe there\'s an error, contact your team member or email events@mayker.com. We\'ll review your account and provide clarification within 2-3 business days.'
+        }
+      ]
+    }
+  };
+
+  const toggleItem = (sectionId, itemIndex) => {
+    const key = `${sectionId}-${itemIndex}`;
+    setOpenItems(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Update URL hash
+      window.history.pushState(null, '', `#${sectionId}`);
+    }
+  };
+
+  // Open first item in each section by default
+  useEffect(() => {
+    const initialOpen = {};
+    Object.keys(faqData).forEach(sectionId => {
+      initialOpen[`${sectionId}-0`] = true;
+    });
+    setOpenItems(initialOpen);
+  }, []);
+
+  return (
+    <div style={{
+      backgroundColor: warmIvory,
+      minHeight: '100vh',
+      padding: '0'
+    }}>
+      <div style={{
+        maxWidth: '1000px',
+        margin: '0 auto',
+        padding: '0 24px'
+      }}>
+        {/* Hero Section */}
+        <header style={{
+          paddingTop: '80px',
+          paddingBottom: '64px',
+          textAlign: 'center'
+        }}>
+          <h1 style={{
+            fontSize: '48px',
+            fontWeight: '300',
+            fontFamily: "'Domaine Text', serif",
+            color: warmCharcoal,
+            marginBottom: '24px',
+            letterSpacing: '-0.02em',
+            lineHeight: '1.2'
+          }}>
+            Guide to Your Mayker Reserve Experience
+          </h1>
+          <p style={{
+            fontSize: '16px',
+            fontWeight: '400',
+            fontFamily: "'NeueHaasUnica', sans-serif",
+            color: warmGrey,
+            lineHeight: '1.6',
+            maxWidth: '600px',
+            margin: '0 auto'
+          }}>
+            A curated guide to your membership, services, billing, and support with Mayker Reserve.
+          </p>
+        </header>
+
+        {/* Chapter Navigation */}
+        <nav style={{
+          padding: '16px 0 32px',
+          borderBottom: '1px solid rgba(0, 0, 0, 0.08)',
+          marginBottom: '56px'
+        }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '40px',
+            flexWrap: 'wrap'
+          }}>
+            {Object.keys(faqData).map((sectionId) => (
+              <a
+                key={sectionId}
+                href={`#${sectionId}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToSection(sectionId);
+                }}
+                style={{
+                  fontSize: '13px',
+                  fontWeight: '400',
+                  fontFamily: "'NeueHaasUnica', sans-serif",
+                  color: warmGrey,
+                  textDecoration: 'none',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                  paddingBottom: '8px',
+                  borderBottom: '2px solid transparent',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = maykerOlive;
+                  e.currentTarget.style.borderBottomColor = maykerOlive;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = warmGrey;
+                  e.currentTarget.style.borderBottomColor = 'transparent';
+                }}
+              >
+                {faqData[sectionId].title}
+              </a>
+            ))}
+          </div>
+        </nav>
+
+        {/* FAQ Sections */}
+        {Object.entries(faqData).map(([sectionId, section], sectionIndex) => (
+          <section
+            key={sectionId}
+            id={sectionId}
+            style={{
+              marginBottom: sectionIndex < Object.keys(faqData).length - 1 ? '80px' : '80px',
+              scrollMarginTop: '80px'
+            }}
+          >
+            <h2 style={{
+              fontSize: '36px',
+              fontWeight: '300',
+              fontFamily: "'Domaine Text', serif",
+              color: warmCharcoal,
+              marginBottom: '12px',
+              letterSpacing: '-0.02em'
+            }}>
+              {section.title}
+            </h2>
+            <p style={{
+              fontSize: '14px',
+              fontWeight: '400',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              color: warmGrey,
+              fontStyle: 'italic',
+              marginBottom: '40px',
+              lineHeight: '1.6'
+            }}>
+              {section.intro}
+            </p>
+
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px'
+            }}>
+              {section.items.map((item, itemIndex) => {
+                const itemKey = `${sectionId}-${itemIndex}`;
+                const isOpen = openItems[itemKey];
+
+                return (
+                  <div
+                    key={itemIndex}
+                    style={{
+                      backgroundColor: '#FFFFFF',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(0, 0, 0, 0.08)',
+                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.04)',
+                      overflow: 'hidden',
+                      transition: 'all 0.25s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isOpen) {
+                        e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.02)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isOpen) {
+                        e.currentTarget.style.backgroundColor = '#FFFFFF';
+                      }
+                    }}
+                  >
+                    <button
+                      onClick={() => toggleItem(sectionId, itemIndex)}
+                      role="button"
+                      aria-expanded={isOpen}
+                      style={{
+                        width: '100%',
+                        padding: '20px 24px',
+                        backgroundColor: 'transparent',
+                        border: 'none',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        gap: '16px'
+                      }}
+                    >
+                      <span style={{
+                        fontSize: '16px',
+                        fontWeight: '500',
+                        fontFamily: "'NeueHaasUnica', sans-serif",
+                        color: warmCharcoal,
+                        lineHeight: '1.5',
+                        flex: 1
+                      }}>
+                        {item.question}
+                      </span>
+                      <span style={{
+                        fontSize: '20px',
+                        color: warmGrey,
+                        transition: 'transform 0.25s ease',
+                        transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                        lineHeight: '1'
+                      }}>
+                        ▼
+                      </span>
+                    </button>
+                    <div
+                      style={{
+                        maxHeight: isOpen ? '1000px' : '0',
+                        overflow: 'hidden',
+                        transition: 'max-height 0.25s ease',
+                        padding: isOpen ? '0 24px 20px' : '0 24px',
+                        opacity: isOpen ? 1 : 0,
+                        transitionProperty: 'max-height, padding, opacity'
+                      }}
+                    >
+                      <div style={{
+                        paddingTop: '12px',
+                        fontSize: '15px',
+                        fontWeight: '400',
+                        fontFamily: "'NeueHaasUnica', sans-serif",
+                        color: warmCharcoal,
+                        lineHeight: '1.7'
+                      }}>
+                        {item.answer.split('\n').map((paragraph, pIndex) => (
+                          <p key={pIndex} style={{ marginBottom: paragraph.includes('\n') ? '12px' : '0' }}>
+                            {paragraph}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
   // TODO: Fetch resources from API
   const resources = [
@@ -2870,7 +3243,7 @@ function DashboardView({ clientInfo, onLogout }) {
   const [spendData, setSpendData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeSection, setActiveSection] = useState('profile'); // 'profile', 'performance', 'proposals', 'resources', 'activity', 'contact'
+  const [activeSection, setActiveSection] = useState('profile'); // 'profile', 'performance', 'proposals', 'resources', 'activity', 'contact', 'faq'
   const [proposalTab, setProposalTab] = useState('active'); // For proposals section
   const [selectedProposal, setSelectedProposal] = useState(null);
   const [profileData, setProfileData] = useState(null);
@@ -3200,6 +3573,10 @@ function DashboardView({ clientInfo, onLogout }) {
           
           {activeSection === 'resources' && (
             <ResourcesSection brandCharcoal={brandCharcoal} />
+          )}
+          
+          {activeSection === 'faq' && (
+            <FAQSection brandCharcoal={brandCharcoal} />
           )}
           
           {activeSection === 'contact' && (
