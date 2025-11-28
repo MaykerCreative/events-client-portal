@@ -1311,14 +1311,30 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
       
       const extendedProductTotal = productSpend * rentalMultiplier;
       
-      // Add product care fees (typically 10% of extended product total)
+      // Calculate discount first (applied to product total)
+      const discountValue = parseFloat(proposal.discountValue || proposal.discount || 0) || 0;
+      let discountType = 'percentage';
+      if (proposal.discountName && proposal.discountName.startsWith('TYPE:')) {
+        const match = proposal.discountName.match(/^TYPE:(\w+)/);
+        if (match) discountType = match[1];
+      }
+      
+      const discount = discountType === 'dollar' 
+        ? discountValue 
+        : extendedProductTotal * (discountValue / 100);
+      
+      // Apply discount to get rental total
+      const rentalTotal = extendedProductTotal - discount;
+      
+      // Add product care fees (10% of extended product total)
       const productCareFee = extendedProductTotal * 0.1;
       
-      // Add service fees (typically 15% of extended product total)
-      const serviceFee = extendedProductTotal * 0.15;
+      // Add service fees (5% of rental total + product care, excluding delivery for product spend)
+      const serviceFee = (rentalTotal + productCareFee) * 0.05;
       
-      // Total product spend (excluding delivery and tax)
-      return extendedProductTotal + productCareFee + serviceFee;
+      // Product spend = product total + product care + service fee - discount
+      // This simplifies to: rentalTotal + productCareFee + serviceFee
+      return rentalTotal + productCareFee + serviceFee;
     } catch (e) {
       console.error('Error calculating product spend:', e);
       return 0;
@@ -1336,11 +1352,11 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
   // Tier system: 15% at start, 20% at $50k, 25% at $100k
   const getCurrentTier = () => {
     if (currentSpend >= 100000) {
-      return { discount: 25, tier: 'Platinum', nextTier: null, progress: 100 };
+      return { discount: 25, tier: 'Founders Estate', nextTier: null, progress: 100 };
     } else if (currentSpend >= 50000) {
-      return { discount: 20, tier: 'Gold', nextTier: 'Platinum (25%)', progress: ((currentSpend - 50000) / 50000) * 100 };
+      return { discount: 20, tier: 'Inner Circle', nextTier: 'Founders Estate (25%)', progress: ((currentSpend - 50000) / 50000) * 100 };
     } else {
-      return { discount: 15, tier: 'Silver', nextTier: 'Gold (20%)', progress: (currentSpend / 50000) * 100 };
+      return { discount: 15, tier: 'House Member', nextTier: 'Inner Circle (20%)', progress: (currentSpend / 50000) * 100 };
     }
   };
 
@@ -1475,7 +1491,7 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
             }}>
               <span>${currentSpend.toLocaleString()}</span>
               <span>
-                {tier.tier === 'Silver' ? '$50,000' : '$100,000'}
+                {tier.tier === 'House Member' ? '$50,000' : '$100,000'}
               </span>
             </div>
           </>
@@ -1499,7 +1515,7 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
             padding: '28px', 
             backgroundColor: '#f9fafb', 
             borderRadius: '12px', 
-            border: tier.tier === 'Silver' ? '2px solid ' + brandCharcoal : '1px solid #e5e7eb',
+            border: tier.tier === 'House Member' ? '2px solid ' + brandCharcoal : '1px solid #e5e7eb',
             transition: 'all 0.2s'
           }}>
             <div style={{ 
@@ -1511,7 +1527,7 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
               textTransform: 'uppercase',
               letterSpacing: '0.1em'
             }}>
-              Silver
+              House Member
             </div>
             <div style={{ 
               fontSize: '28px', 
@@ -1535,7 +1551,7 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
             padding: '28px', 
             backgroundColor: '#f9fafb', 
             borderRadius: '12px', 
-            border: tier.tier === 'Gold' ? '2px solid ' + brandCharcoal : '1px solid #e5e7eb',
+            border: tier.tier === 'Inner Circle' ? '2px solid ' + brandCharcoal : '1px solid #e5e7eb',
             transition: 'all 0.2s'
           }}>
             <div style={{ 
@@ -1547,7 +1563,7 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
               textTransform: 'uppercase',
               letterSpacing: '0.1em'
             }}>
-              Gold
+              Inner Circle
             </div>
             <div style={{ 
               fontSize: '28px', 
@@ -1571,7 +1587,7 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
             padding: '28px', 
             backgroundColor: '#f9fafb', 
             borderRadius: '12px', 
-            border: tier.tier === 'Platinum' ? '2px solid ' + brandCharcoal : '1px solid #e5e7eb',
+            border: tier.tier === 'Founders Estate' ? '2px solid ' + brandCharcoal : '1px solid #e5e7eb',
             transition: 'all 0.2s'
           }}>
             <div style={{ 
@@ -1583,7 +1599,7 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
               textTransform: 'uppercase',
               letterSpacing: '0.1em'
             }}>
-              Platinum
+              Founders Estate
             </div>
             <div style={{ 
               fontSize: '28px', 
