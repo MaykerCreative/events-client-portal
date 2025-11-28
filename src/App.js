@@ -2390,39 +2390,27 @@ function DashboardView({ clientInfo, onLogout }) {
             <div>EVENTS@MAYKER.COM</div>
             <div>(615) 970-1244</div>
           </div>
-          <div style={{ 
-            width: '60px', 
-            height: '60px', 
-            backgroundColor: 'white',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            overflow: 'hidden',
-            padding: '8px'
-          }}>
-            <img 
-              src="/mayker_icon-whisper.png" 
-              alt="Mayker Reserve" 
-              style={{ 
-                width: '100%', 
-                height: '100%', 
-                objectFit: 'contain'
-              }}
-              onLoad={() => {
-                console.log('✅ Footer icon loaded successfully');
-              }}
-              onError={(e) => {
-                console.error('❌ Footer icon failed to load:', e.target.src);
-                // Fallback to text if image fails
-                e.target.style.display = 'none';
-                const fallback = document.createElement('div');
-                fallback.style.cssText = 'font-size: 24px; font-weight: 600; color: ' + brandBrown + '; font-family: "Domaine Text", serif;';
-                fallback.textContent = 'M';
-                e.target.parentElement.appendChild(fallback);
-              }}
-            />
-          </div>
+          <img 
+            src="/mayker_icon-whisper.png" 
+            alt="Mayker Reserve" 
+            style={{ 
+              width: '60px', 
+              height: '60px',
+              objectFit: 'contain'
+            }}
+            onLoad={() => {
+              console.log('✅ Footer icon loaded successfully');
+            }}
+            onError={(e) => {
+              console.error('❌ Footer icon failed to load:', e.target.src);
+              // Fallback to text if image fails
+              e.target.style.display = 'none';
+              const fallback = document.createElement('div');
+              fallback.style.cssText = 'width: 60px; height: 60px; background-color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 600; color: ' + brandBrown + '; font-family: "Domaine Text", serif;';
+              fallback.textContent = 'M';
+              e.target.parentElement.appendChild(fallback);
+            }}
+          />
         </div>
       </div>
     </div>
