@@ -62,7 +62,9 @@ const authService = {
         localStorage.setItem('clientInfo', JSON.stringify({
           email: data.email,
           clientCompanyName: data.clientCompanyName,
-          fullName: data.fullName
+          fullName: data.fullName || `${data.firstName || ''} ${data.lastName || ''}`.trim(),
+          firstName: data.firstName || '',
+          lastName: data.lastName || ''
         }));
         
         // Verify token was stored
