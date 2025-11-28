@@ -64,7 +64,8 @@ const authService = {
           clientCompanyName: data.clientCompanyName,
           fullName: data.fullName || `${data.firstName || ''} ${data.lastName || ''}`.trim(),
           firstName: data.firstName || '',
-          lastName: data.lastName || ''
+          lastName: data.lastName || '',
+          title: data.title || ''
         }));
         
         // Verify token was stored
@@ -890,7 +891,7 @@ function LoginView({ onLogin }) {
 // DASHBOARD SECTIONS
 // ============================================
 
-function ProfileSection({ clientInfo, profileData, editingProfile, setEditingProfile, brandCharcoal = '#2C2C2C', brandBrown = '#603f27', brandBlue = '#7693a9' }) {
+function ProfileSection({ clientInfo, profileData, editingProfile, setEditingProfile, onLogout, brandCharcoal = '#2C2C2C', brandBrown = '#603f27', brandBlue = '#7693a9' }) {
   // Generate Member ID from email hash (or use existing ID if available)
   const generateMemberID = () => {
     if (clientInfo?.memberId) return clientInfo.memberId;
@@ -1179,41 +1180,129 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
         </div>
       </div>
 
-      {/* Edit/Save Buttons */}
+      {/* Action Buttons - Soho House/Flamingo Estate Style */}
       <div style={{ 
         display: 'flex', 
         justifyContent: 'flex-end', 
-        gap: '12px', 
-        marginTop: '64px',
-        paddingTop: '0'
+        gap: '16px', 
+        marginTop: '72px',
+        paddingTop: '32px',
+        borderTop: '1px solid #e8e8e3'
       }}>
         {!editingProfile ? (
+          <>
+            {/* Edit Button */}
             <button
               onClick={() => setEditingProfile(true)}
               style={{
-                padding: '12px 24px',
-                backgroundColor: brandBrown,
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
+                padding: '14px 28px',
+                backgroundColor: '#fafaf8',
+                color: brandCharcoal,
+                border: '1px solid #e8e8e3',
+                borderRadius: '12px',
                 cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: '600',
+                fontSize: '13px',
+                fontWeight: '500',
                 fontFamily: "'NeueHaasUnica', sans-serif",
-                letterSpacing: '-0.01em',
-                transition: 'all 0.2s'
+                letterSpacing: '0.02em',
+                textTransform: 'uppercase',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.02)'
               }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.opacity = '0.9';
-              e.currentTarget.style.transform = 'translateY(-1px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.opacity = '1';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-          >
-            Edit Profile
-          </button>
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#f5f5f2';
+                e.currentTarget.style.borderColor = '#d1d5db';
+                e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.04)';
+                e.currentTarget.style.transform = 'translateY(-1px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#fafaf8';
+                e.currentTarget.style.borderColor = '#e8e8e3';
+                e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.02)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              Edit
+            </button>
+            
+            {/* Password Reset Button */}
+            <button
+              onClick={() => {
+                const newPassword = prompt('Enter your new password (minimum 8 characters):');
+                if (newPassword && newPassword.length >= 8) {
+                  // TODO: Implement password reset API call
+                  alert('Password reset requested. Please contact support to complete the password change.');
+                } else if (newPassword) {
+                  alert('Password must be at least 8 characters long.');
+                }
+              }}
+              style={{
+                padding: '14px 28px',
+                backgroundColor: '#fafaf8',
+                color: brandCharcoal,
+                border: '1px solid #e8e8e3',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: '500',
+                fontFamily: "'NeueHaasUnica', sans-serif",
+                letterSpacing: '0.02em',
+                textTransform: 'uppercase',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.02)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#f5f5f2';
+                e.currentTarget.style.borderColor = '#d1d5db';
+                e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.04)';
+                e.currentTarget.style.transform = 'translateY(-1px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#fafaf8';
+                e.currentTarget.style.borderColor = '#e8e8e3';
+                e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.02)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              Reset Password
+            </button>
+            
+            {/* Logout Button */}
+            <button
+              onClick={() => {
+                if (window.confirm('Are you sure you want to log out?')) {
+                  onLogout();
+                }
+              }}
+              style={{
+                padding: '14px 28px',
+                backgroundColor: brandCharcoal,
+                color: '#fafaf8',
+                border: 'none',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: '500',
+                fontFamily: "'NeueHaasUnica', sans-serif",
+                letterSpacing: '0.02em',
+                textTransform: 'uppercase',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#1a1a1a';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.12)';
+                e.currentTarget.style.transform = 'translateY(-1px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = brandCharcoal;
+                e.currentTarget.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.08)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              Logout
+            </button>
+          </>
         ) : (
           <>
             <button
@@ -1234,25 +1323,31 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
                 });
               }}
               style={{
-                padding: '12px 24px',
-                backgroundColor: 'transparent',
+                padding: '14px 28px',
+                backgroundColor: '#fafaf8',
                 color: brandCharcoal,
-                border: '1px solid #d1d5db',
-                borderRadius: '8px',
+                border: '1px solid #e8e8e3',
+                borderRadius: '12px',
                 cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: '600',
+                fontSize: '13px',
+                fontWeight: '500',
                 fontFamily: "'NeueHaasUnica', sans-serif",
-                letterSpacing: '-0.01em',
-                transition: 'all 0.2s'
+                letterSpacing: '0.02em',
+                textTransform: 'uppercase',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.02)'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = brandCharcoal;
-                e.currentTarget.style.backgroundColor = '#f9fafb';
+                e.currentTarget.style.backgroundColor = '#f5f5f2';
+                e.currentTarget.style.borderColor = '#d1d5db';
+                e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.04)';
+                e.currentTarget.style.transform = 'translateY(-1px)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = '#d1d5db';
-                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.backgroundColor = '#fafaf8';
+                e.currentTarget.style.borderColor = '#e8e8e3';
+                e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.02)';
+                e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
               Cancel
@@ -1260,24 +1355,28 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
             <button
               onClick={handleSave}
               style={{
-                padding: '12px 24px',
-                backgroundColor: brandBrown,
-                color: 'white',
+                padding: '14px 28px',
+                backgroundColor: brandCharcoal,
+                color: '#fafaf8',
                 border: 'none',
-                borderRadius: '6px',
+                borderRadius: '12px',
                 cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: '600',
+                fontSize: '13px',
+                fontWeight: '500',
                 fontFamily: "'NeueHaasUnica', sans-serif",
-                letterSpacing: '-0.01em',
-                transition: 'all 0.2s'
+                letterSpacing: '0.02em',
+                textTransform: 'uppercase',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.opacity = '0.9';
+                e.currentTarget.style.backgroundColor = '#1a1a1a';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.12)';
                 e.currentTarget.style.transform = 'translateY(-1px)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = '1';
+                e.currentTarget.style.backgroundColor = brandCharcoal;
+                e.currentTarget.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.08)';
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
@@ -2669,6 +2768,7 @@ function DashboardView({ clientInfo, onLogout }) {
               profileData={profileData}
               editingProfile={editingProfile}
               setEditingProfile={setEditingProfile}
+              onLogout={onLogout}
               brandCharcoal={brandCharcoal}
               brandBrown={brandBrown}
               brandBlue={brandBlue}
