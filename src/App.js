@@ -1010,6 +1010,38 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
 
   return (
     <div>
+      {/* Image Banner */}
+      <div style={{
+        width: '100%',
+        height: '300px',
+        marginBottom: '48px',
+        borderRadius: '8px',
+        overflow: 'hidden',
+        position: 'relative'
+      }}>
+        <img 
+          src="/account-banner.jpg" 
+          alt="Your Reserve Status" 
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover'
+          }}
+          onError={(e) => {
+            // Fallback if image doesn't exist yet
+            e.target.style.display = 'none';
+            e.target.parentElement.style.backgroundColor = '#f5f5f0';
+            e.target.parentElement.style.display = 'flex';
+            e.target.parentElement.style.alignItems = 'center';
+            e.target.parentElement.style.justifyContent = 'center';
+            const fallback = document.createElement('div');
+            fallback.style.cssText = 'text-align: center; color: #666; font-family: "NeueHaasUnica", sans-serif;';
+            fallback.innerHTML = '<div style="font-size: 24px; font-weight: 300; font-family: \'Domaine Text\', serif; margin-bottom: 8px;">Your Reserve Status</div><div style="width: 60px; height: 1px; background: #2C2C2C; margin: 0 auto 12px;"></div><div style="font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;">A LOOK AT YOUR COLLABORATION, EXCLUSIVES, AND MEMBER BENEFITS.</div>';
+            e.target.parentElement.appendChild(fallback);
+          }}
+        />
+      </div>
+      
       <div style={{ display: 'flex', gap: '64px', marginTop: '0', justifyContent: 'flex-start' }}>
         {/* Left Column - Profile Icon */}
         <div style={{ flex: '0 0 240px', flexShrink: 0 }}>
@@ -1417,39 +1449,42 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
 
       {/* Tier Status */}
       <div style={{ 
-        backgroundColor: 'white', 
-        border: '2px solid #e5e7eb', 
-        padding: '28px', 
-        borderRadius: '12px', 
-        marginBottom: '32px' 
+        backgroundColor: '#fafaf8', 
+        border: 'none',
+        padding: '32px', 
+        borderRadius: '16px', 
+        marginBottom: '40px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
       }}>
         <div style={{ 
-          fontSize: '12px', 
-          fontWeight: '600', 
-          color: '#666',
+          fontSize: '11px', 
+          fontWeight: '500', 
+          color: '#8b8b8b',
           textTransform: 'uppercase',
-          letterSpacing: '0.1em',
-          marginBottom: '10px',
+          letterSpacing: '0.15em',
+          marginBottom: '12px',
           fontFamily: "'NeueHaasUnica', sans-serif"
         }}>
-          Current Tier
+          Your Current Standing
         </div>
         <div style={{ 
-          fontSize: '18px', 
-          fontWeight: '600', 
+          fontSize: '24px', 
+          fontWeight: '300', 
           color: brandCharcoal, 
-          marginBottom: '16px',
-          fontFamily: "'NeueHaasUnica', sans-serif"
-        }}>
-          <span style={{ color: '#059669', fontSize: '20px' }}>{tier.tier}</span>
-        </div>
-        <div style={{ 
-          fontSize: '36px', 
-          fontWeight: '700', 
-          color: brandCharcoal, 
-          marginBottom: '10px',
+          marginBottom: '20px',
           fontFamily: "'Domaine Text', serif",
-          letterSpacing: '-0.02em'
+          letterSpacing: '-0.01em'
+        }}>
+          {tier.tier}
+        </div>
+        <div style={{ 
+          fontSize: '42px', 
+          fontWeight: '300', 
+          color: brandCharcoal, 
+          marginBottom: '12px',
+          fontFamily: "'Domaine Text', serif",
+          letterSpacing: '-0.03em',
+          lineHeight: '1.1'
         }}>
           {tier.discount}% Discount
         </div>
@@ -1467,17 +1502,17 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
             <div style={{ marginBottom: '12px' }}>
               <div style={{ 
                 width: '100%', 
-                height: '16px', 
-                backgroundColor: '#e5e7eb', 
-                borderRadius: '8px',
+                height: '4px', 
+                backgroundColor: '#e8e8e3', 
+                borderRadius: '2px',
                 overflow: 'hidden'
               }}>
                 <div style={{
                   width: `${Math.min(tier.progress, 100)}%`,
                   height: '100%',
-                  backgroundColor: brandCharcoal,
+                  backgroundColor: tier.tier === 'House Member' ? '#6b7d47' : tier.tier === 'Inner Circle' ? '#d4af37' : '#2C2C2C',
                   transition: 'width 0.5s ease',
-                  borderRadius: '8px'
+                  borderRadius: '2px'
                 }} />
               </div>
             </div>
@@ -1510,111 +1545,170 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
         }}>
           Tier Benefits
         </h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
+          {/* House Member - Olive */}
           <div style={{ 
-            padding: '28px', 
-            backgroundColor: '#f9fafb', 
-            borderRadius: '12px', 
-            border: tier.tier === 'House Member' ? '2px solid ' + brandCharcoal : '1px solid #e5e7eb',
-            transition: 'all 0.2s'
+            padding: '32px', 
+            backgroundColor: '#fafaf8', 
+            borderRadius: '16px', 
+            border: tier.tier === 'House Member' ? '1px solid #6b7d47' : '1px solid #e8e8e3',
+            transition: 'all 0.3s ease',
+            boxShadow: tier.tier === 'House Member' 
+              ? '0 4px 12px rgba(107, 125, 71, 0.15)' 
+              : '0 2px 6px rgba(0, 0, 0, 0.04)',
+            position: 'relative',
+            overflow: 'hidden'
           }}>
+            {tier.tier === 'House Member' && (
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '3px',
+                backgroundColor: '#6b7d47'
+              }} />
+            )}
             <div style={{ 
-              fontSize: '13px', 
-              fontWeight: '600', 
-              color: brandCharcoal, 
-              marginBottom: '12px',
+              fontSize: '11px', 
+              fontWeight: '500', 
+              color: '#8b8b8b',
+              marginBottom: '16px',
               fontFamily: "'NeueHaasUnica', sans-serif",
               textTransform: 'uppercase',
-              letterSpacing: '0.1em'
+              letterSpacing: '0.15em'
             }}>
               House Member
             </div>
             <div style={{ 
-              fontSize: '28px', 
-              fontWeight: '700', 
-              color: brandCharcoal,
+              fontSize: '36px', 
+              fontWeight: '300', 
+              color: tier.tier === 'House Member' ? '#6b7d47' : brandCharcoal,
               fontFamily: "'Domaine Text', serif",
-              letterSpacing: '-0.02em',
-              marginBottom: '8px'
+              letterSpacing: '-0.03em',
+              marginBottom: '12px',
+              lineHeight: '1.1'
             }}>
               15%
             </div>
             <div style={{ 
-              fontSize: '13px', 
-              color: '#666',
-              fontFamily: "'NeueHaasUnica', sans-serif"
+              fontSize: '12px', 
+              color: '#8b8b8b',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              fontWeight: '400',
+              lineHeight: '1.5'
             }}>
-              Starting tier
+              Your Current Standing
             </div>
           </div>
+          
+          {/* Inner Circle - Soft Gold */}
           <div style={{ 
-            padding: '28px', 
-            backgroundColor: '#f9fafb', 
-            borderRadius: '12px', 
-            border: tier.tier === 'Inner Circle' ? '2px solid ' + brandCharcoal : '1px solid #e5e7eb',
-            transition: 'all 0.2s'
+            padding: '32px', 
+            backgroundColor: '#fafaf8', 
+            borderRadius: '16px', 
+            border: tier.tier === 'Inner Circle' ? '1px solid #d4af37' : '1px solid #e8e8e3',
+            transition: 'all 0.3s ease',
+            boxShadow: tier.tier === 'Inner Circle' 
+              ? '0 4px 12px rgba(212, 175, 55, 0.15)' 
+              : '0 2px 6px rgba(0, 0, 0, 0.04)',
+            position: 'relative',
+            overflow: 'hidden'
           }}>
+            {tier.tier === 'Inner Circle' && (
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '3px',
+                backgroundColor: '#d4af37'
+              }} />
+            )}
             <div style={{ 
-              fontSize: '13px', 
-              fontWeight: '600', 
-              color: brandCharcoal, 
-              marginBottom: '12px',
+              fontSize: '11px', 
+              fontWeight: '500', 
+              color: '#8b8b8b',
+              marginBottom: '16px',
               fontFamily: "'NeueHaasUnica', sans-serif",
               textTransform: 'uppercase',
-              letterSpacing: '0.1em'
+              letterSpacing: '0.15em'
             }}>
               Inner Circle
             </div>
             <div style={{ 
-              fontSize: '28px', 
-              fontWeight: '700', 
-              color: brandCharcoal,
+              fontSize: '36px', 
+              fontWeight: '300', 
+              color: tier.tier === 'Inner Circle' ? '#d4af37' : brandCharcoal,
               fontFamily: "'Domaine Text', serif",
-              letterSpacing: '-0.02em',
-              marginBottom: '8px'
+              letterSpacing: '-0.03em',
+              marginBottom: '12px',
+              lineHeight: '1.1'
             }}>
               20%
             </div>
             <div style={{ 
-              fontSize: '13px', 
-              color: '#666',
-              fontFamily: "'NeueHaasUnica', sans-serif"
+              fontSize: '12px', 
+              color: '#8b8b8b',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              fontWeight: '400',
+              lineHeight: '1.5'
             }}>
               At $50k spend
             </div>
           </div>
+          
+          {/* Founders Estate - Black */}
           <div style={{ 
-            padding: '28px', 
-            backgroundColor: '#f9fafb', 
-            borderRadius: '12px', 
-            border: tier.tier === 'Founders Estate' ? '2px solid ' + brandCharcoal : '1px solid #e5e7eb',
-            transition: 'all 0.2s'
+            padding: '32px', 
+            backgroundColor: '#fafaf8', 
+            borderRadius: '16px', 
+            border: tier.tier === 'Founders Estate' ? '1px solid #2C2C2C' : '1px solid #e8e8e3',
+            transition: 'all 0.3s ease',
+            boxShadow: tier.tier === 'Founders Estate' 
+              ? '0 4px 12px rgba(44, 44, 44, 0.15)' 
+              : '0 2px 6px rgba(0, 0, 0, 0.04)',
+            position: 'relative',
+            overflow: 'hidden'
           }}>
+            {tier.tier === 'Founders Estate' && (
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '3px',
+                backgroundColor: '#2C2C2C'
+              }} />
+            )}
             <div style={{ 
-              fontSize: '13px', 
-              fontWeight: '600', 
-              color: brandCharcoal, 
-              marginBottom: '12px',
+              fontSize: '11px', 
+              fontWeight: '500', 
+              color: '#8b8b8b',
+              marginBottom: '16px',
               fontFamily: "'NeueHaasUnica', sans-serif",
               textTransform: 'uppercase',
-              letterSpacing: '0.1em'
+              letterSpacing: '0.15em'
             }}>
               Founders Estate
             </div>
             <div style={{ 
-              fontSize: '28px', 
-              fontWeight: '700', 
-              color: brandCharcoal,
+              fontSize: '36px', 
+              fontWeight: '300', 
+              color: tier.tier === 'Founders Estate' ? '#2C2C2C' : brandCharcoal,
               fontFamily: "'Domaine Text', serif",
-              letterSpacing: '-0.02em',
-              marginBottom: '8px'
+              letterSpacing: '-0.03em',
+              marginBottom: '12px',
+              lineHeight: '1.1'
             }}>
               25%
             </div>
             <div style={{ 
-              fontSize: '13px', 
-              color: '#666',
-              fontFamily: "'NeueHaasUnica', sans-serif"
+              fontSize: '12px', 
+              color: '#8b8b8b',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              fontWeight: '400',
+              lineHeight: '1.5'
             }}>
               At $100k spend
             </div>
