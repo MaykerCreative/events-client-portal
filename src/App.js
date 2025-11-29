@@ -2274,7 +2274,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                   
                   {proposal.projectNumber ? (
                     <a
-                      href={`${ADMIN_PROPOSAL_APP_URL}?projectNumber=${encodeURIComponent(proposal.projectNumber)}${proposal.version ? `&version=${encodeURIComponent(proposal.version)}` : ''}&fromClientPortal=true`}
+                      href={`${ADMIN_PROPOSAL_APP_URL}?projectNumber=${encodeURIComponent(proposal.projectNumber)}${proposal.version ? `&version=${encodeURIComponent(proposal.version)}` : ''}&clientView=true`}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{
@@ -4544,7 +4544,7 @@ function DashboardView({ clientInfo, onLogout }) {
   
   // If a proposal is selected and has a projectNumber, redirect to admin app
   if (selectedProposal && selectedProposal.projectNumber) {
-    const adminUrl = `${ADMIN_PROPOSAL_APP_URL}?projectNumber=${encodeURIComponent(selectedProposal.projectNumber)}${selectedProposal.version ? `&version=${encodeURIComponent(selectedProposal.version)}` : ''}&fromClientPortal=true`;
+    const adminUrl = `${ADMIN_PROPOSAL_APP_URL}?projectNumber=${encodeURIComponent(selectedProposal.projectNumber)}${selectedProposal.version ? `&version=${encodeURIComponent(selectedProposal.version)}` : ''}&clientView=true`;
     window.open(adminUrl, '_blank');
     setSelectedProposal(null); // Clear selection after opening
     return null; // Don't render anything while redirecting
@@ -4886,7 +4886,7 @@ function ProposalDetailView({ proposal, onBack, onLogout }) {
           <div style={{ display: 'flex', gap: '12px' }}>
             {ADMIN_PROPOSAL_APP_URL && proposal.projectNumber && (
               <a
-                href={`${ADMIN_PROPOSAL_APP_URL}?projectNumber=${encodeURIComponent(proposal.projectNumber)}${proposal.version ? `&version=${encodeURIComponent(proposal.version)}` : ''}&fromClientPortal=true`}
+                href={`${ADMIN_PROPOSAL_APP_URL}?projectNumber=${encodeURIComponent(proposal.projectNumber)}${proposal.version ? `&version=${encodeURIComponent(proposal.version)}` : ''}&clientView=true`}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ padding: '8px 20px', backgroundColor: '#059669', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif", textDecoration: 'none', display: 'inline-block' }}
