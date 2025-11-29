@@ -2272,31 +2272,63 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                     {proposal.status || 'Pending'}
                   </span>
                   
-                  <button
-                    onClick={() => setSelectedProposal && setSelectedProposal(proposal)}
-                    style={{
-                      padding: '8px 16px',
-                      backgroundColor: 'transparent',
-                      color: '#6b7d47',
-                      border: '1px solid #6b7d47',
-                      borderRadius: '6px',
-                      cursor: 'pointer',
-                      fontSize: '12px',
-                      fontFamily: "'NeueHaasUnica', sans-serif",
-                      fontWeight: '500',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = '#6b7d47';
-                      e.target.style.color = 'white';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = 'transparent';
-                      e.target.style.color = '#6b7d47';
-                    }}
-                  >
-                    View Project
-                  </button>
+                  {proposal.projectNumber ? (
+                    <a
+                      href={`${ADMIN_PROPOSAL_APP_URL}?projectNumber=${encodeURIComponent(proposal.projectNumber)}${proposal.version ? `&version=${encodeURIComponent(proposal.version)}` : ''}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        padding: '8px 16px',
+                        backgroundColor: 'transparent',
+                        color: '#6b7d47',
+                        border: '1px solid #6b7d47',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        fontFamily: "'NeueHaasUnica', sans-serif",
+                        fontWeight: '500',
+                        textDecoration: 'none',
+                        display: 'inline-block',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.backgroundColor = '#6b7d47';
+                        e.target.style.color = 'white';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.backgroundColor = 'transparent';
+                        e.target.style.color = '#6b7d47';
+                      }}
+                    >
+                      View Project
+                    </a>
+                  ) : (
+                    <button
+                      onClick={() => setSelectedProposal && setSelectedProposal(proposal)}
+                      style={{
+                        padding: '8px 16px',
+                        backgroundColor: 'transparent',
+                        color: '#6b7d47',
+                        border: '1px solid #6b7d47',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        fontFamily: "'NeueHaasUnica', sans-serif",
+                        fontWeight: '500',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.backgroundColor = '#6b7d47';
+                        e.target.style.color = 'white';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.backgroundColor = 'transparent';
+                        e.target.style.color = '#6b7d47';
+                      }}
+                    >
+                      View Project
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -4510,6 +4542,15 @@ function DashboardView({ clientInfo, onLogout }) {
     );
   }
   
+  // If a proposal is selected and has a projectNumber, redirect to admin app
+  if (selectedProposal && selectedProposal.projectNumber) {
+    const adminUrl = `${ADMIN_PROPOSAL_APP_URL}?projectNumber=${encodeURIComponent(selectedProposal.projectNumber)}${selectedProposal.version ? `&version=${encodeURIComponent(selectedProposal.version)}` : ''}`;
+    window.open(adminUrl, '_blank');
+    setSelectedProposal(null); // Clear selection after opening
+    return null; // Don't render anything while redirecting
+  }
+  
+  // Fallback: if proposal selected but no projectNumber, show local view
   if (selectedProposal) {
     return (
       <ProposalDetailView 
