@@ -469,6 +469,11 @@ export default function App() {
     setTimeout(checkAuth, 100);
   }, []);
   
+  // Scroll to top when authentication state changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [isAuthenticated]);
+  
   const handleLogin = async (email, password) => {
     try {
       console.log('Attempting login for:', email);
@@ -3338,6 +3343,11 @@ function DashboardView({ clientInfo, onLogout }) {
     fetchData();
   }, []);
   
+  // Scroll to top when navigating between sections or views
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [activeSection, selectedProposal]);
+  
   const fetchData = async (retryCount = 0) => {
     try {
       setLoading(true);
@@ -3784,6 +3794,11 @@ function DashboardView({ clientInfo, onLogout }) {
 
 function ProposalDetailView({ proposal, onBack, onLogout }) {
   const brandCharcoal = '#2C2C2C';
+  
+  // Scroll to top when this view mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
   
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#fafaf8' }}>
