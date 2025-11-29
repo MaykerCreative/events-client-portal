@@ -1785,60 +1785,37 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
 
   return (
     <div>
-      {/* 1. Welcome Header */}
-      <div style={panelStyle}>
-        {/* Greeting Text */}
+      {/* 1. Typographic Welcome Header */}
+      <div style={{
+        backgroundColor: '#E7E6E2',
+        padding: '75px 48px 50px',
+        marginBottom: '48px',
+        textAlign: 'center',
+        borderRadius: '20px'
+      }}>
+        {/* Greeting Headline */}
         <div style={{
-          fontSize: '24px',
+          fontSize: '32px',
           fontWeight: '300',
           color: brandCharcoal,
           fontFamily: "'Domaine Text', serif",
           letterSpacing: '-0.01em',
-          marginBottom: '20px',
+          marginBottom: '16px',
           lineHeight: '1.3'
         }}>
           {getGreeting()}, {firstName ? firstName : 'there'}.
         </div>
+        {/* Subtext */}
         <div style={{
-          fontSize: '14px',
-          color: '#8b8b8b',
+          fontSize: '16px',
+          color: '#6f6a61',
           fontFamily: "'NeueHaasUnica', sans-serif",
           fontWeight: '400',
           lineHeight: '1.6',
-          marginBottom: '32px'
+          letterSpacing: '0.01em'
         }}>
-          Here's a snapshot of your Mayker Reserve membership and upcoming events.
-        </div>
-        
-        {/* Hero Image */}
-        <div style={{
-          width: '100%',
-          height: '320px',
-          borderRadius: '12px',
-          overflow: 'hidden',
-          position: 'relative',
-          backgroundColor: '#1a1a1a'
-        }}>
-          <img 
-            src="/overview-banner.jpg" 
-            alt="Guests gathered at an outdoor event by the water"
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              display: 'block'
-            }}
-            onError={(e) => {
-              // Try alternative paths if main path fails
-              if (!e.target.src.includes('/assets/')) {
-                e.target.src = '/assets/overview-banner.jpg';
-              } else if (!e.target.src.includes('overview-banner')) {
-                e.target.src = '/overview-banner.png';
-              } else {
-                e.target.style.display = 'none';
-              }
-            }}
-          />
+          Here's a snapshot of your Mayker Reserve membership<br />
+          and upcoming events.
         </div>
       </div>
 
