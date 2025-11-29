@@ -1785,56 +1785,103 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
 
   return (
     <div>
-      {/* 1. Welcome Header */}
-      <div style={panelStyle}>
-        <div style={{
-          fontSize: '24px',
-          fontWeight: '300',
-          color: brandCharcoal,
-          fontFamily: "'Domaine Text', serif",
-          letterSpacing: '-0.01em',
-          marginBottom: '12px',
-          lineHeight: '1.3'
-        }}>
-          {getGreeting()}, {firstName ? firstName : 'there'}.
-        </div>
-        <div style={{
-          fontSize: '14px',
-          color: '#8b8b8b',
-          fontFamily: "'NeueHaasUnica', sans-serif",
-          fontWeight: '400',
-          lineHeight: '1.6',
-          marginBottom: '32px'
-        }}>
-          Here's a snapshot of your Mayker Reserve membership and upcoming events.
-        </div>
+      {/* Autographer Font */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @font-face {
+          font-family: 'Autographer';
+          src: url('/Autographer.woff') format('woff');
+          font-weight: normal;
+          font-style: normal;
+          font-display: swap;
+        }
+        @media (max-width: 768px) {
+          .hero-overlay {
+            left: 24px !important;
+            right: 24px !important;
+            top: 16% !important;
+            max-width: none !important;
+          }
+          .hero-greeting {
+            font-size: 1.5rem !important;
+          }
+        }
+      ` }} />
+      
+      {/* 1. Hero Section with Greeting Overlay */}
+      <div style={{
+        ...panelStyle,
+        padding: 0,
+        position: 'relative',
+        borderRadius: '24px',
+        overflow: 'hidden',
+        marginBottom: '48px'
+      }}>
+        {/* Hero Image */}
+        <img 
+          src="/overview-banner.jpg" 
+          alt="Guests gathered at an outdoor event by the water"
+          style={{
+            width: '100%',
+            height: 'auto',
+            display: 'block'
+          }}
+          onError={(e) => {
+            // Try alternative paths if main path fails
+            if (!e.target.src.includes('/assets/')) {
+              e.target.src = '/assets/overview-banner.jpg';
+            } else if (!e.target.src.includes('overview-banner')) {
+              e.target.src = '/overview-banner.png';
+            } else {
+              e.target.style.display = 'none';
+            }
+          }}
+        />
         
-        {/* Banner Image */}
-        <div style={{
-          width: '100%',
-          borderRadius: '12px',
-          overflow: 'hidden',
-          marginTop: '24px'
-        }}>
-          <img 
-            src="/overview-banner.jpg" 
-            alt="Mayker Reserve"
+        {/* Text Overlay */}
+        <div 
+          className="hero-overlay"
+          style={{
+            position: 'absolute',
+            left: '48px',
+            top: '20%',
+            maxWidth: '420px',
+            padding: '16px 0',
+            background: 'linear-gradient(to bottom, rgba(250, 248, 243, 0.85) 0%, rgba(250, 248, 243, 0.35) 40%, rgba(250, 248, 243, 0.00) 100%)'
+          }}
+        >
+          {/* Main Greeting */}
+          <div 
+            className="hero-greeting"
             style={{
-              width: '100%',
-              height: 'auto',
-              display: 'block'
+              margin: '0 0 8px',
+              fontFamily: "'Domaine Text', serif",
+              fontSize: '28px',
+              lineHeight: '1.2',
+              color: '#25231f',
+              fontWeight: '300'
             }}
-            onError={(e) => {
-              // Try alternative paths if main path fails
-              if (!e.target.src.includes('/assets/')) {
-                e.target.src = '/assets/overview-banner.jpg';
-              } else if (!e.target.src.includes('overview-banner')) {
-                e.target.src = '/overview-banner.png';
-              } else {
-                e.target.style.display = 'none';
-              }
+          >
+            {getGreeting()}, <span style={{
+              fontFamily: "'Autographer', cursive",
+              fontSize: '1.1em',
+              letterSpacing: '0.02em'
+            }}>{firstName ? firstName : 'there'}</span>.
+          </div>
+          
+          {/* Subtext */}
+          <div 
+            className="hero-subtext"
+            style={{
+              margin: 0,
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              fontSize: '15px',
+              lineHeight: '1.5',
+              color: '#6f6a61',
+              fontWeight: '400'
             }}
-          />
+          >
+            Here's a snapshot of your Mayker Reserve membership and upcoming events.
+          </div>
         </div>
       </div>
 
