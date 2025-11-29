@@ -1803,19 +1803,75 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
           color: '#8b8b8b',
           fontFamily: "'NeueHaasUnica', sans-serif",
           fontWeight: '400',
-          lineHeight: '1.6'
+          lineHeight: '1.6',
+          marginBottom: '32px'
         }}>
           Here's a snapshot of your Mayker Reserve membership and upcoming events.
+        </div>
+        
+        {/* Banner Image */}
+        <div style={{
+          width: '100%',
+          borderRadius: '12px',
+          overflow: 'hidden',
+          marginTop: '24px'
+        }}>
+          <img 
+            src="/overview-banner.jpg" 
+            alt="Mayker Reserve"
+            style={{
+              width: '100%',
+              height: 'auto',
+              display: 'block'
+            }}
+            onError={(e) => {
+              // Try alternative paths if main path fails
+              if (!e.target.src.includes('/assets/')) {
+                e.target.src = '/assets/overview-banner.jpg';
+              } else if (!e.target.src.includes('overview-banner')) {
+                e.target.src = '/overview-banner.png';
+              } else {
+                e.target.style.display = 'none';
+              }
+            }}
+          />
         </div>
       </div>
 
       {/* 2. Membership Status (Medallion Panel) */}
-      <div style={panelStyle}>
+      <div style={{
+        ...panelStyle,
+        position: 'relative',
+        background: `
+          radial-gradient(circle at center, rgba(250, 250, 248, 0.4) 0%, rgba(250, 250, 248, 0.8) 50%, #fafaf8 100%),
+          url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='linen' x='0' y='0' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3Cpath d='M0 0h100v100H0z' fill='%23fafaf8'/%3E%3Cpath d='M0 0h1v100H0z' fill='%23f5f5f0' opacity='0.3'/%3E%3Cpath d='M0 0h100v1H0z' fill='%23f5f5f0' opacity='0.3'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100' height='100' fill='url(%23linen)'/%3E%3C/svg%3E") repeat
+        `,
+        backgroundSize: 'auto, 100px 100px'
+      }}>
+        {/* Micro-monogram watermark */}
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          fontSize: '320px',
+          fontWeight: '300',
+          color: 'rgba(44, 44, 44, 0.02)',
+          fontFamily: "'Domaine Text', serif",
+          letterSpacing: '-0.05em',
+          pointerEvents: 'none',
+          zIndex: 0
+        }}>
+          M
+        </div>
+        
         <div style={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          position: 'relative',
+          zIndex: 1
         }}>
           {/* Status Medallion */}
           <div style={{
@@ -1827,17 +1883,28 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             alignItems: 'center',
             justifyContent: 'center'
           }}>
+            {/* Radial gradient behind medallion */}
+            <div style={{
+              position: 'absolute',
+              width: '280px',
+              height: '280px',
+              borderRadius: '50%',
+              background: `radial-gradient(circle, rgba(${tier.tier === 'House Member' ? '107, 125, 71' : tier.tier === 'Inner Circle' ? '212, 175, 55' : '44, 44, 44'}, 0.08) 0%, transparent 70%)`,
+              zIndex: 0
+            }} />
             <div style={{
               position: 'absolute',
               width: '240px',
               height: '240px',
               borderRadius: '50%',
               border: tier.tier === 'House Member' ? '3px solid #6b7d47' : tier.tier === 'Inner Circle' ? '3px solid #d4af37' : '3px solid #2C2C2C',
-              backgroundColor: 'transparent'
+              backgroundColor: 'transparent',
+              zIndex: 1
             }} />
             <div style={{
               textAlign: 'center',
-              zIndex: 1
+              zIndex: 2,
+              position: 'relative'
             }}>
               <div style={{
                 fontSize: '40px',
@@ -1871,6 +1938,14 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               flexDirection: 'column',
               alignItems: 'center'
             }}>
+              {/* Thin horizontal olive rule */}
+              <div style={{
+                width: '60px',
+                height: '1px',
+                backgroundColor: '#6b7d47',
+                marginBottom: '20px',
+                opacity: 0.3
+              }} />
               <div style={{
                 fontSize: '10px',
                 color: '#8b8b8b',
@@ -1980,23 +2055,42 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
           </div>
           
           <div style={{
-            backgroundColor: 'white',
             borderRadius: '12px',
-            padding: '24px',
-            minHeight: '200px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            overflow: 'hidden',
             border: '1px solid #e8e8e3'
           }}>
-            <div style={{
-              fontSize: '12px',
-              color: '#999',
-              fontFamily: "'NeueHaasUnica', sans-serif",
-              fontStyle: 'italic'
-            }}>
-              Image placeholder
-            </div>
+            <img 
+              src="/december-perk.jpg" 
+              alt={`${currentMonth} Member Perk`}
+              style={{
+                width: '100%',
+                height: 'auto',
+                display: 'block'
+              }}
+              onError={(e) => {
+                // Try alternative paths if main path fails
+                if (!e.target.src.includes('/assets/')) {
+                  e.target.src = '/assets/december-perk.jpg';
+                } else if (!e.target.src.includes('december-perk')) {
+                  e.target.src = '/december-perk.png';
+                } else {
+                  // Fallback to placeholder if image not found
+                  e.target.style.display = 'none';
+                  e.target.parentElement.style.backgroundColor = 'white';
+                  e.target.parentElement.style.display = 'flex';
+                  e.target.parentElement.style.alignItems = 'center';
+                  e.target.parentElement.style.justifyContent = 'center';
+                  e.target.parentElement.style.minHeight = '200px';
+                  const placeholder = document.createElement('div');
+                  placeholder.textContent = 'Image placeholder';
+                  placeholder.style.fontSize = '12px';
+                  placeholder.style.color = '#999';
+                  placeholder.style.fontFamily = "'NeueHaasUnica', sans-serif";
+                  placeholder.style.fontStyle = 'italic';
+                  e.target.parentElement.appendChild(placeholder);
+                }
+              }}
+            />
           </div>
         </div>
       </div>
@@ -2410,6 +2504,117 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* 7. Concierge Card */}
+      <div style={smallerPanelStyle}>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          textAlign: 'center'
+        }}>
+          <div style={{
+            fontSize: '18px',
+            fontWeight: '300',
+            color: brandCharcoal,
+            fontFamily: "'Domaine Text', serif",
+            letterSpacing: '-0.01em',
+            marginBottom: '12px'
+          }}>
+            Need anything?
+          </div>
+          <div style={{
+            fontSize: '14px',
+            color: '#8b8b8b',
+            fontFamily: "'NeueHaasUnica', sans-serif",
+            fontWeight: '400',
+            lineHeight: '1.6',
+            marginBottom: '32px',
+            maxWidth: '500px'
+          }}>
+            Your Reserve team is here to support your projects.
+          </div>
+          
+          {/* Noelle Powell Card */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '20px',
+            backgroundColor: 'white',
+            padding: '24px 32px',
+            borderRadius: '12px',
+            border: '1px solid #e8e8e3',
+            maxWidth: '400px',
+            width: '100%'
+          }}>
+            <div style={{
+              width: '64px',
+              height: '64px',
+              borderRadius: '50%',
+              backgroundColor: '#f0f0f0',
+              overflow: 'hidden',
+              flexShrink: 0
+            }}>
+              <img 
+                src="/noelle-powell.jpg" 
+                alt="Noelle Powell"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover'
+                }}
+                onError={(e) => {
+                  if (!e.target.src.includes('/assets/')) {
+                    e.target.src = '/assets/noelle-powell.jpg';
+                  } else {
+                    e.target.style.display = 'none';
+                  }
+                }}
+              />
+            </div>
+            <div style={{
+              flex: 1,
+              textAlign: 'left'
+            }}>
+              <div style={{
+                fontSize: '16px',
+                fontWeight: '500',
+                color: brandCharcoal,
+                fontFamily: "'NeueHaasUnica', sans-serif",
+                marginBottom: '4px'
+              }}>
+                Noelle Powell
+              </div>
+              <div style={{
+                fontSize: '12px',
+                color: '#8b8b8b',
+                fontFamily: "'NeueHaasUnica', sans-serif",
+                marginBottom: '8px'
+              }}>
+                Client Services Director
+              </div>
+              <a 
+                href={`mailto:Noelle@Mayker.com`}
+                style={{
+                  fontSize: '12px',
+                  color: '#6b7d47',
+                  fontFamily: "'NeueHaasUnica', sans-serif",
+                  textDecoration: 'none',
+                  fontWeight: '500'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.textDecoration = 'underline';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.textDecoration = 'none';
+                }}
+              >
+                Noelle@Mayker.com
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
