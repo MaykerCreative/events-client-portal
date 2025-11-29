@@ -1838,32 +1838,53 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
         </div>
       </div>
 
-      {/* 2. Membership Status (Medallion Panel) */}
+      {/* 2. Membership Status + Monthly Perk (Side by Side) */}
       <div style={{
-        ...panelStyle,
-        position: 'relative',
-        background: `
-          radial-gradient(circle at center, rgba(250, 250, 248, 0.4) 0%, rgba(250, 250, 248, 0.8) 50%, #fafaf8 100%),
-          url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='linen' x='0' y='0' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3Cpath d='M0 0h100v100H0z' fill='%23fafaf8'/%3E%3Cpath d='M0 0h1v100H0z' fill='%23f5f5f0' opacity='0.3'/%3E%3Cpath d='M0 0h100v1H0z' fill='%23f5f5f0' opacity='0.3'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100' height='100' fill='url(%23linen)'/%3E%3C/svg%3E") repeat
-        `,
-        backgroundSize: 'auto, 100px 100px'
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: '48px',
+        marginBottom: '48px'
       }}>
-        {/* Micro-monogram watermark */}
+        {/* Membership Status (Medallion Panel) */}
         <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          fontSize: '320px',
-          fontWeight: '300',
-          color: 'rgba(44, 44, 44, 0.02)',
-          fontFamily: "'Domaine Text', serif",
-          letterSpacing: '-0.05em',
-          pointerEvents: 'none',
-          zIndex: 0
+          ...panelStyle,
+          position: 'relative',
+          marginBottom: 0,
+          background: `
+            radial-gradient(circle at center, rgba(250, 250, 248, 0.4) 0%, rgba(250, 250, 248, 0.8) 50%, #fafaf8 100%),
+            url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='linen' x='0' y='0' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3Cpath d='M0 0h100v100H0z' fill='%23fafaf8'/%3E%3Cpath d='M0 0h1v100H0z' fill='%23f5f5f0' opacity='0.3'/%3E%3Cpath d='M0 0h100v1H0z' fill='%23f5f5f0' opacity='0.3'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100' height='100' fill='url(%23linen)'/%3E%3C/svg%3E") repeat
+          `,
+          backgroundSize: 'auto, 100px 100px'
         }}>
-          M
-        </div>
+          {/* Icon watermark */}
+          <div style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '280px',
+            height: '280px',
+            opacity: 0.03,
+            pointerEvents: 'none',
+            zIndex: 0
+          }}>
+            <img 
+              src="/mayker_icon-black.svg" 
+              alt=""
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain'
+              }}
+              onError={(e) => {
+                if (!e.target.src.includes('/assets/')) {
+                  e.target.src = '/assets/mayker_icon-black.svg';
+                } else {
+                  e.target.style.display = 'none';
+                }
+              }}
+            />
+          </div>
         
         <div style={{
           display: 'flex',
@@ -2006,32 +2027,63 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             </div>
           )}
         </div>
-      </div>
-
-      {/* 3. Member Perk */}
-      <div style={panelStyle}>
-        <div style={{
-          fontSize: '22px',
-          fontWeight: '300',
-          color: '#1a1a1a',
-          fontFamily: "'Domaine Text', serif",
-          letterSpacing: '-0.02em',
-          lineHeight: '1.2',
-          marginBottom: '16px'
-        }}>
-          {currentMonth} Member Perk
         </div>
-        
+
+        {/* Monthly Perk - Square with text overlay */}
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: '48% 52%',
-          gap: '48px',
-          alignItems: 'flex-start'
+          ...panelStyle,
+          marginBottom: 0,
+          position: 'relative',
+          padding: 0,
+          aspectRatio: '1 / 1',
+          overflow: 'hidden',
+          borderRadius: '20px'
         }}>
-          <div>
+          <img 
+            src="/december-perk.jpg" 
+            alt={`${currentMonth} Member Perk`}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              position: 'absolute',
+              top: 0,
+              left: 0
+            }}
+            onError={(e) => {
+              if (!e.target.src.includes('/assets/')) {
+                e.target.src = '/assets/december-perk.jpg';
+              } else if (!e.target.src.includes('december-perk')) {
+                e.target.src = '/december-perk.png';
+              } else {
+                e.target.style.display = 'none';
+              }
+            }}
+          />
+          {/* Text overlay */}
+          <div style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)',
+            padding: '48px',
+            color: 'white'
+          }}>
+            <div style={{
+              fontSize: '22px',
+              fontWeight: '300',
+              color: 'white',
+              fontFamily: "'Domaine Text', serif",
+              letterSpacing: '-0.02em',
+              lineHeight: '1.2',
+              marginBottom: '16px'
+            }}>
+              {currentMonth} Member Perk
+            </div>
             <div style={{
               fontSize: '15px',
-              color: '#2a2a2a',
+              color: 'rgba(255, 255, 255, 0.95)',
               fontFamily: "'NeueHaasUnica', sans-serif",
               fontWeight: '400',
               lineHeight: '1.5',
@@ -2039,10 +2091,9 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             }}>
               A year-end thank you: Reserve Members receive 25% off all rental products.
             </div>
-            
             <div style={{
               fontSize: '11px',
-              color: '#6b6b6b',
+              color: 'rgba(255, 255, 255, 0.8)',
               fontFamily: "'NeueHaasUnica', sans-serif",
               fontWeight: '400',
               lineHeight: '1.6',
@@ -2053,45 +2104,6 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               <div style={{ marginBottom: '6px' }}>Applies to rental products only</div>
               <div>Excludes custom fabrication + procurement</div>
             </div>
-          </div>
-          
-          <div style={{
-            borderRadius: '12px',
-            overflow: 'hidden',
-            border: '1px solid #e8e8e3'
-          }}>
-            <img 
-              src="/december-perk.jpg" 
-              alt={`${currentMonth} Member Perk`}
-              style={{
-                width: '100%',
-                height: 'auto',
-                display: 'block'
-              }}
-              onError={(e) => {
-                // Try alternative paths if main path fails
-                if (!e.target.src.includes('/assets/')) {
-                  e.target.src = '/assets/december-perk.jpg';
-                } else if (!e.target.src.includes('december-perk')) {
-                  e.target.src = '/december-perk.png';
-                } else {
-                  // Fallback to placeholder if image not found
-                  e.target.style.display = 'none';
-                  e.target.parentElement.style.backgroundColor = 'white';
-                  e.target.parentElement.style.display = 'flex';
-                  e.target.parentElement.style.alignItems = 'center';
-                  e.target.parentElement.style.justifyContent = 'center';
-                  e.target.parentElement.style.minHeight = '200px';
-                  const placeholder = document.createElement('div');
-                  placeholder.textContent = 'Image placeholder';
-                  placeholder.style.fontSize = '12px';
-                  placeholder.style.color = '#999';
-                  placeholder.style.fontFamily = "'NeueHaasUnica', sans-serif";
-                  placeholder.style.fontStyle = 'italic';
-                  e.target.parentElement.appendChild(placeholder);
-                }
-              }}
-            />
           </div>
         </div>
       </div>
