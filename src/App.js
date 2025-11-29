@@ -7,6 +7,11 @@ import React, { useState, useEffect } from 'react';
 // Update this with your Client Apps Script Web App URL
 const CLIENT_API_URL = 'https://script.google.com/macros/s/AKfycbzRLIS_HkRzFI9wlm_tvE1ccfQTeDUqqPSrTwCVbtmKtJuoVJWyZQORG6z6_B40bxCU/exec';
 
+// Shopify Storefront API Configuration
+const SHOPIFY_STORE = 'maykerevents';
+const SHOPIFY_STOREFRONT_TOKEN = 'c5d91c74423126f87956f6f32d050878';
+const SHOPIFY_API_URL = `https://${SHOPIFY_STORE}.myshopify.com/api/2024-01/graphql.json`;
+
 // ============================================
 // AUTHENTICATION SERVICE
 // ============================================
@@ -292,6 +297,92 @@ const apiService = {
   // Validate session
   async validateSession() {
     return this.request('validate');
+  }
+};
+
+// ============================================
+// SHOPIFY SERVICE
+// ============================================
+
+const shopifyService = {
+  // Fetch products tagged with "Mayker Reserve Product"
+  async getFeaturedProducts() {
+    try {
+      const query = `
+        query getProducts($tag: String!) {
+          products(first: 10, query: $tag) {
+            edges {
+              node {
+                id
+                title
+                description
+                handle
+                images(first: 1) {
+                  edges {
+                    node {
+                      url
+                      altText
+                    }
+                  }
+                }
+                priceRange {
+                  minVariantPrice {
+                    amount
+                    currencyCode
+                  }
+                }
+              }
+            }
+          }
+        }
+      `;
+      
+      const variables = {
+        tag: 'tag:"Mayker Reserve Product"'
+      };
+      
+      const response = await fetch(SHOPIFY_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_TOKEN
+        },
+        body: JSON.stringify({ query, variables })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Shopify API error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.errors) {
+        console.error('Shopify GraphQL errors:', data.errors);
+        return [];
+      }
+      
+      // Transform Shopify data to our format
+      return data.data.products.edges.map(edge => {
+        const product = edge.node;
+        const image = product.images.edges[0]?.node;
+        const price = parseFloat(product.priceRange.minVariantPrice.amount);
+        
+        return {
+          id: product.id,
+          title: product.title,
+          description: product.description || '',
+          handle: product.handle,
+          imageUrl: image?.url || '',
+          imageAlt: image?.altText || product.title,
+          price: price,
+          currencyCode: product.priceRange.minVariantPrice.currencyCode,
+          url: `https://${SHOPIFY_STORE}.myshopify.com/products/${product.handle}`
+        };
+      });
+    } catch (error) {
+      console.error('Error fetching Shopify products:', error);
+      return [];
+    }
   }
 };
 
@@ -1508,6 +1599,20 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
 // ============================================
 
 function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedProposal, brandCharcoal = '#2C2C2C' }) {
+  const [shopifyProducts, setShopifyProducts] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  
+  // Fetch Shopify products on mount
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoadingProducts(true);
+      const products = await shopifyService.getFeaturedProducts();
+      setShopifyProducts(products);
+      setLoadingProducts(false);
+    };
+    fetchProducts();
+  }, []);
+  
   // Reuse tier calculation logic from PerformanceSection
   const calculateProductSpend = (proposal) => {
     try {
@@ -1894,11 +1999,193 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
       </div>
 
       {/* 4. Featured Products from Shopify */}
-      {/* TODO: Connect to Shopify API for products tagged "Monthly Reserve Perk" */}
-      {/* For now, this section is hidden if no products are available */}
-      <div style={{ display: 'none' }}>
-        {/* Shopify products will be displayed here when integrated */}
-      </div>
+      {shopifyProducts.length > 0 && (
+        <div style={panelStyle}>
+          <div style={{
+            fontSize: '18px',
+            fontWeight: '300',
+            color: brandCharcoal,
+            fontFamily: "'Domaine Text', serif",
+            letterSpacing: '-0.01em',
+            marginBottom: '32px'
+          }}>
+            Featured Products
+          </div>
+          
+          {loadingProducts ? (
+            <div style={{
+              textAlign: 'center',
+              padding: '48px',
+              color: '#8b8b8b',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              fontSize: '14px'
+            }}>
+              Loading products...
+            </div>
+          ) : shopifyProducts.length === 1 ? (
+            // Single product - large featured layout
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '48px',
+              alignItems: 'center'
+            }}>
+              <div>
+                {shopifyProducts[0].imageUrl && (
+                  <img 
+                    src={shopifyProducts[0].imageUrl} 
+                    alt={shopifyProducts[0].imageAlt}
+                    style={{
+                      width: '100%',
+                      borderRadius: '12px',
+                      aspectRatio: '1',
+                      objectFit: 'cover'
+                    }}
+                  />
+                )}
+              </div>
+              <div>
+                <h3 style={{
+                  fontSize: '20px',
+                  fontWeight: '300',
+                  color: brandCharcoal,
+                  fontFamily: "'Domaine Text', serif",
+                  letterSpacing: '-0.01em',
+                  marginBottom: '16px'
+                }}>
+                  {shopifyProducts[0].title}
+                </h3>
+                {shopifyProducts[0].description && (
+                  <p style={{
+                    fontSize: '14px',
+                    color: '#8b8b8b',
+                    fontFamily: "'NeueHaasUnica', sans-serif",
+                    lineHeight: '1.6',
+                    marginBottom: '24px'
+                  }}>
+                    {shopifyProducts[0].description.length > 150 
+                      ? shopifyProducts[0].description.substring(0, 150) + '...'
+                      : shopifyProducts[0].description}
+                  </p>
+                )}
+                <a
+                  href={shopifyProducts[0].url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'inline-block',
+                    padding: '12px 24px',
+                    backgroundColor: '#6b7d47',
+                    color: 'white',
+                    textDecoration: 'none',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    fontFamily: "'NeueHaasUnica', sans-serif",
+                    fontWeight: '500',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = '#5a6b3a';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = '#6b7d47';
+                  }}
+                >
+                  View Product
+                </a>
+              </div>
+            </div>
+          ) : (
+            // Multiple products - grid layout
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '24px'
+            }}>
+              {shopifyProducts.map((product) => (
+                <div
+                  key={product.id}
+                  style={{
+                    backgroundColor: 'white',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid #e8e8e3',
+                    transition: 'all 0.2s ease',
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}
+                >
+                  {product.imageUrl && (
+                    <img 
+                      src={product.imageUrl} 
+                      alt={product.imageAlt}
+                      style={{
+                        width: '100%',
+                        borderRadius: '8px',
+                        aspectRatio: '1',
+                        objectFit: 'cover',
+                        marginBottom: '16px'
+                      }}
+                    />
+                  )}
+                  <h3 style={{
+                    fontSize: '16px',
+                    fontWeight: '500',
+                    color: brandCharcoal,
+                    fontFamily: "'NeueHaasUnica', sans-serif",
+                    marginBottom: '8px'
+                  }}>
+                    {product.title}
+                  </h3>
+                  {product.description && (
+                    <p style={{
+                      fontSize: '12px',
+                      color: '#8b8b8b',
+                      fontFamily: "'NeueHaasUnica', sans-serif",
+                      lineHeight: '1.5',
+                      marginBottom: '16px',
+                      flex: 1
+                    }}>
+                      {product.description.length > 100 
+                        ? product.description.substring(0, 100) + '...'
+                        : product.description}
+                    </p>
+                  )}
+                  <a
+                    href={product.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-block',
+                      padding: '10px 20px',
+                      backgroundColor: 'transparent',
+                      color: '#6b7d47',
+                      border: '1px solid #6b7d47',
+                      textDecoration: 'none',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      fontFamily: "'NeueHaasUnica', sans-serif",
+                      fontWeight: '500',
+                      textAlign: 'center',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.backgroundColor = '#6b7d47';
+                      e.target.style.color = 'white';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.backgroundColor = 'transparent';
+                      e.target.style.color = '#6b7d47';
+                    }}
+                  >
+                    View Product
+                  </a>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 5. Active Projects Snapshot */}
       {activeProposals.length > 0 && (
