@@ -1840,11 +1840,27 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
 
       {/* 2. Membership Status + Monthly Perk (Side by Side) */}
       <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: '48px',
         marginBottom: '48px'
       }}>
+        {/* Section Label */}
+        <div style={{
+          fontSize: '11px',
+          fontWeight: '400',
+          color: '#6b6b6b',
+          fontFamily: "'NeueHaasUnica', sans-serif",
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+          marginBottom: '16px',
+          textAlign: 'left'
+        }}>
+          Your Reserve Highlights
+        </div>
+        
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '48px'
+        }}>
         {/* Membership Status (Medallion Panel) */}
         <div style={{
           ...panelStyle,
@@ -1894,12 +1910,12 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
           position: 'relative',
           zIndex: 1
         }}>
-          {/* Status Medallion */}
+          {/* Status Medallion - Reduced size */}
           <div style={{
             position: 'relative',
-            width: '240px',
-            height: '240px',
-            marginBottom: '56px',
+            width: '200px',
+            height: '200px',
+            marginBottom: '40px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
@@ -1907,16 +1923,16 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             {/* Radial gradient behind medallion */}
             <div style={{
               position: 'absolute',
-              width: '280px',
-              height: '280px',
+              width: '240px',
+              height: '240px',
               borderRadius: '50%',
               background: `radial-gradient(circle, rgba(${tier.tier === 'House Member' ? '107, 125, 71' : tier.tier === 'Inner Circle' ? '212, 175, 55' : '44, 44, 44'}, 0.08) 0%, transparent 70%)`,
               zIndex: 0
             }} />
             <div style={{
               position: 'absolute',
-              width: '240px',
-              height: '240px',
+              width: '200px',
+              height: '200px',
               borderRadius: '50%',
               border: tier.tier === 'House Member' ? '3px solid #6b7d47' : tier.tier === 'Inner Circle' ? '3px solid #d4af37' : '3px solid #2C2C2C',
               backgroundColor: 'transparent',
@@ -1928,18 +1944,18 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               position: 'relative'
             }}>
               <div style={{
-                fontSize: '40px',
+                fontSize: '34px',
                 fontWeight: '300',
                 color: brandCharcoal,
                 fontFamily: "'Domaine Text', serif",
                 letterSpacing: '-0.02em',
                 lineHeight: '1.2',
-                marginBottom: '12px'
+                marginBottom: '10px'
               }}>
                 {tier.tier}
               </div>
               <div style={{
-                fontSize: '20px',
+                fontSize: '18px',
                 fontWeight: '300',
                 color: '#8b8b8b',
                 fontFamily: "'NeueHaasUnica', sans-serif",
@@ -2080,9 +2096,9 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               opacity: 0.4
             }} />
             <div style={{
-              fontSize: '24px',
+              fontSize: '30px',
               fontWeight: '300',
-              color: '#1a1a1a',
+              color: '#0f0f0f',
               fontFamily: "'Domaine Text', serif",
               letterSpacing: '-0.02em',
               lineHeight: '1.2',
@@ -2529,52 +2545,63 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
         </div>
       </div>
 
-      {/* 7. Concierge Card */}
-      <div style={smallerPanelStyle}>
+      {/* 7. Concierge Section - Large, Inviting */}
+      <div style={{
+        ...panelStyle,
+        padding: '80px 64px',
+        minHeight: '400px'
+      }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '48px',
+          gridTemplateColumns: '1fr 1.2fr',
+          gap: '80px',
           alignItems: 'center'
         }}>
           {/* Left Column: Heading + Subheading */}
           <div>
             <div style={{
-              fontSize: '15px',
+              fontSize: '32px',
               fontWeight: '300',
               color: '#1a1a1a',
               fontFamily: "'Domaine Text', serif",
-              letterSpacing: '-0.02em',
-              lineHeight: '1.3',
-              marginBottom: '6px'
+              letterSpacing: '-0.03em',
+              lineHeight: '1.2',
+              marginBottom: '16px'
             }}>
               Need anything?
             </div>
             <div style={{
-              fontSize: '13px',
+              fontSize: '16px',
               color: '#4a4a4a',
               fontFamily: "'NeueHaasUnica', sans-serif",
               fontWeight: '400',
-              lineHeight: '1.5',
-              letterSpacing: '0.01em'
+              lineHeight: '1.6',
+              letterSpacing: '0.01em',
+              marginBottom: '32px',
+              maxWidth: '420px'
             }}>
-              Your Reserve team is here to support your next event.
+              Your Reserve team is here to support your next event. We're available whenever you need us.
             </div>
           </div>
           
-          {/* Right Column: Noelle Powell Contact */}
+          {/* Right Column: Noelle Powell Contact - Larger, More Prominent */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '20px'
+            gap: '32px',
+            padding: '40px',
+            backgroundColor: 'rgba(255, 255, 255, 0.6)',
+            borderRadius: '16px',
+            border: '1px solid rgba(232, 232, 227, 0.5)'
           }}>
             <div style={{
-              width: '72px',
-              height: '72px',
+              width: '120px',
+              height: '120px',
               borderRadius: '50%',
               backgroundColor: '#f0f0f0',
               overflow: 'hidden',
-              flexShrink: 0
+              flexShrink: 0,
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)'
             }}>
               <img 
                 src="/noelle-powell.jpg" 
@@ -2597,23 +2624,24 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               flex: 1
             }}>
               <div style={{
-                fontSize: '17px',
+                fontSize: '24px',
                 fontWeight: '300',
                 color: '#1a1a1a',
                 fontFamily: "'Domaine Text', serif",
-                letterSpacing: '-0.01em',
-                marginBottom: '4px',
+                letterSpacing: '-0.02em',
+                marginBottom: '8px',
                 lineHeight: '1.3'
               }}>
                 Noelle Powell
               </div>
               <div style={{
-                fontSize: '11px',
-                color: '#4a4a4a',
+                fontSize: '12px',
+                color: '#5a5a5a',
                 fontFamily: "'NeueHaasUnica', sans-serif",
                 fontWeight: '400',
-                letterSpacing: '0.02em',
-                marginBottom: '8px',
+                letterSpacing: '0.03em',
+                textTransform: 'uppercase',
+                marginBottom: '16px',
                 lineHeight: '1.4'
               }}>
                 Client Services Director
@@ -2621,23 +2649,26 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               <div style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '4px'
+                gap: '8px'
               }}>
                 <a 
                   href={`mailto:Noelle@Mayker.com`}
                   style={{
-                    fontSize: '12px',
+                    fontSize: '14px',
                     color: '#6b7d47',
                     fontFamily: "'NeueHaasUnica', sans-serif",
                     textDecoration: 'none',
                     fontWeight: '400',
-                    letterSpacing: '0.01em'
+                    letterSpacing: '0.01em',
+                    transition: 'all 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
                     e.target.style.textDecoration = 'underline';
+                    e.target.style.color = '#5a6b3a';
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.textDecoration = 'none';
+                    e.target.style.color = '#6b7d47';
                   }}
                 >
                   Noelle@Mayker.com
@@ -2645,18 +2676,21 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                 <a 
                   href={`tel:+16159701244`}
                   style={{
-                    fontSize: '12px',
+                    fontSize: '14px',
                     color: '#6b7d47',
                     fontFamily: "'NeueHaasUnica', sans-serif",
                     textDecoration: 'none',
                     fontWeight: '400',
-                    letterSpacing: '0.01em'
+                    letterSpacing: '0.01em',
+                    transition: 'all 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
                     e.target.style.textDecoration = 'underline';
+                    e.target.style.color = '#5a6b3a';
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.textDecoration = 'none';
+                    e.target.style.color = '#6b7d47';
                   }}
                 >
                   (615) 970-1244
