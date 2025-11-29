@@ -1394,6 +1394,597 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
   );
 }
 
+// ============================================
+// OVERVIEW SECTION
+// ============================================
+
+function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedProposal, brandCharcoal = '#2C2C2C' }) {
+  // Reuse tier calculation logic from PerformanceSection
+  const calculateProductSpend = (proposal) => {
+    try {
+      if (proposal.isHistorical && proposal.historicalProductTotal) {
+        return parseFloat(proposal.historicalProductTotal) || 0;
+      }
+      
+      const sections = JSON.parse(proposal.sectionsJSON || '[]');
+      let productSpend = 0;
+      
+      sections.forEach(section => {
+        if (section.products && Array.isArray(section.products)) {
+          section.products.forEach(product => {
+            const quantity = parseFloat(product.quantity) || 0;
+            const price = parseFloat(product.price) || 0;
+            productSpend += quantity * price;
+          });
+        }
+      });
+      
+      const duration = proposal.startDate && proposal.endDate ? 
+        Math.ceil((new Date(proposal.endDate) - new Date(proposal.startDate)) / (1000 * 60 * 60 * 24)) + 1 : 1;
+      const rentalMultiplier = proposal.customRentalMultiplier ? 
+        parseFloat(proposal.customRentalMultiplier) : 
+        (duration <= 1 ? 1 : duration <= 3 ? 1.5 : duration <= 7 ? 2 : 2.5);
+      
+      const extendedProductTotal = productSpend * rentalMultiplier;
+      
+      const discountValue = parseFloat(proposal.discountValue || proposal.discount || 0) || 0;
+      let discountType = 'percentage';
+      if (proposal.discountName && proposal.discountName.startsWith('TYPE:')) {
+        const match = proposal.discountName.match(/^TYPE:(\w+)/);
+        if (match) discountType = match[1];
+      }
+      
+      const discount = discountType === 'dollar' 
+        ? discountValue 
+        : extendedProductTotal * (discountValue / 100);
+      
+      const rentalTotal = extendedProductTotal - discount;
+      const productCareFee = extendedProductTotal * 0.1;
+      const serviceFee = (rentalTotal + productCareFee) * 0.05;
+      
+      return rentalTotal + productCareFee + serviceFee;
+    } catch (e) {
+      console.error('Error calculating product spend:', e);
+      return 0;
+    }
+  };
+  
+  const currentYear = new Date().getFullYear();
+  const yearProposals = proposals.filter(p => {
+    if (!p.startDate || p.status === 'Cancelled') return false;
+    const proposalYear = new Date(p.startDate).getFullYear();
+    return proposalYear === currentYear;
+  }).sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+  
+  const currentYearSpend = yearProposals.reduce((total, proposal) => {
+    return total + calculateProductSpend(proposal);
+  }, 0);
+  
+  let tierBaseSpend = currentYearSpend;
+  let carriedOverTier = null;
+  
+  if (currentYear >= 2026) {
+    const year2025Proposals = proposals.filter(p => {
+      if (!p.startDate || p.status === 'Cancelled') return false;
+      const proposalYear = new Date(p.startDate).getFullYear();
+      return proposalYear === 2025;
+    });
+    
+    const year2025Spend = year2025Proposals.reduce((total, proposal) => {
+      return total + calculateProductSpend(proposal);
+    }, 0);
+    
+    if (year2025Spend >= 100000) {
+      carriedOverTier = { discount: 25, tier: 'Founders Estate', baseSpend: year2025Spend };
+    } else if (year2025Spend >= 50000) {
+      carriedOverTier = { discount: 20, tier: 'Inner Circle', baseSpend: year2025Spend };
+    } else {
+      carriedOverTier = { discount: 15, tier: 'House Member', baseSpend: year2025Spend };
+    }
+    
+    tierBaseSpend = carriedOverTier.baseSpend;
+  }
+  
+  const getCurrentTier = () => {
+    if (carriedOverTier) {
+      const tier = carriedOverTier.tier;
+      if (tier === 'Founders Estate') {
+        return { discount: 25, tier: 'Founders Estate', nextTier: null, progress: 100, nextTierName: null };
+      } else if (tier === 'Inner Circle') {
+        const progress = Math.min((currentYearSpend / 50000) * 100, 100);
+        return { discount: 20, tier: 'Inner Circle', nextTier: 'Founders Estate (25%)', progress: progress, nextTierName: 'Founders Estate' };
+      } else {
+        const progress = Math.min((currentYearSpend / 50000) * 100, 100);
+        return { discount: 15, tier: 'House Member', nextTier: 'Inner Circle (20%)', progress: progress, nextTierName: 'Inner Circle' };
+      }
+    }
+    
+    if (tierBaseSpend >= 100000) {
+      return { discount: 25, tier: 'Founders Estate', nextTier: null, progress: 100, nextTierName: null };
+    } else if (tierBaseSpend >= 50000) {
+      return { discount: 20, tier: 'Inner Circle', nextTier: 'Founders Estate (25%)', progress: ((tierBaseSpend - 50000) / 50000) * 100, nextTierName: 'Founders Estate' };
+    } else {
+      return { discount: 15, tier: 'House Member', nextTier: 'Inner Circle (20%)', progress: (tierBaseSpend / 50000) * 100, nextTierName: 'Inner Circle' };
+    }
+  };
+
+  const tier = getCurrentTier();
+  
+  // Calculate progress details
+  let pointsToNextTier = 0;
+  let nextTierPoints = 0;
+  
+  if (tier.nextTier) {
+    if (tier.tier === 'House Member') {
+      nextTierPoints = 50000;
+      pointsToNextTier = Math.ceil(50000 - currentYearSpend);
+    } else if (tier.tier === 'Inner Circle') {
+      nextTierPoints = 100000;
+      if (carriedOverTier) {
+        pointsToNextTier = Math.ceil(50000 - currentYearSpend);
+      } else {
+        pointsToNextTier = Math.ceil(100000 - currentYearSpend);
+      }
+    }
+  }
+  
+  const currentPoints = Math.round(currentYearSpend);
+  const progressPercent = Math.round(tier.progress);
+  
+  // Get active proposals (up to 3)
+  const activeProposals = proposals.filter(p => 
+    p.status === 'Pending' || p.status === 'Active' || (p.status === 'Approved' && isFutureDate(p.startDate)) || (p.status === 'Confirmed' && isFutureDate(p.startDate))
+  ).slice(0, 3);
+  
+  // Get greeting based on time of day
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  };
+  
+  const firstName = clientInfo?.firstName || clientInfo?.fullName?.split(' ')[0] || '';
+  const currentMonth = new Date().toLocaleString('en-US', { month: 'long' });
+  
+  // Panel styling (reused throughout)
+  const panelStyle = {
+    backgroundColor: '#fafaf8',
+    border: 'none',
+    padding: '64px 48px',
+    borderRadius: '20px',
+    marginBottom: '48px',
+    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.06)'
+  };
+  
+  const smallerPanelStyle = {
+    backgroundColor: '#fafaf8',
+    border: 'none',
+    padding: '32px',
+    borderRadius: '20px',
+    marginBottom: '48px',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
+  };
+
+  return (
+    <div>
+      {/* 1. Welcome Header */}
+      <div style={panelStyle}>
+        <div style={{
+          fontSize: '24px',
+          fontWeight: '300',
+          color: brandCharcoal,
+          fontFamily: "'Domaine Text', serif",
+          letterSpacing: '-0.01em',
+          marginBottom: '12px',
+          lineHeight: '1.3'
+        }}>
+          {getGreeting()}, {firstName ? firstName : 'there'}.
+        </div>
+        <div style={{
+          fontSize: '14px',
+          color: '#8b8b8b',
+          fontFamily: "'NeueHaasUnica', sans-serif",
+          fontWeight: '400',
+          lineHeight: '1.6'
+        }}>
+          Here's a snapshot of your Mayker Reserve membership and upcoming events.
+        </div>
+      </div>
+
+      {/* 2. Membership Status (Medallion Panel) */}
+      <div style={panelStyle}>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          {/* Status Medallion */}
+          <div style={{
+            position: 'relative',
+            width: '240px',
+            height: '240px',
+            marginBottom: '56px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <div style={{
+              position: 'absolute',
+              width: '240px',
+              height: '240px',
+              borderRadius: '50%',
+              border: tier.tier === 'House Member' ? '3px solid #6b7d47' : tier.tier === 'Inner Circle' ? '3px solid #d4af37' : '3px solid #2C2C2C',
+              backgroundColor: 'transparent'
+            }} />
+            <div style={{
+              textAlign: 'center',
+              zIndex: 1
+            }}>
+              <div style={{
+                fontSize: '40px',
+                fontWeight: '300',
+                color: brandCharcoal,
+                fontFamily: "'Domaine Text', serif",
+                letterSpacing: '-0.02em',
+                lineHeight: '1.2',
+                marginBottom: '12px'
+              }}>
+                {tier.tier}
+              </div>
+              <div style={{
+                fontSize: '20px',
+                fontWeight: '300',
+                color: '#8b8b8b',
+                fontFamily: "'NeueHaasUnica', sans-serif",
+                letterSpacing: '-0.01em'
+              }}>
+                {tier.discount}% Off
+              </div>
+            </div>
+          </div>
+
+          {/* Progress Section */}
+          {tier.nextTier && (
+            <div style={{
+              width: '100%',
+              maxWidth: '500px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
+            }}>
+              <div style={{
+                fontSize: '10px',
+                color: '#8b8b8b',
+                fontFamily: "'NeueHaasUnica', sans-serif",
+                fontWeight: '500',
+                textTransform: 'uppercase',
+                letterSpacing: '0.15em',
+                marginBottom: '20px',
+                textAlign: 'center'
+              }}>
+                PROGRESS TOWARD {tier.nextTierName.toUpperCase()}
+              </div>
+              
+              <div style={{
+                width: '65%',
+                height: '3px',
+                backgroundColor: '#e8e8e3',
+                borderRadius: '2px',
+                marginBottom: '20px',
+                overflow: 'hidden',
+                position: 'relative'
+              }}>
+                <div style={{
+                  width: `${Math.min(tier.progress, 100)}%`,
+                  height: '100%',
+                  backgroundColor: tier.tier === 'House Member' ? '#6b7d47' : tier.tier === 'Inner Circle' ? '#d4af37' : '#2C2C2C',
+                  transition: 'width 0.8s ease',
+                  borderRadius: '2px'
+                }} />
+              </div>
+              
+              <div style={{
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px'
+              }}>
+                <div style={{
+                  fontSize: '16px',
+                  color: brandCharcoal,
+                  fontFamily: "'NeueHaasUnica', sans-serif",
+                  fontWeight: '500',
+                  lineHeight: '1.4'
+                }}>
+                  {pointsToNextTier.toLocaleString()} pts to {tier.nextTierName}
+                </div>
+                
+                <div style={{
+                  fontSize: '12px',
+                  color: '#8b8b8b',
+                  fontFamily: "'NeueHaasUnica', sans-serif",
+                  fontWeight: '400',
+                  lineHeight: '1.5'
+                }}>
+                  Progress: {progressPercent}% complete  •  {currentPoints.toLocaleString()} pts earned  •  {nextTierPoints.toLocaleString()} pts required
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 3. Member Perk */}
+      <div style={panelStyle}>
+        <div style={{
+          fontSize: '18px',
+          fontWeight: '300',
+          color: brandCharcoal,
+          fontFamily: "'Domaine Text', serif",
+          letterSpacing: '-0.01em',
+          marginBottom: '24px'
+        }}>
+          {currentMonth} Member Perk
+        </div>
+        
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '48px',
+          alignItems: 'center'
+        }}>
+          <div>
+            <div style={{
+              fontSize: '14px',
+              color: brandCharcoal,
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              fontWeight: '400',
+              lineHeight: '1.7',
+              marginBottom: '24px'
+            }}>
+              A year-end thank you: this December, Reserve Members receive 25% off all rental products.
+            </div>
+            
+            <div style={{
+              fontSize: '12px',
+              color: '#8b8b8b',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              fontWeight: '400',
+              lineHeight: '1.8',
+              marginTop: '20px'
+            }}>
+              <div style={{ marginBottom: '8px' }}>• Projects opened + closed between Dec 1–31, 2025</div>
+              <div style={{ marginBottom: '8px' }}>• Events occurring between Dec 1, 2025 – Mar 31, 2026</div>
+              <div style={{ marginBottom: '8px' }}>• Applies to rental products only</div>
+              <div>• Excludes custom fabrication + procurement</div>
+            </div>
+          </div>
+          
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            padding: '24px',
+            minHeight: '200px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '1px solid #e8e8e3'
+          }}>
+            <div style={{
+              fontSize: '12px',
+              color: '#999',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              fontStyle: 'italic'
+            }}>
+              Image placeholder
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 4. Featured Products from Shopify */}
+      {/* TODO: Connect to Shopify API for products tagged "Monthly Reserve Perk" */}
+      {/* For now, this section is hidden if no products are available */}
+      <div style={{ display: 'none' }}>
+        {/* Shopify products will be displayed here when integrated */}
+      </div>
+
+      {/* 5. Active Projects Snapshot */}
+      {activeProposals.length > 0 && (
+        <div style={smallerPanelStyle}>
+          <div style={{
+            fontSize: '18px',
+            fontWeight: '300',
+            color: brandCharcoal,
+            fontFamily: "'Domaine Text', serif",
+            letterSpacing: '-0.01em',
+            marginBottom: '24px'
+          }}>
+            Your Active Projects
+          </div>
+          
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px'
+          }}>
+            {activeProposals.map((proposal, index) => (
+              <div
+                key={index}
+                style={{
+                  backgroundColor: 'white',
+                  padding: '20px',
+                  borderRadius: '12px',
+                  border: '1px solid #e8e8e3',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <div style={{ flex: 1 }}>
+                  <div style={{
+                    fontSize: '16px',
+                    fontWeight: '500',
+                    color: brandCharcoal,
+                    fontFamily: "'NeueHaasUnica', sans-serif",
+                    marginBottom: '8px'
+                  }}>
+                    {proposal.venueName || 'Untitled Project'}
+                  </div>
+                  <div style={{
+                    fontSize: '12px',
+                    color: '#8b8b8b',
+                    fontFamily: "'NeueHaasUnica', sans-serif",
+                    marginBottom: '4px'
+                  }}>
+                    {proposal.eventDate || (proposal.startDate ? new Date(proposal.startDate).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    }) : 'Date TBD')}
+                  </div>
+                  <div style={{
+                    fontSize: '12px',
+                    color: '#8b8b8b',
+                    fontFamily: "'NeueHaasUnica', sans-serif"
+                  }}>
+                    {proposal.city}, {proposal.state}
+                  </div>
+                </div>
+                
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '16px'
+                }}>
+                  <span style={{
+                    display: 'inline-block',
+                    padding: '4px 12px',
+                    borderRadius: '12px',
+                    fontSize: '11px',
+                    fontWeight: '500',
+                    backgroundColor: proposal.status === 'Pending' ? '#f5f1e6' : proposal.status === 'Approved' ? '#e8f5e9' : '#f3f4f6',
+                    color: proposal.status === 'Pending' ? '#b8860b' : proposal.status === 'Approved' ? '#2e7d32' : '#666',
+                    fontFamily: "'NeueHaasUnica', sans-serif"
+                  }}>
+                    {proposal.status || 'Pending'}
+                  </span>
+                  
+                  <button
+                    onClick={() => setSelectedProposal && setSelectedProposal(proposal)}
+                    style={{
+                      padding: '8px 16px',
+                      backgroundColor: 'transparent',
+                      color: '#6b7d47',
+                      border: '1px solid #6b7d47',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '12px',
+                      fontFamily: "'NeueHaasUnica', sans-serif",
+                      fontWeight: '500',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.backgroundColor = '#6b7d47';
+                      e.target.style.color = 'white';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.backgroundColor = 'transparent';
+                      e.target.style.color = '#6b7d47';
+                    }}
+                  >
+                    View Project
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 6. Recent Activity Feed */}
+      <div style={smallerPanelStyle}>
+        <div style={{
+          fontSize: '18px',
+          fontWeight: '300',
+          color: brandCharcoal,
+          fontFamily: "'Domaine Text', serif",
+          letterSpacing: '-0.01em',
+          marginBottom: '24px'
+        }}>
+          Recent Activity
+        </div>
+        
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0'
+        }}>
+          {/* Placeholder activity items - TODO: Connect to actual activity feed */}
+          {[
+            { type: 'proposal', text: 'New proposal created for Spring Event', time: '2 days ago' },
+            { type: 'update', text: 'Proposal updated with final details', time: '5 days ago' },
+            { type: 'approval', text: 'Proposal approved for Summer Gala', time: '1 week ago' }
+          ].map((activity, index) => (
+            <div
+              key={index}
+              style={{
+                padding: '16px 0',
+                borderBottom: index < 2 ? '1px solid #e8e8e3' : 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+                transition: 'all 0.2s ease',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.paddingLeft = '8px';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.paddingLeft = '0';
+              }}
+            >
+              <div style={{
+                width: '20px',
+                height: '20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#8b8b8b',
+                fontSize: '12px'
+              }}>
+                {activity.type === 'proposal' ? '📄' : activity.type === 'update' ? '📝' : '⭐'}
+              </div>
+              
+              <div style={{ flex: 1 }}>
+                <div style={{
+                  fontSize: '14px',
+                  color: brandCharcoal,
+                  fontFamily: "'NeueHaasUnica', sans-serif",
+                  fontWeight: '400',
+                  marginBottom: '4px'
+                }}>
+                  {activity.text}
+                </div>
+                <div style={{
+                  fontSize: '11px',
+                  color: '#8b8b8b',
+                  fontFamily: "'NeueHaasUnica', sans-serif"
+                }}>
+                  {activity.time}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2C' }) {
   // Calculate product spend for each proposal (rental products + product care + service fees, excluding delivery and tax)
   const calculateProductSpend = (proposal) => {
@@ -3648,9 +4239,13 @@ function DashboardView({ clientInfo, onLogout }) {
           )}
           
           {activeSection === 'performance' && (
-            <div style={{ padding: '48px', textAlign: 'center', color: '#999', fontFamily: "'NeueHaasUnica', sans-serif" }}>
-              Overview content coming soon.
-            </div>
+            <OverviewSection 
+              clientInfo={clientInfo}
+              spendData={spendData}
+              proposals={proposals}
+              setSelectedProposal={setSelectedProposal}
+              brandCharcoal={brandCharcoal}
+            />
           )}
           
           {activeSection === 'activity' && (
