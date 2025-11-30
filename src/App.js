@@ -1751,7 +1751,13 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
   // Get active proposals (up to 3)
   const activeProposals = proposals.filter(p => 
     p.status === 'Pending' || p.status === 'Active' || (p.status === 'Approved' && isFutureDate(p.startDate)) || (p.status === 'Confirmed' && isFutureDate(p.startDate))
-  ).slice(0, 3);
+  )
+  .sort((a, b) => {
+    const dateA = a.eventDate ? new Date(a.eventDate) : (a.startDate ? new Date(a.startDate) : new Date(0));
+    const dateB = b.eventDate ? new Date(b.eventDate) : (b.startDate ? new Date(b.startDate) : new Date(0));
+    return dateA - dateB; // Sort ascending (earliest first)
+  })
+  .slice(0, 3);
   
   // Get greeting based on time of day
   const getGreeting = () => {
@@ -2319,12 +2325,12 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
       {activeProposals.length > 0 && (
         <div style={{
           ...smallerPanelStyle,
-          backgroundColor: '#3E0D12'
+          backgroundColor: '#E8E3DD'
         }}>
           <div style={{
             fontSize: '18px',
             fontWeight: '300',
-            color: '#fafaf8',
+            color: brandCharcoal,
             fontFamily: "'Domaine Text', serif",
             letterSpacing: '-0.01em',
             marginBottom: '24px'
@@ -2464,144 +2470,66 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
         </div>
       )}
 
-      {/* 6. Recent Activity Feed */}
-      <div style={{
-        ...smallerPanelStyle,
-        backgroundColor: '#EFEDE9'
-      }}>
-        <div style={{
-          fontSize: '18px',
-          fontWeight: '300',
-          color: brandCharcoal,
-          fontFamily: "'Domaine Text', serif",
-          letterSpacing: '-0.01em',
-          marginBottom: '24px'
-        }}>
-          Recent Activity
-        </div>
-        
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0'
-        }}>
-          {/* Placeholder activity items - TODO: Connect to actual activity feed */}
-          {[
-            { type: 'proposal', text: 'New proposal created for Spring Event', time: '2 days ago' },
-            { type: 'update', text: 'Proposal updated with final details', time: '5 days ago' },
-            { type: 'approval', text: 'Proposal approved for Summer Gala', time: '1 week ago' }
-          ].map((activity, index) => (
-            <div
-              key={index}
-              style={{
-                padding: '16px 0',
-                borderBottom: index < 2 ? '1px solid #e8e8e3' : 'none',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '16px',
-                transition: 'all 0.2s ease',
-                cursor: 'pointer'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.paddingLeft = '8px';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.paddingLeft = '0';
-              }}
-            >
-              <div style={{
-                width: '20px',
-                height: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#8b8b8b',
-                fontSize: '12px'
-              }}>
-                {activity.type === 'proposal' ? '📄' : activity.type === 'update' ? '📝' : '⭐'}
-              </div>
-              
-              <div style={{ flex: 1 }}>
-                <div style={{
-                  fontSize: '14px',
-                  color: brandCharcoal,
-                  fontFamily: "'NeueHaasUnica', sans-serif",
-                  fontWeight: '400',
-                  marginBottom: '4px'
-                }}>
-                  {activity.text}
-                </div>
-                <div style={{
-                  fontSize: '11px',
-                  color: '#8b8b8b',
-                  fontFamily: "'NeueHaasUnica', sans-serif"
-                }}>
-                  {activity.time}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 7. Concierge Section - Large, Inviting */}
+      {/* 7. Concierge Section - Improved */}
       <div style={{
         ...panelStyle,
         backgroundColor: '#F2F1ED',
-        padding: '80px 64px',
-        minHeight: '400px'
+        padding: '96px 64px',
+        minHeight: '480px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center'
       }}>
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1.2fr',
-          gap: '68px',
-          alignItems: 'center'
+          maxWidth: '800px',
+          margin: '0 auto',
+          textAlign: 'center'
         }}>
-          {/* Left Column: Heading + Subheading */}
-          <div>
-            <div style={{
-              fontSize: '32px',
-              fontWeight: '300',
-              color: '#1a1a1a',
-              fontFamily: "'Domaine Text', serif",
-              letterSpacing: '-0.03em',
-              lineHeight: '1.2',
-              marginBottom: '24px'
-            }}>
-              Need anything?
-            </div>
-            <div style={{
-              fontSize: '16px',
-              color: '#4a4a4a',
-              fontFamily: "'NeueHaasUnica', sans-serif",
-              fontWeight: '400',
-              lineHeight: '1.6',
-              letterSpacing: '0.01em',
-              marginBottom: '32px',
-              maxWidth: '420px'
-            }}>
-              Your Reserve team is here to support your next event. We're available whenever you need us.
-            </div>
+          <div style={{
+            fontSize: '36px',
+            fontWeight: '300',
+            color: '#1a1a1a',
+            fontFamily: "'Domaine Text', serif",
+            letterSpacing: '-0.03em',
+            lineHeight: '1.2',
+            marginBottom: '20px'
+          }}>
+            Need anything?
+          </div>
+          <div style={{
+            fontSize: '18px',
+            color: '#4a4a4a',
+            fontFamily: "'NeueHaasUnica', sans-serif",
+            fontWeight: '400',
+            lineHeight: '1.7',
+            letterSpacing: '0.01em',
+            marginBottom: '56px',
+            maxWidth: '600px',
+            marginLeft: 'auto',
+            marginRight: 'auto'
+          }}>
+            Your dedicated Reserve team is here to support your projects, partnerships, and events. Reach out anytime.
           </div>
           
-          {/* Right Column: Noelle Powell Contact - Larger, More Prominent */}
+          {/* Contact Card - Centered */}
           <div style={{
-            display: 'flex',
+            display: 'inline-flex',
             alignItems: 'center',
             gap: '32px',
-            padding: '40px',
-            backgroundColor: 'rgba(250, 248, 243, 0.4)',
-            borderRadius: '16px',
-            border: '1px solid rgba(232, 232, 227, 0.3)'
+            padding: '48px 56px',
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: '20px',
+            border: '1px solid rgba(232, 232, 227, 0.4)',
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.06)'
           }}>
             <div style={{
-              width: '138px',
-              height: '138px',
+              width: '120px',
+              height: '120px',
               borderRadius: '50%',
               backgroundColor: '#f0f0f0',
               overflow: 'hidden',
               flexShrink: 0,
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)'
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
             }}>
               <img 
                 src="/noelle-powell.jpg" 
@@ -2621,27 +2549,27 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               />
             </div>
             <div style={{
-              flex: 1
+              textAlign: 'left'
             }}>
               <div style={{
-                fontSize: '24px',
+                fontSize: '26px',
                 fontWeight: '300',
                 color: '#1a1a1a',
                 fontFamily: "'Domaine Text', serif",
                 letterSpacing: '-0.02em',
-                marginBottom: '8px',
+                marginBottom: '6px',
                 lineHeight: '1.3'
               }}>
                 Noelle Powell
               </div>
               <div style={{
-                fontSize: '12px',
+                fontSize: '13px',
                 color: '#2a2a2a',
                 fontFamily: "'NeueHaasUnica', sans-serif",
                 fontWeight: '300',
                 letterSpacing: '0.01em',
                 textTransform: 'none',
-                marginBottom: '16px',
+                marginBottom: '20px',
                 lineHeight: '1.4'
               }}>
                 Client Services Director
@@ -2649,12 +2577,12 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               <div style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '8px'
+                gap: '10px'
               }}>
                 <a 
                   href={`mailto:Noelle@Mayker.com`}
                   style={{
-                    fontSize: '14px',
+                    fontSize: '15px',
                     color: '#6b7d47',
                     fontFamily: "'NeueHaasUnica', sans-serif",
                     textDecoration: 'none',
@@ -2676,7 +2604,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                 <a 
                   href={`tel:+16159701244`}
                   style={{
-                    fontSize: '14px',
+                    fontSize: '15px',
                     color: '#6b7d47',
                     fontFamily: "'NeueHaasUnica', sans-serif",
                     textDecoration: 'none',
@@ -2712,12 +2640,13 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
         <div style={{
           fontSize: '18px',
           color: '#2a2a2a',
-          fontFamily: "'Autographer', cursive",
-          fontWeight: 'normal',
-          letterSpacing: '0.02em',
-          lineHeight: '1.6'
+          fontFamily: "'NeueHaasUnica', sans-serif",
+          fontWeight: '400',
+          letterSpacing: '0.05em',
+          lineHeight: '1.6',
+          textTransform: 'uppercase'
         }}>
-          Thank you for being part of Mayker Reserve.
+          THANK YOU FOR BEING PART OF MAYKER RESERVE.
         </div>
       </div>
     </div>
