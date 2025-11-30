@@ -2599,84 +2599,118 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
         </div>
       </div>
 
-      {/* 8. Featured Member Section */}
+      {/* 8. Featured Member Section - Editorial Block */}
       <div style={{
-        ...panelStyle,
-        backgroundColor: '#CFC6BD',
-        padding: '64px 48px'
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        minHeight: '60vh',
+        marginBottom: '48px',
+        overflow: 'hidden'
       }}>
+        {/* Left: Full-bleed Image */}
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: '200px 1fr',
-          gap: '48px',
-          alignItems: 'center'
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          {/* Left: Image */}
-          <div>
-            <img 
-              src="/featured-member.jpg" 
-              alt="Hill & Co. Creative"
-              style={{
-                width: '100%',
-                height: 'auto',
-                borderRadius: '12px',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-              }}
-              onError={(e) => {
-                if (!e.target.src.includes('/assets/')) {
-                  e.target.src = '/assets/featured-member.jpg';
-                } else {
-                  e.target.style.display = 'none';
-                }
-              }}
-            />
-          </div>
-          
-          {/* Right: Content */}
-          <div>
+          <img 
+            src="/featured-member.jpg" 
+            alt="Hill & Co. Creative"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              display: 'block'
+            }}
+            onError={(e) => {
+              if (!e.target.src.includes('/assets/')) {
+                e.target.src = '/assets/featured-member.jpg';
+              } else {
+                e.target.style.display = 'none';
+              }
+            }}
+          />
+        </div>
+        
+        {/* Right: Editorial Text Block */}
+        <div style={{
+          backgroundColor: '#DED6CE',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '80px 60px'
+        }}>
+          <div style={{
+            width: '58%',
+            maxWidth: '500px'
+          }}>
+            {/* Label */}
             <div style={{
-              fontSize: '22px',
+              fontSize: '10px',
+              fontWeight: '500',
+              color: '#6b6b6b',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              marginBottom: '32px',
+              lineHeight: '1.4'
+            }}>
+              FEATURED MEMBER
+            </div>
+            
+            {/* Headline */}
+            <div style={{
+              fontSize: '42px',
               fontWeight: '300',
               color: '#1a1a1a',
               fontFamily: "'Domaine Text', serif",
-              letterSpacing: '-0.01em',
-              marginBottom: '6px'
+              letterSpacing: '-0.02em',
+              lineHeight: '1.2',
+              marginBottom: '12px'
             }}>
               Hill & Co.
             </div>
+            
+            {/* Subheadline */}
             <div style={{
-              fontSize: '13px',
+              fontSize: '11px',
+              fontWeight: '400',
               color: '#6b6b6b',
               fontFamily: "'NeueHaasUnica', sans-serif",
-              fontWeight: '400',
-              letterSpacing: '0.01em',
-              marginBottom: '16px'
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              marginBottom: '40px',
+              lineHeight: '1.5'
             }}>
-              Charleston, SC
+              CHARLESTON, SC
             </div>
+            
+            {/* Body Copy */}
             <div style={{
-              fontSize: '14px',
+              fontSize: '16px',
+              fontWeight: '400',
               color: '#2a2a2a',
               fontFamily: "'NeueHaasUnica', sans-serif",
-              fontWeight: '400',
-              lineHeight: '1.7',
+              lineHeight: '1.8',
               letterSpacing: '0.01em',
-              marginBottom: '16px'
+              marginBottom: '32px'
             }}>
-              <strong style={{ fontWeight: '500' }}>Why we admire them:</strong> Hill & Co. has a gift for pairing bold ideas with a beautifully restrained touch. The result: interiors that feel artful, inviting, and refreshingly their own.
+              Hill & Co. brings a quiet confidence to color, pattern, and texture—spaces that feel considered, layered, and beautifully lived in.
             </div>
+            
+            {/* Link */}
             <a 
               href="https://www.hillandcocreative.com/"
               target="_blank"
               rel="noopener noreferrer"
               style={{
-                fontSize: '13px',
+                fontSize: '14px',
                 color: '#6b7d47',
                 fontFamily: "'NeueHaasUnica', sans-serif",
                 textDecoration: 'none',
                 fontWeight: '400',
                 letterSpacing: '0.01em',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.2s ease',
+                display: 'inline-block'
               }}
               onMouseEnter={(e) => {
                 e.target.style.textDecoration = 'underline';
@@ -2687,7 +2721,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                 e.target.style.color = '#6b7d47';
               }}
             >
-              https://www.hillandcocreative.com/
+              hillandcocreative.com
             </a>
           </div>
         </div>
