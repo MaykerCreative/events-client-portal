@@ -2470,135 +2470,6 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
         </div>
       )}
 
-      {/* 7. Concierge Section - Personal & Warm */}
-      <div style={{
-        ...panelStyle,
-        backgroundColor: '#F2F1ED',
-        padding: '64px 48px'
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: '48px'
-        }}>
-          {/* Left: Photo */}
-          <div style={{
-            flexShrink: 0
-          }}>
-            <div style={{
-              width: '140px',
-              height: '140px',
-              borderRadius: '50%',
-              overflow: 'hidden',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)'
-            }}>
-              <img 
-                src="/noelle-powell.jpg" 
-                alt="Noelle Powell"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover'
-                }}
-                onError={(e) => {
-                  if (!e.target.src.includes('/assets/')) {
-                    e.target.src = '/assets/noelle-powell.jpg';
-                  } else {
-                    e.target.style.display = 'none';
-                  }
-                }}
-              />
-            </div>
-          </div>
-          
-          {/* Right: Text & Contact */}
-          <div style={{
-            flex: 1
-          }}>
-            <div style={{
-              fontSize: '24px',
-              fontWeight: '300',
-              color: '#1a1a1a',
-              fontFamily: "'Domaine Text', serif",
-              letterSpacing: '-0.02em',
-              lineHeight: '1.3',
-              marginBottom: '8px'
-            }}>
-              Noelle Powell
-            </div>
-            <div style={{
-              fontSize: '13px',
-              color: '#6b6b6b',
-              fontFamily: "'NeueHaasUnica', sans-serif",
-              fontWeight: '300',
-              letterSpacing: '0.01em',
-              marginBottom: '20px'
-            }}>
-              Your Reserve point of contact
-            </div>
-            <div style={{
-              fontSize: '15px',
-              color: '#4a4a4a',
-              fontFamily: "'NeueHaasUnica', sans-serif",
-              fontWeight: '400',
-              lineHeight: '1.7',
-              letterSpacing: '0.01em',
-              marginBottom: '24px'
-            }}>
-              Questions about your membership, upcoming events, or need help with a project? I'm here to help.
-            </div>
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px'
-            }}>
-              <a 
-                href={`mailto:Noelle@Mayker.com`}
-                style={{
-                  fontSize: '14px',
-                  color: '#6b7d47',
-                  fontFamily: "'NeueHaasUnica', sans-serif",
-                  textDecoration: 'none',
-                  fontWeight: '400',
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.textDecoration = 'underline';
-                  e.target.style.color = '#5a6b3a';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.textDecoration = 'none';
-                  e.target.style.color = '#6b7d47';
-                }}
-              >
-                Noelle@Mayker.com
-              </a>
-              <a 
-                href={`tel:+16159701244`}
-                style={{
-                  fontSize: '14px',
-                  color: '#6b7d47',
-                  fontFamily: "'NeueHaasUnica', sans-serif",
-                  textDecoration: 'none',
-                  fontWeight: '400',
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.textDecoration = 'underline';
-                  e.target.style.color = '#5a6b3a';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.textDecoration = 'none';
-                  e.target.style.color = '#6b7d47';
-                }}
-              >
-                (615) 970-1244
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* 8. Featured Member Section - Editorial Block */}
       <div style={{
         display: 'grid',
@@ -2667,7 +2538,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               lineHeight: '1.2',
               marginBottom: '12px'
             }}>
-              Hill & Co.
+              Hill and Co.
             </div>
             
             {/* Subheadline */}
@@ -2686,7 +2557,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             
             {/* Body Copy */}
             <div style={{
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: '400',
               color: '#2a2a2a',
               fontFamily: "'NeueHaasUnica', sans-serif",
@@ -2694,7 +2565,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               letterSpacing: '0.01em',
               marginBottom: '32px'
             }}>
-              Hill & Co. brings a quiet confidence to color, pattern, and texture—spaces that feel considered, layered, and beautifully lived in.
+              Hill and Co. brings a quiet confidence to color, pattern, and texture—spaces that feel considered, layered, and beautifully lived in.
             </div>
             
             {/* Link */}
@@ -2727,7 +2598,250 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
         </div>
       </div>
 
-      {/* 9. Footer Band */}
+      {/* 9. Concierge Section - Editorial 3-Column Layout */}
+      <div style={{
+        backgroundColor: '#F2F1ED',
+        padding: '96px 48px',
+        marginBottom: '48px'
+      }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr 1fr',
+          gap: '32px',
+          maxWidth: '1200px',
+          margin: '0 auto'
+        }}>
+          {/* Column 1: General Inquiries */}
+          <div style={{
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '100%',
+              aspectRatio: '3/4',
+              marginBottom: '32px',
+              overflow: 'hidden'
+            }}>
+              <img 
+                src="/concierge-1.jpg" 
+                alt="General Inquiries"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block'
+                }}
+                onError={(e) => {
+                  if (!e.target.src.includes('/assets/')) {
+                    e.target.src = '/assets/concierge-1.jpg';
+                  } else {
+                    e.target.style.display = 'none';
+                  }
+                }}
+              />
+            </div>
+            <div style={{
+              fontSize: '14px',
+              fontWeight: '300',
+              fontStyle: 'italic',
+              color: '#6b6b6b',
+              fontFamily: "'Domaine Text', serif",
+              letterSpacing: '-0.01em',
+              lineHeight: '1.4',
+              marginBottom: '4px'
+            }}>
+              General
+            </div>
+            <div style={{
+              fontSize: '20px',
+              fontWeight: '300',
+              color: '#1a1a1a',
+              fontFamily: "'Domaine Text', serif",
+              letterSpacing: '-0.01em',
+              lineHeight: '1.3',
+              marginBottom: '24px'
+            }}>
+              Inquiries
+            </div>
+            <a 
+              href="mailto:events@mayker.com"
+              style={{
+                fontSize: '12px',
+                color: '#6b7d47',
+                fontFamily: "'NeueHaasUnica', sans-serif",
+                textDecoration: 'none',
+                fontWeight: '400',
+                letterSpacing: '0.05em',
+                textTransform: 'lowercase',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.textDecoration = 'underline';
+                e.target.style.color = '#5a6b3a';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.textDecoration = 'none';
+                e.target.style.color = '#6b7d47';
+              }}
+            >
+              events@mayker.com
+            </a>
+          </div>
+
+          {/* Column 2: Custom Project Inquiries */}
+          <div style={{
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '100%',
+              aspectRatio: '3/4',
+              marginBottom: '32px',
+              overflow: 'hidden'
+            }}>
+              <img 
+                src="/concierge-2.jpg" 
+                alt="Custom Project Inquiries"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block'
+                }}
+                onError={(e) => {
+                  if (!e.target.src.includes('/assets/')) {
+                    e.target.src = '/assets/concierge-2.jpg';
+                  } else {
+                    e.target.style.display = 'none';
+                  }
+                }}
+              />
+            </div>
+            <div style={{
+              fontSize: '14px',
+              fontWeight: '300',
+              fontStyle: 'italic',
+              color: '#6b6b6b',
+              fontFamily: "'Domaine Text', serif",
+              letterSpacing: '-0.01em',
+              lineHeight: '1.4',
+              marginBottom: '4px'
+            }}>
+              Custom Project
+            </div>
+            <div style={{
+              fontSize: '20px',
+              fontWeight: '300',
+              color: '#1a1a1a',
+              fontFamily: "'Domaine Text', serif",
+              letterSpacing: '-0.01em',
+              lineHeight: '1.3',
+              marginBottom: '24px'
+            }}>
+              Inquiries
+            </div>
+            <a 
+              href="mailto:noelle@mayker.com"
+              style={{
+                fontSize: '12px',
+                color: '#6b7d47',
+                fontFamily: "'NeueHaasUnica', sans-serif",
+                textDecoration: 'none',
+                fontWeight: '400',
+                letterSpacing: '0.05em',
+                textTransform: 'lowercase',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.textDecoration = 'underline';
+                e.target.style.color = '#5a6b3a';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.textDecoration = 'none';
+                e.target.style.color = '#6b7d47';
+              }}
+            >
+              noelle@mayker.com
+            </a>
+          </div>
+
+          {/* Column 3: Partnership Inquiries */}
+          <div style={{
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '100%',
+              aspectRatio: '3/4',
+              marginBottom: '32px',
+              overflow: 'hidden'
+            }}>
+              <img 
+                src="/concierge-3.jpg" 
+                alt="Partnership Inquiries"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block'
+                }}
+                onError={(e) => {
+                  if (!e.target.src.includes('/assets/')) {
+                    e.target.src = '/assets/concierge-3.jpg';
+                  } else {
+                    e.target.style.display = 'none';
+                  }
+                }}
+              />
+            </div>
+            <div style={{
+              fontSize: '14px',
+              fontWeight: '300',
+              fontStyle: 'italic',
+              color: '#6b6b6b',
+              fontFamily: "'Domaine Text', serif",
+              letterSpacing: '-0.01em',
+              lineHeight: '1.4',
+              marginBottom: '4px'
+            }}>
+              Partnership
+            </div>
+            <div style={{
+              fontSize: '20px',
+              fontWeight: '300',
+              color: '#1a1a1a',
+              fontFamily: "'Domaine Text', serif",
+              letterSpacing: '-0.01em',
+              lineHeight: '1.3',
+              marginBottom: '24px'
+            }}>
+              Inquiries
+            </div>
+            <a 
+              href="mailto:constance@mayker.com"
+              style={{
+                fontSize: '12px',
+                color: '#6b7d47',
+                fontFamily: "'NeueHaasUnica', sans-serif",
+                textDecoration: 'none',
+                fontWeight: '400',
+                letterSpacing: '0.05em',
+                textTransform: 'lowercase',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.textDecoration = 'underline';
+                e.target.style.color = '#5a6b3a';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.textDecoration = 'none';
+                e.target.style.color = '#6b7d47';
+              }}
+            >
+              constance@mayker.com
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* 10. Footer Band */}
       <div style={{
         width: '100%',
         padding: '60px 48px',
