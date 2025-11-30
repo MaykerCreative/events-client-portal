@@ -2056,6 +2056,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
           <img 
             src="/december-perk.jpg" 
             alt={`${currentMonth} Member Perk`}
+            loading="lazy"
             style={{
               width: '100%',
               height: '100%',
@@ -2169,6 +2170,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                   <img 
                     src={shopifyProducts[0].imageUrl} 
                     alt={shopifyProducts[0].imageAlt}
+                    loading="lazy"
                     style={{
                       width: '100%',
                       borderRadius: '12px',
@@ -2253,6 +2255,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                     <img 
                       src={product.imageUrl} 
                       alt={product.imageAlt}
+                      loading="lazy"
                       style={{
                         width: '100%',
                         borderRadius: '8px',
@@ -2486,6 +2489,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
           <img 
             src="/featured-member.jpg" 
             alt="Hill & Co. Creative"
+            loading="lazy"
             style={{
               width: '100%',
               height: '100%',
@@ -2605,6 +2609,17 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
         marginBottom: '48px'
       }}>
         <div style={{
+          fontSize: '24px',
+          fontWeight: '300',
+          color: brandCharcoal,
+          fontFamily: "'Domaine Text', serif",
+          letterSpacing: '-0.01em',
+          marginBottom: '56px',
+          textAlign: 'center'
+        }}>
+          Concierge
+        </div>
+        <div style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr 1fr',
           gap: '32px',
@@ -2624,6 +2639,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               <img 
                 src="/concierge-1.jpg" 
                 alt="General Inquiries"
+                loading="lazy"
                 style={{
                   width: '100%',
                   height: '100%',
@@ -2640,7 +2656,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               />
             </div>
             <div style={{
-              fontSize: '14px',
+              fontSize: '16px',
               fontWeight: '300',
               fontStyle: 'italic',
               color: '#6b6b6b',
@@ -2652,7 +2668,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               General
             </div>
             <div style={{
-              fontSize: '20px',
+              fontSize: '24px',
               fontWeight: '300',
               color: '#1a1a1a',
               fontFamily: "'Domaine Text', serif",
@@ -2665,13 +2681,13 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             <a 
               href="mailto:events@mayker.com"
               style={{
-                fontSize: '12px',
+                fontSize: '14px',
                 color: '#6b7d47',
                 fontFamily: "'NeueHaasUnica', sans-serif",
                 textDecoration: 'none',
                 fontWeight: '400',
                 letterSpacing: '0.05em',
-                textTransform: 'lowercase',
+                textTransform: 'uppercase',
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={(e) => {
@@ -2683,7 +2699,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                 e.target.style.color = '#6b7d47';
               }}
             >
-              events@mayker.com
+              EVENTS@MAYKER.COM
             </a>
           </div>
 
@@ -2700,6 +2716,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               <img 
                 src="/concierge-2.jpg" 
                 alt="Custom Project Inquiries"
+                loading="lazy"
                 style={{
                   width: '100%',
                   height: '100%',
@@ -2716,7 +2733,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               />
             </div>
             <div style={{
-              fontSize: '14px',
+              fontSize: '16px',
               fontWeight: '300',
               fontStyle: 'italic',
               color: '#6b6b6b',
@@ -2728,7 +2745,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               Custom Project
             </div>
             <div style={{
-              fontSize: '20px',
+              fontSize: '24px',
               fontWeight: '300',
               color: '#1a1a1a',
               fontFamily: "'Domaine Text', serif",
@@ -2741,13 +2758,13 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             <a 
               href="mailto:noelle@mayker.com"
               style={{
-                fontSize: '12px',
+                fontSize: '14px',
                 color: '#6b7d47',
                 fontFamily: "'NeueHaasUnica', sans-serif",
                 textDecoration: 'none',
                 fontWeight: '400',
                 letterSpacing: '0.05em',
-                textTransform: 'lowercase',
+                textTransform: 'uppercase',
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={(e) => {
@@ -2759,7 +2776,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                 e.target.style.color = '#6b7d47';
               }}
             >
-              noelle@mayker.com
+              NOELLE@MAYKER.COM
             </a>
           </div>
 
@@ -2776,6 +2793,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               <img 
                 src="/concierge-3.jpg" 
                 alt="Partnership Inquiries"
+                loading="lazy"
                 style={{
                   width: '100%',
                   height: '100%',
@@ -2792,7 +2810,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               />
             </div>
             <div style={{
-              fontSize: '14px',
+              fontSize: '16px',
               fontWeight: '300',
               fontStyle: 'italic',
               color: '#6b6b6b',
@@ -2804,7 +2822,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               Partnership
             </div>
             <div style={{
-              fontSize: '20px',
+              fontSize: '24px',
               fontWeight: '300',
               color: '#1a1a1a',
               fontFamily: "'Domaine Text', serif",
@@ -2817,13 +2835,13 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             <a 
               href="mailto:constance@mayker.com"
               style={{
-                fontSize: '12px',
+                fontSize: '14px',
                 color: '#6b7d47',
                 fontFamily: "'NeueHaasUnica', sans-serif",
                 textDecoration: 'none',
                 fontWeight: '400',
                 letterSpacing: '0.05em',
-                textTransform: 'lowercase',
+                textTransform: 'uppercase',
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={(e) => {
@@ -2835,7 +2853,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                 e.target.style.color = '#6b7d47';
               }}
             >
-              constance@mayker.com
+              CONSTANCE@MAYKER.COM
             </a>
           </div>
         </div>
