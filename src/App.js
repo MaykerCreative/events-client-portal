@@ -2324,7 +2324,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
       {/* 5. Active Projects Snapshot */}
       {activeProposals.length > 0 && (
         <div style={{
-          ...smallerPanelStyle,
+          ...panelStyle,
           backgroundColor: '#E8E3DD'
         }}>
           <div style={{
@@ -2470,66 +2470,27 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
         </div>
       )}
 
-      {/* 7. Concierge Section - Improved */}
+      {/* 7. Concierge Section - Personal & Warm */}
       <div style={{
         ...panelStyle,
         backgroundColor: '#F2F1ED',
-        padding: '96px 64px',
-        minHeight: '480px',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center'
+        padding: '64px 48px'
       }}>
         <div style={{
-          maxWidth: '800px',
-          margin: '0 auto',
-          textAlign: 'center'
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '48px'
         }}>
+          {/* Left: Photo */}
           <div style={{
-            fontSize: '36px',
-            fontWeight: '300',
-            color: '#1a1a1a',
-            fontFamily: "'Domaine Text', serif",
-            letterSpacing: '-0.03em',
-            lineHeight: '1.2',
-            marginBottom: '20px'
-          }}>
-            Need anything?
-          </div>
-          <div style={{
-            fontSize: '18px',
-            color: '#4a4a4a',
-            fontFamily: "'NeueHaasUnica', sans-serif",
-            fontWeight: '400',
-            lineHeight: '1.7',
-            letterSpacing: '0.01em',
-            marginBottom: '56px',
-            maxWidth: '600px',
-            marginLeft: 'auto',
-            marginRight: 'auto'
-          }}>
-            Your dedicated Reserve team is here to support your projects, partnerships, and events. Reach out anytime.
-          </div>
-          
-          {/* Contact Card - Centered */}
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '32px',
-            padding: '48px 56px',
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            borderRadius: '20px',
-            border: '1px solid rgba(232, 232, 227, 0.4)',
-            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.06)'
+            flexShrink: 0
           }}>
             <div style={{
-              width: '120px',
-              height: '120px',
+              width: '140px',
+              height: '140px',
               borderRadius: '50%',
-              backgroundColor: '#f0f0f0',
               overflow: 'hidden',
-              flexShrink: 0,
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)'
             }}>
               <img 
                 src="/noelle-powell.jpg" 
@@ -2548,97 +2509,200 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                 }}
               />
             </div>
+          </div>
+          
+          {/* Right: Text & Contact */}
+          <div style={{
+            flex: 1
+          }}>
             <div style={{
-              textAlign: 'left'
+              fontSize: '24px',
+              fontWeight: '300',
+              color: '#1a1a1a',
+              fontFamily: "'Domaine Text', serif",
+              letterSpacing: '-0.02em',
+              lineHeight: '1.3',
+              marginBottom: '8px'
             }}>
-              <div style={{
-                fontSize: '26px',
-                fontWeight: '300',
-                color: '#1a1a1a',
-                fontFamily: "'Domaine Text', serif",
-                letterSpacing: '-0.02em',
-                marginBottom: '6px',
-                lineHeight: '1.3'
-              }}>
-                Noelle Powell
-              </div>
-              <div style={{
-                fontSize: '13px',
-                color: '#2a2a2a',
-                fontFamily: "'NeueHaasUnica', sans-serif",
-                fontWeight: '300',
-                letterSpacing: '0.01em',
-                textTransform: 'none',
-                marginBottom: '20px',
-                lineHeight: '1.4'
-              }}>
-                Client Services Director
-              </div>
-              <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px'
-              }}>
-                <a 
-                  href={`mailto:Noelle@Mayker.com`}
-                  style={{
-                    fontSize: '15px',
-                    color: '#6b7d47',
-                    fontFamily: "'NeueHaasUnica', sans-serif",
-                    textDecoration: 'none',
-                    fontWeight: '400',
-                    letterSpacing: '0.01em',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.textDecoration = 'underline';
-                    e.target.style.color = '#5a6b3a';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.textDecoration = 'none';
-                    e.target.style.color = '#6b7d47';
-                  }}
-                >
-                  Noelle@Mayker.com
-                </a>
-                <a 
-                  href={`tel:+16159701244`}
-                  style={{
-                    fontSize: '15px',
-                    color: '#6b7d47',
-                    fontFamily: "'NeueHaasUnica', sans-serif",
-                    textDecoration: 'none',
-                    fontWeight: '400',
-                    letterSpacing: '0.01em',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.textDecoration = 'underline';
-                    e.target.style.color = '#5a6b3a';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.textDecoration = 'none';
-                    e.target.style.color = '#6b7d47';
-                  }}
-                >
-                  (615) 970-1244
-                </a>
-              </div>
+              Noelle Powell
+            </div>
+            <div style={{
+              fontSize: '13px',
+              color: '#6b6b6b',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              fontWeight: '300',
+              letterSpacing: '0.01em',
+              marginBottom: '20px'
+            }}>
+              Your Reserve point of contact
+            </div>
+            <div style={{
+              fontSize: '15px',
+              color: '#4a4a4a',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              fontWeight: '400',
+              lineHeight: '1.7',
+              letterSpacing: '0.01em',
+              marginBottom: '24px'
+            }}>
+              Questions about your membership, upcoming events, or need help with a project? I'm here to help.
+            </div>
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px'
+            }}>
+              <a 
+                href={`mailto:Noelle@Mayker.com`}
+                style={{
+                  fontSize: '14px',
+                  color: '#6b7d47',
+                  fontFamily: "'NeueHaasUnica', sans-serif",
+                  textDecoration: 'none',
+                  fontWeight: '400',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.textDecoration = 'underline';
+                  e.target.style.color = '#5a6b3a';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.textDecoration = 'none';
+                  e.target.style.color = '#6b7d47';
+                }}
+              >
+                Noelle@Mayker.com
+              </a>
+              <a 
+                href={`tel:+16159701244`}
+                style={{
+                  fontSize: '14px',
+                  color: '#6b7d47',
+                  fontFamily: "'NeueHaasUnica', sans-serif",
+                  textDecoration: 'none',
+                  fontWeight: '400',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.textDecoration = 'underline';
+                  e.target.style.color = '#5a6b3a';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.textDecoration = 'none';
+                  e.target.style.color = '#6b7d47';
+                }}
+              >
+                (615) 970-1244
+              </a>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 8. Footer Band */}
+      {/* 8. Featured Member Section */}
+      <div style={{
+        ...panelStyle,
+        backgroundColor: '#CFC6BD',
+        padding: '64px 48px'
+      }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '200px 1fr',
+          gap: '48px',
+          alignItems: 'center'
+        }}>
+          {/* Left: Image */}
+          <div>
+            <img 
+              src="/featured-member.jpg" 
+              alt="Hill & Co. Creative"
+              style={{
+                width: '100%',
+                height: 'auto',
+                borderRadius: '12px',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+              }}
+              onError={(e) => {
+                if (!e.target.src.includes('/assets/')) {
+                  e.target.src = '/assets/featured-member.jpg';
+                } else {
+                  e.target.style.display = 'none';
+                }
+              }}
+            />
+          </div>
+          
+          {/* Right: Content */}
+          <div>
+            <div style={{
+              fontSize: '22px',
+              fontWeight: '300',
+              color: '#1a1a1a',
+              fontFamily: "'Domaine Text', serif",
+              letterSpacing: '-0.01em',
+              marginBottom: '6px'
+            }}>
+              Hill & Co.
+            </div>
+            <div style={{
+              fontSize: '13px',
+              color: '#6b6b6b',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              fontWeight: '400',
+              letterSpacing: '0.01em',
+              marginBottom: '16px'
+            }}>
+              Charleston, SC
+            </div>
+            <div style={{
+              fontSize: '14px',
+              color: '#2a2a2a',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              fontWeight: '400',
+              lineHeight: '1.7',
+              letterSpacing: '0.01em',
+              marginBottom: '16px'
+            }}>
+              <strong style={{ fontWeight: '500' }}>Why we admire them:</strong> Hill & Co. has a gift for pairing bold ideas with a beautifully restrained touch. The result: interiors that feel artful, inviting, and refreshingly their own.
+            </div>
+            <a 
+              href="https://www.hillandcocreative.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontSize: '13px',
+                color: '#6b7d47',
+                fontFamily: "'NeueHaasUnica', sans-serif",
+                textDecoration: 'none',
+                fontWeight: '400',
+                letterSpacing: '0.01em',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.textDecoration = 'underline';
+                e.target.style.color = '#5a6b3a';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.textDecoration = 'none';
+                e.target.style.color = '#6b7d47';
+              }}
+            >
+              https://www.hillandcocreative.com/
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* 9. Footer Band */}
       <div style={{
         width: '100%',
-        padding: '80px 48px',
+        padding: '60px 48px',
         backgroundColor: 'transparent',
         marginTop: '48px',
         textAlign: 'center'
       }}>
         <div style={{
-          fontSize: '18px',
+          fontSize: '12px',
           color: '#2a2a2a',
           fontFamily: "'NeueHaasUnica', sans-serif",
           fontWeight: '400',
