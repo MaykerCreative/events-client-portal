@@ -3248,10 +3248,40 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
     const proposalYear = start.getFullYear();
     return proposalYear === currentYear;
   }).sort((a, b) => {
-    // Sort by date - use timestamp for historical, startDate for regular
-    const dateA = a.isHistorical && a.timestamp ? new Date(a.timestamp) : (a.startDate ? parseDateSafely(a.startDate) : new Date(0));
-    const dateB = b.isHistorical && b.timestamp ? new Date(b.timestamp) : (b.startDate ? parseDateSafely(b.startDate) : new Date(0));
-    return (dateB || new Date(0)) - (dateA || new Date(0));
+    // Sort by date - most recent first (descending)
+    // Use timestamp for historical, startDate for regular, eventDate as fallback
+    let dateA = null;
+    if (a.isHistorical && a.timestamp) {
+      dateA = new Date(a.timestamp);
+    } else if (a.startDate) {
+      dateA = parseDateSafely(a.startDate);
+    } else if (a.eventDate) {
+      // Try to parse eventDate if it's a date string
+      if (typeof a.eventDate === 'string' && a.eventDate.includes('GMT')) {
+        dateA = new Date(a.eventDate);
+      } else if (a.eventDate instanceof Date) {
+        dateA = a.eventDate;
+      }
+    }
+    
+    let dateB = null;
+    if (b.isHistorical && b.timestamp) {
+      dateB = new Date(b.timestamp);
+    } else if (b.startDate) {
+      dateB = parseDateSafely(b.startDate);
+    } else if (b.eventDate) {
+      // Try to parse eventDate if it's a date string
+      if (typeof b.eventDate === 'string' && b.eventDate.includes('GMT')) {
+        dateB = new Date(b.eventDate);
+      } else if (b.eventDate instanceof Date) {
+        dateB = b.eventDate;
+      }
+    }
+    
+    // Most recent first (descending order)
+    const timeA = dateA ? dateA.getTime() : 0;
+    const timeB = dateB ? dateB.getTime() : 0;
+    return timeB - timeA; // Descending: newest first
   });
   
   // Calculate current year YTD spend from product spend (not invoice total)
@@ -3260,11 +3290,14 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
   }, 0);
   
   // Calculate total money saved (discounts) for current year
+  // Include: historical projects (Column G discount) + confirmed/approved projects (from proposal portal)
   const currentYearMoneySaved = yearProposals.reduce((total, proposal) => {
     try {
-      // For historical projects, use historicalDiscount if available (from Column G)
+      // For historical projects, use historicalDiscount from Column G
       if (proposal.isHistorical) {
-        const histDiscount = proposal.historicalDiscount !== undefined ? parseFloat(proposal.historicalDiscount) : 0;
+        const histDiscount = proposal.historicalDiscount !== undefined && proposal.historicalDiscount !== null 
+          ? parseFloat(proposal.historicalDiscount) 
+          : 0;
         if (!isNaN(histDiscount) && histDiscount > 0) {
           return total + histDiscount;
         }
@@ -3272,7 +3305,13 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
         return total;
       }
       
-      // For regular projects, use the same logic as calculateDetailedTotals
+      // For regular projects, only calculate discount for confirmed/approved/completed projects
+      // (not pending, as those haven't been finalized yet)
+      if (proposal.status === 'Pending' || proposal.status === 'Active') {
+        return total; // Don't count pending/active projects
+      }
+      
+      // For regular projects (Confirmed, Approved, Completed), use the same logic as calculateDetailedTotals
       const sections = JSON.parse(proposal.sectionsJSON || '[]');
       
       // Calculate base product total
@@ -4084,16 +4123,46 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
 }
 
 function ProposalsSection({ proposals, proposalTab, setProposalTab, setSelectedProposal, brandCharcoal = '#2C2C2C' }) {
+  // Helper function to get sortable date from proposal (most recent first)
+  const getSortableDate = (proposal) => {
+    if (proposal.isHistorical && proposal.timestamp) {
+      return new Date(proposal.timestamp);
+    } else if (proposal.startDate) {
+      return parseDateSafely(proposal.startDate);
+    } else if (proposal.eventDate) {
+      if (typeof proposal.eventDate === 'string' && proposal.eventDate.includes('GMT')) {
+        return new Date(proposal.eventDate);
+      } else if (proposal.eventDate instanceof Date) {
+        return proposal.eventDate;
+      }
+    }
+    return new Date(0);
+  };
+  
   // Use same filtering logic as DashboardView - match how Contributing Projects filters
   const activeProposals = proposals.filter(p => 
     p.status === 'Pending' || p.status === 'Active' || (p.status === 'Approved' && isFutureDate(p.startDate)) || (p.status === 'Confirmed' && isFutureDate(p.startDate))
-  );
+  ).sort((a, b) => {
+    const dateA = getSortableDate(a);
+    const dateB = getSortableDate(b);
+    return dateB.getTime() - dateA.getTime(); // Most recent first
+  });
+  
   const completedProposals = proposals.filter(p => 
     (p.status === 'Approved' && isPastDate(p.startDate)) || (p.status === 'Completed') || (p.status === 'Confirmed' && isPastDate(p.startDate))
-  );
+  ).sort((a, b) => {
+    const dateA = getSortableDate(a);
+    const dateB = getSortableDate(b);
+    return dateB.getTime() - dateA.getTime(); // Most recent first
+  });
+  
   const cancelledProposals = proposals.filter(p => 
     p.status === 'Cancelled'
-  );
+  ).sort((a, b) => {
+    const dateA = getSortableDate(a);
+    const dateB = getSortableDate(b);
+    return dateB.getTime() - dateA.getTime(); // Most recent first
+  });
 
   const getProposalsForTab = () => {
     switch (proposalTab) {
