@@ -407,23 +407,76 @@ function parseDateSafely(dateStr) {
 }
 
 function formatDateRange(proposal) {
+  // For historical projects, use eventDate if available (single date)
+  if (proposal.isHistorical && proposal.eventDate) {
+    const date = parseDateSafely(proposal.eventDate);
+    if (date && !isNaN(date.getTime())) {
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+    }
+  }
+  
+  // For historical projects without eventDate, try to use startDate as single date
+  if (proposal.isHistorical && proposal.startDate && !proposal.endDate) {
+    const date = parseDateSafely(proposal.startDate);
+    if (date && !isNaN(date.getTime())) {
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+    }
+  }
+  
+  // For regular projects or historical with date range, use startDate and endDate
   const start = parseDateSafely(proposal.startDate);
   const end = parseDateSafely(proposal.endDate);
-  if (!start || !end) return '';
   
-  const startMonth = start.toLocaleDateString('en-US', { month: 'long' });
-  const endMonth = end.toLocaleDateString('en-US', { month: 'long' });
-  const startDay = start.getDate();
-  const endDay = end.getDate();
-  const year = start.getFullYear();
-  
-  if (startMonth === endMonth && startDay === endDay) {
-    return `${startMonth} ${startDay}, ${year}`;
-  } else if (startMonth === endMonth) {
-    return `${startMonth} ${startDay}-${endDay}, ${year}`;
-  } else {
-    return `${startMonth} ${startDay} - ${endMonth} ${endDay}, ${year}`;
+  // If we have a start date but no end date, format as single date
+  if (start && !end) {
+    if (!isNaN(start.getTime())) {
+      return start.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+    }
+    return '';
   }
+  
+  // If we have both dates, format as range
+  if (start && end && !isNaN(start.getTime()) && !isNaN(end.getTime())) {
+    const startMonth = start.toLocaleDateString('en-US', { month: 'long' });
+    const endMonth = end.toLocaleDateString('en-US', { month: 'long' });
+    const startDay = start.getDate();
+    const endDay = end.getDate();
+    const year = start.getFullYear();
+    
+    if (startMonth === endMonth && startDay === endDay) {
+      return `${startMonth} ${startDay}, ${year}`;
+    } else if (startMonth === endMonth) {
+      return `${startMonth} ${startDay} - ${endDay}, ${year}`;
+    } else {
+      return `${startMonth} ${startDay} - ${endMonth} ${endDay}, ${year}`;
+    }
+  }
+  
+  // Fallback: try eventDate if available
+  if (proposal.eventDate) {
+    const date = parseDateSafely(proposal.eventDate);
+    if (date && !isNaN(date.getTime())) {
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+    }
+  }
+  
+  return '';
 }
 
 function calculateTotal(proposal) {
@@ -4014,11 +4067,21 @@ function ProposalsSection({ proposals, proposalTab, setProposalTab, setSelectedP
                         fontSize: '14px',
                         color: brandCharcoal
                       }}>
-                        {dateRange || (proposal.startDate ? new Date(proposal.startDate).toLocaleDateString('en-US', { 
-                          year: 'numeric', 
-                          month: 'short', 
-                          day: 'numeric' 
-                        }) : 'N/A')}
+                        {dateRange || (proposal.eventDate ? (() => {
+                          const date = parseDateSafely(proposal.eventDate);
+                          return date && !isNaN(date.getTime()) ? date.toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                          }) : 'N/A';
+                        })() : (proposal.startDate ? (() => {
+                          const date = parseDateSafely(proposal.startDate);
+                          return date && !isNaN(date.getTime()) ? date.toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                          }) : 'N/A';
+                        })() : 'N/A'))}
                       </td>
                       <td style={{ 
                         padding: '14px 16px', 
