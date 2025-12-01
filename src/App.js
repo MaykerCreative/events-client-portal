@@ -409,11 +409,94 @@ function parseDateSafely(dateStr) {
 // Shared utility function to get a sortable date from a proposal
 // Returns a Date object that can be used for sorting (most recent first)
 function getSortableDateFromProposal(proposal) {
-  // Priority 1: Use timestamp for historical projects (most reliable)
-  if (proposal.isHistorical && proposal.timestamp) {
-    const ts = new Date(proposal.timestamp);
-    if (!isNaN(ts.getTime())) {
-      return ts;
+  // For historical projects, try to parse eventDate first (it has the actual event date)
+  // Only use timestamp if eventDate can't be parsed
+  if (proposal.isHistorical) {
+    // Try eventDate first for historical projects (it contains the actual event date)
+    if (proposal.eventDate) {
+      if (proposal.eventDate instanceof Date) {
+        if (!isNaN(proposal.eventDate.getTime())) {
+          return proposal.eventDate;
+        }
+      } else if (typeof proposal.eventDate === 'string') {
+        const eventDateStr = proposal.eventDate.trim();
+        
+        // Try parsing GMT date strings first (e.g., "Tue Aug 19 2025 00:00:00 GMT-0500")
+        // Handle strings like "Tue Aug 19 2025 00:00:00 GMT-0500 (Central Daylight Time)"
+        // Remove timezone name in parentheses if present, as it can cause parsing issues
+        let cleanDateStr = eventDateStr;
+        // Remove timezone name in parentheses: "(Central Daylight Time)" or "(Central Standard Time)"
+        cleanDateStr = cleanDateStr.replace(/\s*\([^)]+\)\s*$/, '');
+        
+        const dateObj = new Date(cleanDateStr);
+        if (!isNaN(dateObj.getTime())) {
+          const year = dateObj.getFullYear();
+          // Only use if it's a reasonable date (not year 1970 from failed parse)
+          if (year >= 2000 && year <= 2100) {
+            return dateObj;
+          }
+        }
+        
+        // Try parsing formatted strings like "April 5 - 13, 2025" or "April 5, 2025"
+        const monthMap = {
+          'january': 0, 'february': 1, 'march': 2, 'april': 3, 'may': 4, 'june': 5,
+          'july': 6, 'august': 7, 'september': 8, 'october': 9, 'november': 10, 'december': 11
+        };
+        
+        // Pattern 1: "Month Day - Day, Year" or "Month Day-Day, Year" (date range)
+        // Also handles "March 29 - April 3, 2026" (cross-month ranges)
+        let match = eventDateStr.match(/(\w+)\s+(\d+)\s*-\s*(\d+),?\s+(\d{4})/i);
+        if (!match) {
+          // Try cross-month: "March 29 - April 3, 2026"
+          match = eventDateStr.match(/(\w+)\s+(\d+)\s*-\s*(\w+)\s+(\d+),?\s+(\d{4})/i);
+          if (match) {
+            const startMonthName = match[1].toLowerCase();
+            const startMonth = monthMap[startMonthName];
+            const startDay = parseInt(match[2]);
+            const year = parseInt(match[5]);
+            if (startMonth !== undefined && startDay && year) {
+              const parsed = new Date(year, startMonth, startDay);
+              if (!isNaN(parsed.getTime())) {
+                return parsed;
+              }
+            }
+          }
+        } else {
+          const monthName = match[1].toLowerCase();
+          const month = monthMap[monthName];
+          const day = parseInt(match[2]); // Use first date for sorting
+          const year = parseInt(match[4]);
+          if (month !== undefined && day && year) {
+            const parsed = new Date(year, month, day);
+            if (!isNaN(parsed.getTime())) {
+              return parsed;
+            }
+          }
+        }
+        
+        // Pattern 2: "Month Day, Year" (single date)
+        match = eventDateStr.match(/(\w+)\s+(\d+),?\s+(\d{4})/i);
+        if (match) {
+          const monthName = match[1].toLowerCase();
+          const month = monthMap[monthName];
+          const day = parseInt(match[2]);
+          const year = parseInt(match[3]);
+          if (month !== undefined && day && year) {
+            const parsed = new Date(year, month, day);
+            if (!isNaN(parsed.getTime())) {
+              return parsed;
+            }
+          }
+        }
+      }
+    }
+    
+    // Fallback to timestamp for historical projects only if eventDate parsing failed
+    if (proposal.timestamp) {
+      const ts = new Date(proposal.timestamp);
+      if (!isNaN(ts.getTime())) {
+        return ts;
+      }
     }
   }
   
