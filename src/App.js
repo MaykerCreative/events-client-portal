@@ -2421,33 +2421,33 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
       <div 
         className="featured-member-section"
         style={{
-          display: 'flex',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
           marginBottom: '48px',
           borderRadius: '20px',
           overflow: 'hidden',
           backgroundColor: '#FAF8F3',
-          gap: 0
+          minHeight: '500px'
         }}
       >
-        {/* Left: Editorial Image */}
+        {/* Left: Image - 50% width, no cropping */}
         <div style={{
-          flex: '0 0 auto',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          maxHeight: '75vh',
           overflow: 'hidden',
-          borderRadius: '20px 0 0 20px'
+          borderRadius: '20px 0 0 20px',
+          backgroundColor: '#DED6CE',
+          padding: '0'
         }}>
           <img 
             src="/featured-member.jpg" 
             alt="Hill & Co. Creative"
             loading="lazy"
             style={{
-              width: 'auto',
+              width: '100%',
               height: '100%',
-              maxHeight: '75vh',
-              objectFit: 'cover',
+              objectFit: 'contain',
               objectPosition: 'center',
               display: 'block'
             }}
@@ -2461,16 +2461,14 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
           />
         </div>
         
-        {/* Right: Editorial Text Block */}
+        {/* Right: Editorial Text Block - 50% width */}
         <div style={{
-          flex: '1 1 auto',
           backgroundColor: '#DED6CE',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '96px 80px',
-          borderRadius: '0 20px 20px 0',
-          minHeight: '75vh'
+          padding: '80px 60px',
+          borderRadius: '0 20px 20px 0'
         }}>
           <div style={{
             width: '100%',
@@ -2563,55 +2561,38 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
       {/* Responsive Styles for Featured Member Section */}
       <style dangerouslySetInnerHTML={{ __html: `
         .featured-member-section {
-          display: flex !important;
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
         }
         .featured-member-section > div:first-child {
-          flex: 0 0 auto !important;
-          max-height: 75vh !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
         }
         .featured-member-section > div:first-child img {
-          width: auto !important;
+          width: 100% !important;
           height: 100% !important;
-          max-height: 75vh !important;
-          object-fit: cover !important;
-        }
-        .featured-member-section > div:last-child {
-          flex: 1 1 auto !important;
-          min-height: 75vh !important;
-          padding: 96px 80px !important;
-        }
-        @media (max-width: 1024px) {
-          /* Tablet: Reduce heights and padding */
-          .featured-member-section > div:first-child {
-            max-height: 60vh !important;
-          }
-          .featured-member-section > div:first-child img {
-            max-height: 60vh !important;
-          }
-          .featured-member-section > div:last-child {
-            min-height: 60vh !important;
-            padding: 64px 48px !important;
-          }
+          object-fit: contain !important;
+          object-position: center !important;
         }
         @media (max-width: 768px) {
           /* Mobile: Stack vertically */
           .featured-member-section {
-            flex-direction: column !important;
+            grid-template-columns: 1fr !important;
+            grid-template-rows: auto auto !important;
           }
           .featured-member-section > div:first-child {
-            max-height: none !important;
-            width: 100% !important;
             border-radius: 20px 20px 0 0 !important;
+            min-height: 300px !important;
           }
           .featured-member-section > div:first-child img {
             width: 100% !important;
             height: auto !important;
-            max-height: none !important;
-            object-fit: cover !important;
+            max-height: 400px !important;
+            object-fit: contain !important;
           }
           .featured-member-section > div:last-child {
             border-radius: 0 0 20px 20px !important;
-            min-height: auto !important;
             padding: 64px 32px !important;
           }
         }
