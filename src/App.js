@@ -2584,8 +2584,8 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
           height: 100% !important;
           min-height: 100% !important;
         }
-        @media (max-width: 768px) {
-          /* Mobile: Stack vertically */
+        @media (max-width: 900px) {
+          /* Tablet and below: Stack vertically for better readability */
           .featured-member-section {
             grid-template-columns: 1fr !important;
             grid-template-rows: auto auto !important;
@@ -2593,6 +2593,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
           .featured-member-section > div:first-child {
             border-radius: 20px 20px 0 0 !important;
             aspect-ratio: 4 / 3 !important;
+            width: 100% !important;
           }
           .featured-member-section > div:first-child img {
             width: 100% !important;
@@ -2604,7 +2605,9 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
           }
           .featured-member-section > div:last-child {
             border-radius: 0 0 20px 20px !important;
-            padding: 64px 32px !important;
+            padding: 64px 40px !important;
+            height: auto !important;
+            min-height: auto !important;
           }
         }
       ` }} />
