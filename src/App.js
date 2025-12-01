@@ -6670,6 +6670,7 @@ function DashboardView({ clientInfo, onLogout }) {
           maxWidth: '1400px', 
           margin: '0 auto', 
           display: 'flex', 
+          justifyContent: 'center',
           gap: '8px',
           overflowX: 'auto',
           WebkitOverflowScrolling: 'touch'
