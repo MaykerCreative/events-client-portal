@@ -1451,6 +1451,272 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
             />
           </div>
 
+          {/* Professional Preferences Section */}
+          <div style={{ marginBottom: '48px' }}>
+            <h3 style={{ 
+              fontSize: '13px', 
+              fontWeight: '600', 
+              color: brandCharcoal,
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+              marginBottom: '24px'
+            }}>
+              PROFESSIONAL PREFERENCES
+            </h3>
+            
+            {/* Preferred Method of Communication */}
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{ 
+                display: 'block', 
+                fontSize: '13px', 
+                fontWeight: '600', 
+                marginBottom: '8px', 
+                color: brandCharcoal,
+                fontFamily: "'NeueHaasUnica', sans-serif",
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em'
+              }}>
+                Preferred Method of Communication
+              </label>
+              {editingProfile ? (
+                <select
+                  value={formData.preferredCommunication || ''}
+                  onChange={(e) => setFormData({ ...formData, preferredCommunication: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '8px 0',
+                    border: 'none',
+                    borderBottom: '1px solid #d1d5db',
+                    borderRadius: '0',
+                    fontSize: '15px',
+                    fontFamily: "'NeueHaasUnica', sans-serif",
+                    backgroundColor: 'transparent',
+                    color: brandCharcoal,
+                    boxSizing: 'border-box',
+                    outline: 'none',
+                    cursor: 'pointer',
+                    transition: 'border-color 0.2s'
+                  }}
+                >
+                  <option value="">Select...</option>
+                  <option value="Phone Call">Phone Call</option>
+                  <option value="Email">Email</option>
+                  <option value="Text">Text</option>
+                </select>
+              ) : (
+                <div style={{ 
+                  fontSize: '15px', 
+                  color: brandCharcoal, 
+                  padding: '8px 0',
+                  borderBottom: '1px solid #e5e7eb',
+                  minHeight: '23px'
+                }}>
+                  {formData.preferredCommunication || 'Not set'}
+                </div>
+              )}
+            </div>
+
+            {/* Preferred Payment Method */}
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{ 
+                display: 'block', 
+                fontSize: '13px', 
+                fontWeight: '600', 
+                marginBottom: '8px', 
+                color: brandCharcoal,
+                fontFamily: "'NeueHaasUnica', sans-serif",
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em'
+              }}>
+                Preferred Payment Method
+              </label>
+              {editingProfile ? (
+                <select
+                  value={formData.preferredPaymentMethod || ''}
+                  onChange={(e) => setFormData({ ...formData, preferredPaymentMethod: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '8px 0',
+                    border: 'none',
+                    borderBottom: '1px solid #d1d5db',
+                    borderRadius: '0',
+                    fontSize: '15px',
+                    fontFamily: "'NeueHaasUnica', sans-serif",
+                    backgroundColor: 'transparent',
+                    color: brandCharcoal,
+                    boxSizing: 'border-box',
+                    outline: 'none',
+                    cursor: 'pointer',
+                    transition: 'border-color 0.2s'
+                  }}
+                >
+                  <option value="">Select...</option>
+                  <option value="ACH/Wire">ACH/Wire</option>
+                  <option value="Check">Check</option>
+                  <option value="Credit Card (3% Fee)">Credit Card (3% Fee)</option>
+                </select>
+              ) : (
+                <div style={{ 
+                  fontSize: '15px', 
+                  color: brandCharcoal, 
+                  padding: '8px 0',
+                  borderBottom: '1px solid #e5e7eb',
+                  minHeight: '23px'
+                }}>
+                  {formData.preferredPaymentMethod || 'Not set'}
+                </div>
+              )}
+            </div>
+
+            {/* Tax Exempt */}
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{ 
+                display: 'block', 
+                fontSize: '13px', 
+                fontWeight: '600', 
+                marginBottom: '8px', 
+                color: brandCharcoal,
+                fontFamily: "'NeueHaasUnica', sans-serif",
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em'
+              }}>
+                Tax Exempt
+              </label>
+              {editingProfile ? (
+                <select
+                  value={formData.taxExempt || 'Not Exempt'}
+                  onChange={(e) => setFormData({ ...formData, taxExempt: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '8px 0',
+                    border: 'none',
+                    borderBottom: '1px solid #d1d5db',
+                    borderRadius: '0',
+                    fontSize: '15px',
+                    fontFamily: "'NeueHaasUnica', sans-serif",
+                    backgroundColor: 'transparent',
+                    color: brandCharcoal,
+                    boxSizing: 'border-box',
+                    outline: 'none',
+                    cursor: 'pointer',
+                    transition: 'border-color 0.2s'
+                  }}
+                >
+                  <option value="Not Exempt">Not Exempt</option>
+                  <option value="Exempt">Exempt</option>
+                </select>
+              ) : (
+                <div style={{ 
+                  fontSize: '15px', 
+                  color: brandCharcoal, 
+                  padding: '8px 0',
+                  borderBottom: '1px solid #e5e7eb',
+                  minHeight: '23px'
+                }}>
+                  {formData.taxExempt || 'Not Exempt'}
+                </div>
+              )}
+            </div>
+
+            {/* Tax Exempt Document Upload */}
+            {formData.taxExempt === 'Exempt' && (
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{ 
+                  display: 'block', 
+                  fontSize: '13px', 
+                  fontWeight: '600', 
+                  marginBottom: '8px', 
+                  color: brandCharcoal,
+                  fontFamily: "'NeueHaasUnica', sans-serif",
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em'
+                }}>
+                  Tax Exempt Document
+                </label>
+                {editingProfile ? (
+                  <div>
+                    {formData.taxExemptDocumentUrl && (
+                      <div style={{ 
+                        marginBottom: '12px',
+                        fontSize: '13px',
+                        color: '#666',
+                        fontFamily: "'NeueHaasUnica', sans-serif"
+                      }}>
+                        Current document: <a 
+                          href={formData.taxExemptDocumentUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          style={{ color: '#6b7d47', textDecoration: 'underline' }}
+                        >
+                          View Document
+                        </a>
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          // In a real implementation, this would upload to a server
+                          // For now, we'll store the file name and create a preview
+                          const reader = new FileReader();
+                          reader.onload = (event) => {
+                            setFormData({ 
+                              ...formData, 
+                              taxExemptDocument: file,
+                              taxExemptDocumentUrl: event.target.result // In production, this would be a server URL
+                            });
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      style={{ 
+                        fontSize: '13px', 
+                        fontFamily: "'NeueHaasUnica', sans-serif",
+                        padding: '8px 0',
+                        borderBottom: '1px solid #d1d5db',
+                        width: '100%',
+                        cursor: 'pointer'
+                      }}
+                    />
+                    <div style={{ 
+                      marginTop: '8px',
+                      fontSize: '12px',
+                      color: '#666',
+                      fontFamily: "'NeueHaasUnica', sans-serif",
+                      fontStyle: 'italic'
+                    }}>
+                      Accepted formats: PDF, JPG, PNG
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ 
+                    fontSize: '15px', 
+                    color: brandCharcoal, 
+                    padding: '8px 0',
+                    borderBottom: '1px solid #e5e7eb',
+                    minHeight: '23px'
+                  }}>
+                    {formData.taxExemptDocumentUrl ? (
+                      <a 
+                        href={formData.taxExemptDocumentUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        style={{ color: '#6b7d47', textDecoration: 'underline' }}
+                      >
+                        View Tax Exempt Document
+                      </a>
+                    ) : (
+                      'No document uploaded'
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
           {/* Personal Interests Section */}
           <div>
             <h3 style={{ 
