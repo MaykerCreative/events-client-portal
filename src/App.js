@@ -2430,7 +2430,9 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
         <div style={{
           position: 'relative',
           overflow: 'hidden',
-          borderRadius: '20px 0 0 20px'
+          borderRadius: '20px 0 0 20px',
+          minHeight: '500px',
+          height: '100%'
         }}>
           <img 
             src="/featured-member.jpg" 
@@ -2440,7 +2442,9 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              display: 'block'
+              objectPosition: 'center',
+              display: 'block',
+              minHeight: '500px'
             }}
             onError={(e) => {
               if (!e.target.src.includes('/assets/')) {
@@ -2459,7 +2463,8 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
           alignItems: 'center',
           justifyContent: 'center',
           padding: '80px 60px',
-          borderRadius: '0 20px 20px 0'
+          borderRadius: '0 20px 20px 0',
+          minHeight: '500px'
         }}>
           <div style={{
             width: '58%',
@@ -4514,14 +4519,8 @@ function FAQSection({ brandCharcoal = '#2C2C2C' }) {
     }
   };
 
-  // Open first item in each section by default
+  // Initialize with all items closed
   useEffect(() => {
-    const initialOpen = {};
-    Object.keys(faqData).forEach(sectionId => {
-      initialOpen[`${sectionId}-0`] = true;
-    });
-    setOpenItems(initialOpen);
-    
     // Set active section from URL hash if present
     const hash = window.location.hash.replace('#', '');
     if (hash && faqData[hash]) {
@@ -4792,13 +4791,13 @@ function FAQSection({ brandCharcoal = '#2C2C2C' }) {
                           maxHeight: isOpen ? '1000px' : '0',
                           overflow: 'hidden',
                           transition: 'max-height 0.25s ease',
-                          padding: isOpen ? '0 30px 20px' : '0 30px', // Increased horizontal padding
+                          padding: isOpen ? '0 30px 20px' : '0 30px',
                           opacity: isOpen ? 1 : 0,
                           transitionProperty: 'max-height, padding, opacity'
                         }}
                       >
                         <div style={{
-                          paddingTop: '12px',
+                          paddingTop: '4px',
                           fontSize: '15px',
                           fontWeight: '400',
                           fontFamily: "'NeueHaasUnica', sans-serif",
@@ -4806,7 +4805,7 @@ function FAQSection({ brandCharcoal = '#2C2C2C' }) {
                           lineHeight: '1.7'
                         }}>
                           {item.answer.split('\n').map((paragraph, pIndex) => (
-                            <p key={pIndex} style={{ marginBottom: paragraph.includes('\n') ? '12px' : '0' }}>
+                            <p key={pIndex} style={{ marginBottom: pIndex < item.answer.split('\n').length - 1 ? '8px' : '0' }}>
                               {paragraph}
                             </p>
                           ))}
