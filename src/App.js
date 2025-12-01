@@ -407,34 +407,15 @@ function parseDateSafely(dateStr) {
 }
 
 function formatDateRange(proposal) {
-  // For historical projects, eventDate is already a formatted string, so use it directly
-  if (proposal.isHistorical && proposal.eventDate) {
-    // eventDate is already formatted (e.g., "Mar 21-23, 2025"), but we want full month names
-    // Try to parse it, or use it as-is if it's already well-formatted
-    if (typeof proposal.eventDate === 'string' && proposal.eventDate.trim()) {
-      // If it's already a nice format, use it; otherwise try to parse startDate/endDate
-      if (proposal.startDate) {
-        const start = parseDateSafely(proposal.startDate);
-        if (start && !isNaN(start.getTime())) {
-          if (proposal.endDate) {
-            const end = parseDateSafely(proposal.endDate);
-            if (end && !isNaN(end.getTime())) {
-              return formatAllDates(start, end);
-            }
-          }
-          return start.toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-          });
-        }
-      }
-      // Fallback: use eventDate as-is
-      return proposal.eventDate;
-    }
+  // First priority: Use eventDate if available (it's already formatted from the backend)
+  // This works for both historical and regular projects that have eventDate set
+  if (proposal.eventDate && typeof proposal.eventDate === 'string' && proposal.eventDate.trim()) {
+    // eventDate is already formatted (e.g., "April 5-13, 2025" or "April 5 - 13, 2025")
+    // Normalize spacing around hyphens to be consistent (spaces around dash)
+    return proposal.eventDate.replace(/\s*-\s*/g, ' - ');
   }
   
-  // For regular projects or historical with date range, use startDate and endDate
+  // Second priority: Try to use startDate and endDate if available
   const start = parseDateSafely(proposal.startDate);
   const end = parseDateSafely(proposal.endDate);
   
@@ -447,17 +428,11 @@ function formatDateRange(proposal) {
         day: 'numeric' 
       });
     }
-    return '';
   }
   
   // If we have both dates, format showing all dates
   if (start && end && !isNaN(start.getTime()) && !isNaN(end.getTime())) {
     return formatAllDates(start, end);
-  }
-  
-  // Fallback: try eventDate if available (as formatted string)
-  if (proposal.eventDate && typeof proposal.eventDate === 'string') {
-    return proposal.eventDate;
   }
   
   return '';
