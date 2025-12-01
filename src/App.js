@@ -4285,9 +4285,9 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
         </h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }} className="tier-benefits-grid">
           {/* House Member - Olive */}
-          <div style={{ 
+          <div className={tier.tier === 'House Member' ? 'tier-card-selected' : ''} style={{ 
             padding: '32px', 
-            backgroundColor: tier.tier === 'House Member' ? 'rgba(107, 125, 71, 0.05)' : '#fafaf8', 
+            backgroundColor: '#fafaf8', 
             borderRadius: '16px', 
             border: tier.tier === 'House Member' ? '1px solid #6b7d47' : '1px solid #e8e8e3',
             transition: 'all 0.3s ease',
@@ -4341,9 +4341,9 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
           </div>
           
           {/* Inner Circle - Soft Gold */}
-          <div style={{ 
+          <div className={tier.tier === 'Inner Circle' ? 'tier-card-selected' : ''} style={{ 
             padding: '32px', 
-            backgroundColor: tier.tier === 'Inner Circle' ? 'rgba(212, 175, 55, 0.05)' : '#fafaf8', 
+            backgroundColor: '#fafaf8', 
             borderRadius: '16px', 
             border: tier.tier === 'Inner Circle' ? '1px solid #d4af37' : '1px solid #e8e8e3',
             transition: 'all 0.3s ease',
@@ -4397,11 +4397,11 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
           </div>
           
           {/* Founders Estate - Charcoal with Olive accent */}
-          <div style={{ 
+          <div className={tier.tier === 'Founders Estate' ? 'tier-card-selected' : ''} style={{ 
             padding: '32px', 
-            backgroundColor: tier.tier === 'Founders Estate' ? 'rgba(107, 125, 71, 0.05)' : '#fafaf8', 
+            backgroundColor: '#fafaf8', 
             borderRadius: '16px', 
-            border: tier.tier === 'Founders Estate' ? '1px solid #6b7d47' : '1px solid #e8e8e3',
+            border: tier.tier === 'Founders Estate' ? '1px solid #2C2C2C' : '1px solid #e8e8e3',
             transition: 'all 0.3s ease',
             boxShadow: tier.tier === 'Founders Estate' 
               ? '0 4px 12px rgba(107, 125, 71, 0.15)' 
@@ -6585,6 +6585,17 @@ function DashboardView({ clientInfo, onLogout }) {
           
           .tier-benefits-grid > div > div:last-child {
             font-size: 11px !important;
+          }
+          
+          /* Tier Benefits - Mobile-specific styling for selected tier */
+          .tier-benefits-grid .tier-card-selected {
+            background-color: rgba(107, 125, 71, 0.05) !important;
+            border-color: #6b7d47 !important;
+          }
+          
+          /* Override top accent bar to olive on mobile for all selected tiers */
+          .tier-benefits-grid .tier-card-selected > div[style*="position: 'absolute'"] {
+            background-color: #6b7d47 !important;
           }
           
           /* Ensure all images respect container width */
