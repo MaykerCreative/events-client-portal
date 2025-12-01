@@ -4191,7 +4191,7 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
         display: 'flex',
         gap: '48px',
         alignItems: 'flex-start'
-      }}>
+      }} className="ytd-stats-card">
         {/* YTD Points */}
         <div style={{ flex: '1' }}>
           <div style={{ 
@@ -4283,7 +4283,7 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
         }}>
           Tier Benefits
         </h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }} className="tier-benefits-grid">
           {/* House Member - Olive */}
           <div style={{ 
             padding: '32px', 
@@ -6535,6 +6535,51 @@ function DashboardView({ clientInfo, onLogout }) {
             text-align: center !important;
             font-size: 24px !important;
             margin-bottom: 24px !important;
+          }
+          
+          /* YTD Stats Card - Stack on mobile */
+          .ytd-stats-card {
+            flex-direction: column !important;
+            gap: 32px !important;
+            padding: 24px 20px !important;
+          }
+          
+          .ytd-stats-card > div {
+            flex: 1 1 100% !important;
+            text-align: center !important;
+          }
+          
+          .ytd-stats-card > div > div:first-child {
+            font-size: 10px !important;
+            margin-bottom: 12px !important;
+          }
+          
+          .ytd-stats-card > div > div:last-child {
+            font-size: 42px !important;
+          }
+          
+          /* Tier Benefits - Stack on mobile */
+          .tier-benefits-grid {
+            grid-template-columns: 1fr !important;
+            gap: 20px !important;
+          }
+          
+          .tier-benefits-grid > div {
+            padding: 24px 20px !important;
+          }
+          
+          .tier-benefits-grid > div > div:first-child {
+            font-size: 10px !important;
+            margin-bottom: 12px !important;
+          }
+          
+          .tier-benefits-grid > div > div:nth-child(2) {
+            font-size: 32px !important;
+            margin-bottom: 8px !important;
+          }
+          
+          .tier-benefits-grid > div > div:last-child {
+            font-size: 11px !important;
           }
           
           /* Ensure all images respect container width */
