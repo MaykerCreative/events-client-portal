@@ -413,15 +413,32 @@ function formatDateRange(proposal) {
   if (proposal.eventDate) {
     let eventDateStr = '';
     
-    // Handle Date objects (shouldn't happen but just in case)
+    // Handle Date objects - convert to formatted string
     if (proposal.eventDate instanceof Date) {
+      // If it's a Date object, format it properly
       eventDateStr = proposal.eventDate.toLocaleDateString('en-US', { 
         year: 'numeric', 
         month: 'long', 
         day: 'numeric' 
       });
-    } else if (typeof proposal.eventDate === 'string' && proposal.eventDate.trim()) {
-      eventDateStr = proposal.eventDate.trim();
+    } else if (typeof proposal.eventDate === 'string') {
+      // Check if it's a Date string (like "Wed Mar 19 2025 00:00:00 GMT-0500")
+      // If it looks like a Date string, try to parse and format it
+      if (proposal.eventDate.includes('GMT') || proposal.eventDate.match(/^\w{3}\s+\w{3}\s+\d{1,2}\s+\d{4}/)) {
+        const parsedDate = new Date(proposal.eventDate);
+        if (!isNaN(parsedDate.getTime())) {
+          eventDateStr = parsedDate.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          });
+        } else {
+          eventDateStr = proposal.eventDate.trim();
+        }
+      } else {
+        // It's already a formatted string
+        eventDateStr = proposal.eventDate.trim();
+      }
     }
     
     if (eventDateStr) {
@@ -2190,6 +2207,47 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               </div>
             </div>
           )}
+          
+          {/* Founders Estate Additional Info */}
+          {tier.tier === 'Founders Estate' && (
+            <div style={{
+              marginTop: '32px',
+              paddingTop: '32px',
+              borderTop: '1px solid #e5e7eb',
+              width: '100%',
+              maxWidth: '500px'
+            }}>
+              <div style={{
+                fontSize: '14px',
+                color: brandCharcoal,
+                fontFamily: "'NeueHaasUnica', sans-serif",
+                fontWeight: '400',
+                lineHeight: '1.6',
+                marginBottom: '16px'
+              }}>
+                As a Founders Estate member, you receive 25% off all rental orders.
+              </div>
+              <div style={{
+                fontSize: '13px',
+                color: '#8b8b8b',
+                fontFamily: "'NeueHaasUnica', sans-serif",
+                fontWeight: '400',
+                lineHeight: '1.6'
+              }}>
+                Points YTD: {Math.round(currentYearSpend).toLocaleString()}
+              </div>
+              <div style={{
+                fontSize: '13px',
+                color: '#8b8b8b',
+                fontFamily: "'NeueHaasUnica', sans-serif",
+                fontWeight: '400',
+                lineHeight: '1.6',
+                marginTop: '4px'
+              }}>
+                Projects YTD: {yearProposals.length}
+              </div>
+            </div>
+          )}
         </div>
         </div>
 
@@ -3148,8 +3206,13 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
   const currentYearMoneySaved = yearProposals.reduce((total, proposal) => {
     try {
       // For historical projects, use historicalDiscount if available (from Column G)
-      if (proposal.isHistorical && proposal.historicalDiscount !== undefined) {
-        return total + (parseFloat(proposal.historicalDiscount) || 0);
+      if (proposal.isHistorical) {
+        const histDiscount = proposal.historicalDiscount !== undefined ? parseFloat(proposal.historicalDiscount) : 0;
+        if (!isNaN(histDiscount) && histDiscount > 0) {
+          return total + histDiscount;
+        }
+        // If no historicalDiscount, return total (no discount for this project)
+        return total;
       }
       
       // For regular projects, use the same logic as calculateDetailedTotals
@@ -3789,43 +3852,6 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
             }}>
               At 100,000 points
             </div>
-            {tier.tier === 'Founders Estate' && (
-              <div style={{
-                marginTop: '24px',
-                paddingTop: '24px',
-                borderTop: '1px solid #e5e7eb'
-              }}>
-                <div style={{
-                  fontSize: '14px',
-                  color: brandCharcoal,
-                  fontFamily: "'NeueHaasUnica', sans-serif",
-                  fontWeight: '400',
-                  lineHeight: '1.6',
-                  marginBottom: '16px'
-                }}>
-                  As a Founders Estate member, you receive 25% off all rental orders.
-                </div>
-                <div style={{
-                  fontSize: '13px',
-                  color: '#8b8b8b',
-                  fontFamily: "'NeueHaasUnica', sans-serif",
-                  fontWeight: '400',
-                  lineHeight: '1.6'
-                }}>
-                  Points YTD: {Math.round(currentYearSpend).toLocaleString()}
-                </div>
-                <div style={{
-                  fontSize: '13px',
-                  color: '#8b8b8b',
-                  fontFamily: "'NeueHaasUnica', sans-serif",
-                  fontWeight: '400',
-                  lineHeight: '1.6',
-                  marginTop: '4px'
-                }}>
-                  Projects YTD: {yearProposals.length}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
