@@ -2418,34 +2418,36 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
       )}
 
       {/* 8. Featured Member Section - Editorial Block */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        minHeight: '60vh',
-        marginBottom: '48px',
-        overflow: 'hidden',
-        borderRadius: '20px'
-      }}>
-        {/* Left: Full-bleed Image */}
-        <div style={{
-          position: 'relative',
+      <div 
+        className="featured-member-section"
+        style={{
+          display: 'flex',
+          marginBottom: '48px',
+          borderRadius: '20px',
           overflow: 'hidden',
-          borderRadius: '20px 0 0 20px',
-          minHeight: '500px',
-          height: '100%',
-          backgroundColor: '#DED6CE',
+          backgroundColor: '#FAF8F3',
+          gap: 0
+        }}
+      >
+        {/* Left: Editorial Image */}
+        <div style={{
+          flex: '0 0 auto',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          maxHeight: '75vh',
+          overflow: 'hidden',
+          borderRadius: '20px 0 0 20px'
         }}>
           <img 
             src="/featured-member.jpg" 
             alt="Hill & Co. Creative"
             loading="lazy"
             style={{
-              width: '100%',
+              width: 'auto',
               height: '100%',
-              objectFit: 'contain',
+              maxHeight: '75vh',
+              objectFit: 'cover',
               objectPosition: 'center',
               display: 'block'
             }}
@@ -2461,17 +2463,18 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
         
         {/* Right: Editorial Text Block */}
         <div style={{
+          flex: '1 1 auto',
           backgroundColor: '#DED6CE',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '80px 60px',
+          padding: '96px 80px',
           borderRadius: '0 20px 20px 0',
-          minHeight: '500px'
+          minHeight: '75vh'
         }}>
           <div style={{
-            width: '58%',
-            maxWidth: '500px'
+            width: '100%',
+            maxWidth: '560px'
           }}>
             {/* Label */}
             <div style={{
@@ -2556,6 +2559,63 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
           </div>
         </div>
       </div>
+      
+      {/* Responsive Styles for Featured Member Section */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        .featured-member-section {
+          display: flex !important;
+        }
+        .featured-member-section > div:first-child {
+          flex: 0 0 auto !important;
+          max-height: 75vh !important;
+        }
+        .featured-member-section > div:first-child img {
+          width: auto !important;
+          height: 100% !important;
+          max-height: 75vh !important;
+          object-fit: cover !important;
+        }
+        .featured-member-section > div:last-child {
+          flex: 1 1 auto !important;
+          min-height: 75vh !important;
+          padding: 96px 80px !important;
+        }
+        @media (max-width: 1024px) {
+          /* Tablet: Reduce heights and padding */
+          .featured-member-section > div:first-child {
+            max-height: 60vh !important;
+          }
+          .featured-member-section > div:first-child img {
+            max-height: 60vh !important;
+          }
+          .featured-member-section > div:last-child {
+            min-height: 60vh !important;
+            padding: 64px 48px !important;
+          }
+        }
+        @media (max-width: 768px) {
+          /* Mobile: Stack vertically */
+          .featured-member-section {
+            flex-direction: column !important;
+          }
+          .featured-member-section > div:first-child {
+            max-height: none !important;
+            width: 100% !important;
+            border-radius: 20px 20px 0 0 !important;
+          }
+          .featured-member-section > div:first-child img {
+            width: 100% !important;
+            height: auto !important;
+            max-height: none !important;
+            object-fit: cover !important;
+          }
+          .featured-member-section > div:last-child {
+            border-radius: 0 0 20px 20px !important;
+            min-height: auto !important;
+            padding: 64px 32px !important;
+          }
+        }
+      ` }} />
 
       {/* 9. Concierge Section - Editorial 3-Column Layout */}
       <div style={{
