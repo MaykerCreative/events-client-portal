@@ -2409,63 +2409,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                     {proposal.status || 'Pending'}
                   </span>
                   
-                  {proposal.projectNumber ? (
-                    <a
-                      href={`${ADMIN_PROPOSAL_APP_URL}?projectNumber=${encodeURIComponent(proposal.projectNumber)}${proposal.version ? `&version=${encodeURIComponent(proposal.version)}` : ''}&clientView=true`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        padding: '8px 16px',
-                        backgroundColor: 'transparent',
-                        color: '#6b7d47',
-                        border: '1px solid #6b7d47',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontSize: '12px',
-                        fontFamily: "'NeueHaasUnica', sans-serif",
-                        fontWeight: '500',
-                        textDecoration: 'none',
-                        display: 'inline-block',
-                        transition: 'all 0.2s ease'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.backgroundColor = '#6b7d47';
-                        e.target.style.color = 'white';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.backgroundColor = 'transparent';
-                        e.target.style.color = '#6b7d47';
-                      }}
-                    >
-                      View Project
-                    </a>
-                  ) : (
-                    <button
-                      onClick={() => setSelectedProposal && setSelectedProposal(proposal)}
-                      style={{
-                        padding: '8px 16px',
-                        backgroundColor: 'transparent',
-                        color: '#6b7d47',
-                        border: '1px solid #6b7d47',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontSize: '12px',
-                        fontFamily: "'NeueHaasUnica', sans-serif",
-                        fontWeight: '500',
-                        transition: 'all 0.2s ease'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.backgroundColor = '#6b7d47';
-                        e.target.style.color = 'white';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.backgroundColor = 'transparent';
-                        e.target.style.color = '#6b7d47';
-                      }}
-                    >
-                      View Project
-                    </button>
-                  )}
+                  {/* View Project button temporarily disabled */}
                 </div>
               </div>
             ))}
@@ -3585,6 +3529,17 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
                     </th>
                     <th style={{ 
                       padding: '14px 16px', 
+                      textAlign: 'left', 
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      color: brandCharcoal,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em'
+                    }}>
+                      Status
+                    </th>
+                    <th style={{ 
+                      padding: '14px 16px', 
                       textAlign: 'right', 
                       fontSize: '12px',
                       fontWeight: '600',
@@ -3599,6 +3554,17 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
                 <tbody>
                   {yearProposals.map((proposal, index) => {
                     const productSpend = calculateProductSpend(proposal);
+                    // Determine status: Pending, Confirmed, or Completed
+                    let status = 'Pending';
+                    const eventDate = proposal.eventDate || proposal.startDate;
+                    if (proposal.status === 'Pending') {
+                      status = 'Pending';
+                    } else if (proposal.status === 'Confirmed' || (proposal.status === 'Approved' && eventDate && isFutureDate(eventDate))) {
+                      status = 'Confirmed';
+                    } else if (proposal.status === 'Completed' || (eventDate && isPastDate(eventDate))) {
+                      status = 'Completed';
+                    }
+                    
                     return (
                       <tr 
                         key={index}
@@ -3624,6 +3590,13 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
                           fontWeight: '500'
                         }}>
                           {proposal.venueName || 'N/A'}
+                        </td>
+                        <td style={{ 
+                          padding: '14px 16px', 
+                          fontSize: '14px',
+                          color: brandCharcoal
+                        }}>
+                          {status}
                         </td>
                         <td style={{ 
                           padding: '14px 16px', 
@@ -3801,17 +3774,8 @@ function ProposalsSection({ proposals, proposalTab, setProposalTab, setSelectedP
                   return (
                     <tr 
                       key={proposal.id || index}
-                      onClick={() => setSelectedProposal(proposal)}
                       style={{ 
-                        borderBottom: index < getProposalsForTab().length - 1 ? '1px solid #e5e7eb' : 'none',
-                        cursor: 'pointer',
-                        transition: 'background-color 0.2s'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#f9fafb';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'white';
+                        borderBottom: index < getProposalsForTab().length - 1 ? '1px solid #e5e7eb' : 'none'
                       }}
                     >
                       <td style={{ 
@@ -4368,113 +4332,107 @@ function FAQSection({ brandCharcoal = '#2C2C2C' }) {
   const faqData = {
     'reserve-membership': {
       title: 'Reserve Membership',
-      intro: 'Everything you need to know about tiers, benefits, and how your membership grows with you.',
+      intro: '',
       items: [
         {
-          question: 'How do I qualify for Inner Circle?',
-          answer: 'Inner Circle status is achieved when you reach 50,000 points in product spend within a calendar year. Product spend includes rental products, product care fees, and service fees, but excludes delivery and tax. Your tier status is calculated annually, and once achieved, your discount percentage applies to all future proposals within that year.'
+          question: 'What are the membership tiers?',
+          answer: 'Mayker Reserve has three tiers designed to reward your partnership. When you join, you\'re automatically a House Member and receive 15% off all rental orders. Reach 50,000 points in a year and you\'ll join our Inner Circle with 20% off. Achieve 100,000 points annually and you become a Founders Circle member, enjoying 25% off.'
         },
         {
-          question: 'When are my benefits calculated each year?',
-          answer: 'Your tier status and benefits are calculated on a calendar year basis (January 1 through December 31). Points reset at the beginning of each new year, but your tier status from the previous year carries over. For example, if you achieved Inner Circle (20% off) in 2025, you\'ll maintain that discount in 2026 while your points start fresh for the new year.'
+          question: 'How do I earn points?',
+          answer: 'Every dollar you spend on invoices earns you a point (delivery fees and taxes excluded). We also offer double point periods throughout the year to help you reach the next tier faster.'
         },
         {
-          question: 'What is the difference between House Member, Inner Circle, and Founders Estate?',
-          answer: 'House Member (15% off) is our starting tier, available to all Reserve members. Inner Circle (20% off) is achieved at 50,000 points annually, and Founders Estate (25% off) is our highest tier, achieved at 100,000 points annually. Each tier offers increasing discounts on all rental products, product care, and service fees.'
+          question: 'Do my points carry over to the next year?',
+          answer: 'Your points reset each January 1st, but your tier status stays with you. So if you reach Inner Circle this year, you\'ll begin next year as an Inner Circle member with 20% off already in place. To stay at Inner Circle (or move up to Founders Circle), you\'ll earn points fresh during the new year.'
         },
         {
-          question: 'How are points calculated?',
-          answer: 'Points are calculated as 1 point = $1 USD. Your points are based on your product spend, which includes: rental product totals (after rental multipliers), product care fees (10% of extended product total), and service fees (5% of rental total + product care). Delivery fees and taxes are not included in point calculations.'
+          question: 'Can multiple people from my company access our Reserve account?',
+          answer: 'Yes. Each individual has a personal login, but points are accrued by company, so you\'ll be able to see contributing projects from multiple team members, if applicable.'
         },
         {
-          question: 'Do points roll over to the next year?',
-          answer: 'Points reset annually on January 1st. However, your tier status (and corresponding discount percentage) carries over from the previous year. This means if you achieved a higher tier in 2025, you\'ll maintain that tier\'s benefits in 2026, even as your points start fresh.'
+          question: 'What perks come with membership beyond the discount?',
+          answer: 'Reserve members receive precise 1-hour delivery windows, waived rush fees when timelines shift, and access to our design support team for sourcing and space planning. Founders Circle members also have the opportunity to collaborate on a signature piece—a custom design named after you.'
+        },
+        {
+          question: 'Where can I track my progress?',
+          answer: 'Your Activity page shows your current points total, tier status, and project history—everything you need in one place.'
+        },
+        {
+          question: 'When does my discount apply?',
+          answer: 'Your discount is applied automatically to your invoice for all standard rental fees. It does not apply to extended rental terms, custom fabrication, or procurement projects.'
+        },
+        {
+          question: 'What\'s the welcome gift about?',
+          answer: 'You\'ll receive something good in your mailbox—an actual, physical surprise. Not just another welcome email.'
         }
       ]
     },
     'services-products': {
-      title: 'Mayker Services & Products',
-      intro: 'Details on inventory, styling, custom requests, and how we support your events.',
+      title: 'Mayker Services and Products',
+      intro: '',
       items: [
         {
-          question: 'What types of products does Mayker Reserve offer?',
-          answer: 'Mayker Reserve offers a curated collection of premium furniture, decor, tableware, linens, and specialty items for events and installations. Our inventory includes both vintage and contemporary pieces, carefully selected to elevate any occasion. Browse our full catalog in the Resources section of your portal.'
+          question: 'What does Mayker do?',
+          answer: 'We\'re a design resource company. Since 2013, we\'ve provided furniture rentals, custom fabrication, procurement services, and design guidance to brands and individuals. We started in our hometown of Nashville, expanded throughout the Southeast, and now regularly service clients nationwide. We really enjoy getting to know and partnering with the brands, planners, and designers who know that every detail matters.'
         },
         {
-          question: 'Can I request custom or special-order items?',
-          answer: 'Yes, we welcome custom requests and special orders. Please reach out to your dedicated team member or email events@mayker.com with your specific needs. We\'ll work with you to source or create items that align with your vision, subject to availability and timeline considerations.'
+          question: 'What can I rent?',
+          answer: 'We have six core collections: Bars, Furnishings, Lighting, Upholstery, Seating, and Textiles. We focus on the fundamentals, the statement changers, and lean into quality, design versatility, and lasting impressions.'
         },
         {
-          question: 'How far in advance should I book products?',
-          answer: 'We recommend booking at least 4-6 weeks in advance for standard events, and 8-12 weeks for large-scale installations or custom requests. Popular items and peak season dates (holidays, summer months) may require even more advance notice. Contact your team member to discuss availability and timelines.'
+          question: 'Can you create something custom for me?',
+          answer: 'Absolutely. The most memorable details are always authentic. If you\'re looking for something personalized, our Custom Team concepts and delivers original solutions—custom bars, stage fronts, backdrops, display solutions, signage. We also source hand-selected products, whether you need more of something we carry or something entirely new.'
         },
         {
-          question: 'What is included in product care fees?',
-          answer: 'Product care fees (10% of extended product total) cover handling, cleaning, maintenance, and quality assurance for all rental items. This ensures that every piece you receive is in pristine condition and ready for your event.'
+          question: 'What types of projects does Mayker work on?',
+          answer: 'We work across corporate experiences and activations to social gatherings. Whether it\'s an intimate dinner for twenty or a conference for 2,000, we provide the furniture, fabrication, and flexibility to make it happen seamlessly.'
         },
         {
-          question: 'Do you offer styling or design consultation services?',
-          answer: 'Yes, our team can provide styling guidance and design consultation for your events. We work closely with planners and designers to create cohesive, elevated experiences. Contact your dedicated team member to discuss your vision and how we can support your creative process.'
+          question: 'What\'s the investment for custom services?',
+          answer: 'Custom projects are approached on a case-by-case basis. We have a $2,500 project minimum and provide pricing based on project plan, materials, complexity, and timeline.'
+        },
+        {
+          question: 'How do I get started with a custom project?',
+          answer: 'Submit an inquiry online with as much detail as you have—concept, install date, target budget range. If you have dimensions or inspiration photos, send those as well. The more the merrier really rings true here.'
         }
       ]
     },
     'billing-policies': {
-      title: 'Billing & Policies',
-      intro: 'Clarity around invoices, payments, adjustments, and our rental policies.',
+      title: 'Billing and Policies',
+      intro: '',
       items: [
         {
-          question: 'When will I receive my invoice?',
-          answer: 'Invoices are typically sent within 5-7 business days after your event concludes. The invoice will include all rental products, product care fees, service fees, delivery charges, and applicable taxes. You can view and download invoices from your portal\'s Projects section.'
+          question: 'How do I confirm my reservation?',
+          answer: 'Services are confirmed with a signed service agreement and, at minimum, a 50% deposit. The balance is due 30 days prior to your event. For projects booked within 45 days of your event date, full payment is due at contract signing.'
         },
         {
           question: 'What payment methods do you accept?',
-          answer: 'We accept all major credit cards, ACH transfers, and wire transfers. Payment terms are typically net 30 days from invoice date, unless otherwise arranged. Please contact your team member if you need to discuss alternative payment arrangements.'
+          answer: 'We accept all payment methods. A 3% processing fee applies to credit card transactions.'
         },
         {
-          question: 'How are rental multipliers calculated?',
-          answer: 'Rental multipliers are based on event duration: 1 day = 1x, 2-3 days = 1.5x, 4-7 days = 2x, 8+ days = 2.5x. Custom multipliers may be applied for extended rentals or special circumstances. Your proposal will clearly indicate the multiplier used for each item.'
-        },
-        {
-          question: 'What is your cancellation policy?',
-          answer: 'Cancellations made more than 30 days before the event date receive a full refund minus a 10% processing fee. Cancellations 14-30 days before receive a 50% refund. Cancellations within 14 days are non-refundable. Please contact your team member as soon as possible if you need to modify or cancel your reservation.'
+          question: 'What\'s your cancellation policy?',
+          answer: 'Services are non-cancellable and non-refundable. When we reserve products for your project, we remove them from circulation for other clients. This policy protects the integrity of our inventory and ensures availability for all confirmed events.'
         },
         {
           question: 'What happens if a product is damaged during my event?',
-          answer: 'Normal wear and tear is expected and covered. However, significant damage, loss, or theft of items will result in replacement or repair charges. We\'ll work with you to assess any issues and determine appropriate charges. All items are inspected before and after each event.'
+          answer: 'Normal wear and tear is expected and covered by your Product Care Fee. However, significant damage, loss, or theft will result in replacement or repair charges. We\'ll work with you to assess any issues and determine appropriate charges. All items are inspected before and after each event.'
         },
         {
           question: 'Are there delivery and setup fees?',
-          answer: 'Yes, delivery and setup fees are calculated based on location, event size, and complexity. These fees are separate from product spend and do not count toward your tier points. Your proposal will include a detailed breakdown of all delivery-related charges.'
-        }
-      ]
-    },
-    'support-scheduling': {
-      title: 'Support & Scheduling',
-      intro: 'How to reach our team, request changes, and coordinate timelines.',
-      items: [
-        {
-          question: 'How do I contact my dedicated team member?',
-          answer: 'You can reach your dedicated team member directly via email (listed on the Contact page) or through the "Email [Name]" button on their profile card. For general inquiries, email events@mayker.com or call (615) 970-1244 during business hours (Monday-Friday, 9am-5pm CST).'
+          answer: 'Standard delivery (between 10:00 AM - 10:00 PM) is complimentary in the Nashville area. For events outside Nashville, delivery is based on location, event size, and timing. Your proposal will include a detailed breakdown of all delivery-related charges.'
         },
         {
-          question: 'How do I request changes to an existing proposal?',
-          answer: 'To request changes, simply email your team member or reply to the proposal email thread. Include the proposal number and specific items you\'d like to add, remove, or modify. We\'ll provide an updated proposal within 2-3 business days, depending on the complexity of changes.'
+          question: 'Are there additional fees?',
+          answer: 'We charge additional fees for out-of-hours deliveries or challenging load-in conditions that require extra crew and time. Our goal is to keep fees minimal so your budget goes toward product, not process—while still covering what it actually takes to get the job done right.'
         },
         {
-          question: 'What is the typical response time for inquiries?',
-          answer: 'We aim to respond to all inquiries within 24 hours during business days. For urgent matters (within 48 hours of an event), please call directly or mark your email as urgent. Your dedicated team member will prioritize time-sensitive requests.'
+          question: 'Do I need insurance for my event?',
+          answer: 'We require proof of general liability insurance for all events. Your policy should name Mayker as an additional insured. We can provide the specific certificate language if needed.'
         },
         {
-          question: 'Can I schedule a call to discuss my event?',
-          answer: 'Absolutely. Use the "Schedule a Call" button on any team member\'s profile card, or email your team member with your preferred dates and times. We\'re happy to discuss your vision, answer questions, and help plan your perfect event.'
-        },
-        {
-          question: 'How do I access my proposal details and invoices?',
-          answer: 'All proposals and invoices are available in your client portal. Navigate to the "Projects" section to view active and completed proposals. Click on any proposal to see detailed line items, pricing, and download PDF versions. Invoices are also accessible from completed projects.'
-        },
-        {
-          question: 'What should I do if I have a question about my tier status or points?',
-          answer: 'Your current tier status and points are displayed on the Overview page. If you have questions about calculations or believe there\'s an error, contact your team member or email events@mayker.com. We\'ll review your account and provide clarification within 2-3 business days.'
+          question: 'What if I need to add or remove items close to my event date?',
+          answer: 'We do our best to accommodate changes, but inventory availability becomes limited as your event approaches. Contact us as early as possible, and we\'ll work with you to adjust your order within what\'s feasible.'
         }
       ]
     }
@@ -4576,7 +4534,7 @@ function FAQSection({ brandCharcoal = '#2C2C2C' }) {
               letterSpacing: '-0.02em',
               textShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'
             }}>
-              Guide to Your Mayker Reserve Experience
+              Mayker FAQ
             </div>
             <div style={{
               width: '60px',
@@ -5035,7 +4993,7 @@ function DashboardView({ clientInfo, onLogout }) {
     { key: 'activity', label: 'ACTIVITY', section: 'activity' },
     { key: 'projects', label: 'PROJECTS', section: 'proposals' },
     { key: 'account', label: 'ACCOUNT', section: 'profile' },
-    { key: 'resources', label: 'RESOURCES', section: 'resources' },
+    // { key: 'resources', label: 'RESOURCES', section: 'resources' }, // Temporarily hidden
     { key: 'faq', label: 'FAQ', section: 'faq' },
     { key: 'contact', label: 'CONTACT', section: 'contact' }
   ];
@@ -5174,7 +5132,8 @@ function DashboardView({ clientInfo, onLogout }) {
             />
           )}
           
-          {activeSection === 'resources' && (
+          {/* Resources section temporarily hidden */}
+          {false && activeSection === 'resources' && (
             <ResourcesSection brandCharcoal={brandCharcoal} />
           )}
           
@@ -5344,7 +5303,7 @@ function ProposalDetailView({ proposal, onBack, onLogout }) {
           }
         }
       ` }} />
-
+      
       {/* Navigation bar - hidden when printing */}
       <div className="no-print" style={{ position: 'fixed', top: 0, left: 0, right: 0, backgroundColor: 'white', borderBottom: '1px solid #e5e7eb', zIndex: 1000, padding: '16px 24px' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
@@ -5366,12 +5325,12 @@ function ProposalDetailView({ proposal, onBack, onLogout }) {
               Print / Export as PDF
             </button>
             <button onClick={onLogout} style={{ padding: '8px 20px', backgroundColor: '#f3f4f6', color: brandCharcoal, border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif" }}>
-              Sign Out
-            </button>
+            Sign Out
+          </button>
           </div>
         </div>
       </div>
-
+      
       {/* COVER PAGE */}
       <div style={{ backgroundColor: brandTaupe, minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '60px 48px', pageBreakAfter: 'always' }}>
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '80px' }}>
@@ -5385,8 +5344,8 @@ function ProposalDetailView({ proposal, onBack, onLogout }) {
           </div>
           <img src="/mayker_icon-whisper.svg" alt="Mayker Events" style={{ width: '60px', height: '60px' }} onError={(e) => { e.target.style.display = 'none'; }} />
         </div>
-      </div>
-
+          </div>
+          
       {/* PRODUCT SECTIONS */}
       {sections.map((section, sectionIndex) => (
         <div key={sectionIndex} style={{ minHeight: '100vh', padding: '30px 60px 40px', pageBreakAfter: 'always' }}>
@@ -5417,7 +5376,7 @@ function ProposalDetailView({ proposal, onBack, onLogout }) {
                   ) : (
                     '[Product Image]'
                   )}
-                </div>
+            </div>
                 <h3 style={{ fontSize: '11px', fontWeight: '500', color: brandCharcoal, textTransform: 'uppercase', marginBottom: '4px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif" }}>
                   {product.name}
                 </h3>
@@ -5425,7 +5384,7 @@ function ProposalDetailView({ proposal, onBack, onLogout }) {
                 {product.dimensions && (
                   <p style={{ fontSize: '10px', color: '#666', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif" }}>{product.dimensions}</p>
                 )}
-              </div>
+          </div>
             ))}
           </div>
         </div>
@@ -5444,9 +5403,9 @@ function ProposalDetailView({ proposal, onBack, onLogout }) {
               </div>
               <img src="/mayker_icon-black.svg" alt="M" style={{ height: '38px' }} onError={(e) => { e.target.style.display = 'none'; }} />
             </div>
+            </div>
           </div>
-        </div>
-        
+          
         <h2 style={{ fontSize: '18px', fontWeight: '400', color: brandCharcoal, marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'center', fontFamily: "'Domaine Text', serif" }}>Invoice</h2>
         
         {/* Invoice table */}
