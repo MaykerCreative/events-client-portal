@@ -2429,7 +2429,8 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
         {/* Left: Full-bleed Image */}
         <div style={{
           position: 'relative',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          borderRadius: '20px 0 0 20px'
         }}>
           <img 
             src="/featured-member.jpg" 
@@ -2438,7 +2439,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             style={{
               width: '100%',
               height: '100%',
-              objectFit: 'contain',
+              objectFit: 'cover',
               display: 'block'
             }}
             onError={(e) => {
@@ -2457,7 +2458,8 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '80px 60px'
+          padding: '80px 60px',
+          borderRadius: '0 20px 20px 0'
         }}>
           <div style={{
             width: '58%',
@@ -4719,7 +4721,7 @@ function FAQSection({ brandCharcoal = '#2C2C2C' }) {
                   <div key={itemIndex}>
                     <div
                       style={{
-                        backgroundColor: '#FFFFFF',
+                        backgroundColor: isOpen ? '#BDB6A8' : '#FFFFFF',
                         borderRadius: '8px',
                         border: '1px solid #E4E1D8', // Soft warm-grey border
                         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.03)', // Very subtle shadow
@@ -4727,13 +4729,13 @@ function FAQSection({ brandCharcoal = '#2C2C2C' }) {
                         transition: 'all 0.25s ease'
                       }}
                       onMouseEnter={(e) => {
-                        if (!isOpen) {
-                          e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.02)';
-                        }
+                        e.currentTarget.style.backgroundColor = '#BDB6A8';
                       }}
                       onMouseLeave={(e) => {
                         if (!isOpen) {
                           e.currentTarget.style.backgroundColor = '#FFFFFF';
+                        } else {
+                          e.currentTarget.style.backgroundColor = '#BDB6A8';
                         }
                       }}
                     >
