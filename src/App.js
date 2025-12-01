@@ -406,6 +406,143 @@ function parseDateSafely(dateStr) {
   return new Date(dateStr);
 }
 
+// Shared utility function to get a sortable date from a proposal
+// Returns a Date object that can be used for sorting (most recent first)
+function getSortableDateFromProposal(proposal) {
+  // Priority 1: Use timestamp for historical projects (most reliable)
+  if (proposal.isHistorical && proposal.timestamp) {
+    const ts = new Date(proposal.timestamp);
+    if (!isNaN(ts.getTime())) {
+      return ts;
+    }
+  }
+  
+  // Priority 2: Use startDate if available
+  if (proposal.startDate) {
+    if (proposal.startDate instanceof Date) {
+      if (!isNaN(proposal.startDate.getTime())) {
+        return proposal.startDate;
+      }
+    } else if (typeof proposal.startDate === 'string') {
+      // Try YYYY-MM-DD format first
+      if (/^\d{4}-\d{2}-\d{2}/.test(proposal.startDate.trim())) {
+        const parsed = parseDateSafely(proposal.startDate);
+        if (parsed && !isNaN(parsed.getTime())) {
+          return parsed;
+        }
+      }
+      // Try parsing as-is
+      const parsed = new Date(proposal.startDate);
+      if (!isNaN(parsed.getTime())) {
+        return parsed;
+      }
+    }
+  }
+  
+  // Priority 3: Try to parse eventDate (can be in many formats)
+  if (proposal.eventDate) {
+    if (proposal.eventDate instanceof Date) {
+      if (!isNaN(proposal.eventDate.getTime())) {
+        return proposal.eventDate;
+      }
+    } else if (typeof proposal.eventDate === 'string') {
+      const eventDateStr = proposal.eventDate.trim();
+      
+      // Try parsing as Date object first (handles GMT strings)
+      const dateObj = new Date(eventDateStr);
+      if (!isNaN(dateObj.getTime())) {
+        return dateObj;
+      }
+      
+      // Try parsing formatted strings like "April 5 - 13, 2025" or "April 5, 2025"
+      const monthMap = {
+        'january': 0, 'february': 1, 'march': 2, 'april': 3, 'may': 4, 'june': 5,
+        'july': 6, 'august': 7, 'september': 8, 'october': 9, 'november': 10, 'december': 11
+      };
+      
+      // Pattern 1: "Month Day - Day, Year" or "Month Day-Day, Year" (date range)
+      let match = eventDateStr.match(/(\w+)\s+(\d+)\s*-\s*(\d+),?\s+(\d{4})/i);
+      if (match) {
+        const monthName = match[1].toLowerCase();
+        const month = monthMap[monthName];
+        const day = parseInt(match[2]); // Use first date for sorting
+        const year = parseInt(match[4]);
+        if (month !== undefined && day && year) {
+          const parsed = new Date(year, month, day);
+          if (!isNaN(parsed.getTime())) {
+            return parsed;
+          }
+        }
+      }
+      
+      // Pattern 2: "Month Day, Year" (single date)
+      match = eventDateStr.match(/(\w+)\s+(\d+),?\s+(\d{4})/i);
+      if (match) {
+        const monthName = match[1].toLowerCase();
+        const month = monthMap[monthName];
+        const day = parseInt(match[2]);
+        const year = parseInt(match[3]);
+        if (month !== undefined && day && year) {
+          const parsed = new Date(year, month, day);
+          if (!isNaN(parsed.getTime())) {
+            return parsed;
+          }
+        }
+      }
+      
+      // Pattern 3: MM/DD/YYYY format
+      match = eventDateStr.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+      if (match) {
+        const month = parseInt(match[1]) - 1;
+        const day = parseInt(match[2]);
+        const year = parseInt(match[3]);
+        const parsed = new Date(year, month, day);
+        if (!isNaN(parsed.getTime())) {
+          return parsed;
+        }
+      }
+      
+      // Pattern 4: YYYY-MM-DD format
+      match = eventDateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
+      if (match) {
+        const year = parseInt(match[1]);
+        const month = parseInt(match[2]) - 1;
+        const day = parseInt(match[3]);
+        const parsed = new Date(year, month, day);
+        if (!isNaN(parsed.getTime())) {
+          return parsed;
+        }
+      }
+    }
+  }
+  
+  // Priority 4: Try endDate as last resort
+  if (proposal.endDate) {
+    if (proposal.endDate instanceof Date && !isNaN(proposal.endDate.getTime())) {
+      return proposal.endDate;
+    } else if (typeof proposal.endDate === 'string' && /^\d{4}-\d{2}-\d{2}/.test(proposal.endDate.trim())) {
+      const parsed = parseDateSafely(proposal.endDate);
+      if (parsed && !isNaN(parsed.getTime())) {
+        return parsed;
+      }
+    }
+  }
+  
+  // If we can't parse anything, return a very old date so it sorts to the bottom
+  return new Date(0);
+}
+
+// Sort proposals by date (most recent first)
+function sortProposalsByDate(proposals) {
+  return [...proposals].sort((a, b) => {
+    const dateA = getSortableDateFromProposal(a);
+    const dateB = getSortableDateFromProposal(b);
+    const timeA = dateA.getTime();
+    const timeB = dateB.getTime();
+    return timeB - timeA; // Descending: newest first
+  });
+}
+
 function formatDateRange(proposal) {
   // First priority: Use eventDate if available (it's already formatted from the backend)
   // This works for both historical and regular projects that have eventDate set
