@@ -4429,7 +4429,7 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
     // Create a temporary anchor element to trigger download
     const link = document.createElement('a');
     link.href = product.image;
-    link.download = `${product.name.replace(/\s+/g, '-').toLowerCase()}.png`;
+    link.download = `${product.name} - Mayker Events.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
