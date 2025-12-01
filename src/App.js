@@ -2562,12 +2562,6 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
         <div className="overview-hero__subtitle">
           Welcome to your Mayker Reserve portal. A curated landing spot of your membership, projects, and benefits.
         </div>
-        
-        {/* Signature */}
-        <div>
-          <div className="overview-hero__signature-line">Enjoy,</div>
-          <div className="overview-hero__signature">Megan and the Mayker Team</div>
-        </div>
       </div>
 
       {/* 2. Membership Status + Monthly Perk (Side by Side) */}
@@ -3731,6 +3725,7 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
   
   // Get current year proposals for YTD points
   const currentYear = new Date().getFullYear();
+  // Filter and sort year proposals (most recent first)
   const yearProposals = proposals.filter(p => {
     if (p.status === 'Cancelled') return false;
     
@@ -3757,10 +3752,7 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
     if (!start || isNaN(start.getTime())) return false;
     const proposalYear = start.getFullYear();
     return proposalYear === currentYear;
-  });
-  
-  // Sort by date (most recent first) - create new array to avoid mutation issues
-  const sortedYearProposals = [...yearProposals].sort((a, b) => {
+  }).sort((a, b) => {
     // Use shared utility function for consistent sorting
     const dateA = getSortableDateFromProposal(a);
     const dateB = getSortableDateFromProposal(b);
@@ -3777,9 +3769,6 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
     const projectNumB = parseInt(b.projectNumber) || 0;
     return projectNumB - projectNumA;
   });
-  
-  // Use the sorted array for all calculations and rendering
-  const yearProposals = sortedYearProposals;
   
   // Calculate current year YTD spend from product spend (not invoice total)
   const currentYearSpend = yearProposals.reduce((total, proposal) => {
