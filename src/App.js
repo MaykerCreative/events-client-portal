@@ -4287,7 +4287,7 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
           {/* House Member - Olive */}
           <div style={{ 
             padding: '32px', 
-            backgroundColor: '#fafaf8', 
+            backgroundColor: tier.tier === 'House Member' ? 'rgba(107, 125, 71, 0.05)' : '#fafaf8', 
             borderRadius: '16px', 
             border: tier.tier === 'House Member' ? '1px solid #6b7d47' : '1px solid #e8e8e3',
             transition: 'all 0.3s ease',
@@ -4321,7 +4321,7 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
             <div style={{ 
               fontSize: '36px', 
               fontWeight: '300', 
-              color: tier.tier === 'House Member' ? '#6b7d47' : brandCharcoal,
+              color: brandCharcoal,
               fontFamily: "'Domaine Text', serif",
               letterSpacing: '-0.03em',
               marginBottom: '12px',
@@ -4343,7 +4343,7 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
           {/* Inner Circle - Soft Gold */}
           <div style={{ 
             padding: '32px', 
-            backgroundColor: '#fafaf8', 
+            backgroundColor: tier.tier === 'Inner Circle' ? 'rgba(212, 175, 55, 0.05)' : '#fafaf8', 
             borderRadius: '16px', 
             border: tier.tier === 'Inner Circle' ? '1px solid #d4af37' : '1px solid #e8e8e3',
             transition: 'all 0.3s ease',
@@ -4377,7 +4377,7 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
             <div style={{ 
               fontSize: '36px', 
               fontWeight: '300', 
-              color: tier.tier === 'Inner Circle' ? '#d4af37' : brandCharcoal,
+              color: brandCharcoal,
               fontFamily: "'Domaine Text', serif",
               letterSpacing: '-0.03em',
               marginBottom: '12px',
@@ -4396,15 +4396,15 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
             </div>
           </div>
           
-          {/* Founders Estate - Black */}
+          {/* Founders Estate - Charcoal with Olive accent */}
           <div style={{ 
             padding: '32px', 
-            backgroundColor: '#fafaf8', 
+            backgroundColor: tier.tier === 'Founders Estate' ? 'rgba(107, 125, 71, 0.05)' : '#fafaf8', 
             borderRadius: '16px', 
-            border: tier.tier === 'Founders Estate' ? '1px solid #2C2C2C' : '1px solid #e8e8e3',
+            border: tier.tier === 'Founders Estate' ? '1px solid #6b7d47' : '1px solid #e8e8e3',
             transition: 'all 0.3s ease',
             boxShadow: tier.tier === 'Founders Estate' 
-              ? '0 4px 12px rgba(44, 44, 44, 0.15)' 
+              ? '0 4px 12px rgba(107, 125, 71, 0.15)' 
               : '0 2px 6px rgba(0, 0, 0, 0.04)',
             position: 'relative',
             overflow: 'hidden'
@@ -4416,7 +4416,7 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
                 left: 0,
                 right: 0,
                 height: '3px',
-                backgroundColor: '#2C2C2C'
+                backgroundColor: '#6b7d47'
               }} />
             )}
             <div style={{ 
@@ -4433,7 +4433,7 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
             <div style={{ 
               fontSize: '36px', 
               fontWeight: '300', 
-              color: tier.tier === 'Founders Estate' ? '#2C2C2C' : brandCharcoal,
+              color: brandCharcoal,
               fontFamily: "'Domaine Text', serif",
               letterSpacing: '-0.03em',
               marginBottom: '12px',
@@ -6542,20 +6542,25 @@ function DashboardView({ clientInfo, onLogout }) {
             flex-direction: column !important;
             gap: 32px !important;
             padding: 24px 20px !important;
+            align-items: center !important;
           }
           
           .ytd-stats-card > div {
             flex: 1 1 100% !important;
             text-align: center !important;
+            width: 100% !important;
+            max-width: 100% !important;
           }
           
           .ytd-stats-card > div > div:first-child {
             font-size: 10px !important;
             margin-bottom: 12px !important;
+            text-align: center !important;
           }
           
           .ytd-stats-card > div > div:last-child {
             font-size: 42px !important;
+            text-align: center !important;
           }
           
           /* Tier Benefits - Stack on mobile */
