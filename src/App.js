@@ -2014,35 +2014,65 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
     const proposalYear = start.getFullYear();
     return proposalYear === currentYear;
   }).sort((a, b) => {
-    // Sort by date - most recent first (descending)
-    // Use timestamp for historical, startDate for regular, eventDate as fallback
-    let dateA = null;
-    if (a.isHistorical && a.timestamp) {
-      dateA = new Date(a.timestamp);
-    } else if (a.startDate) {
-      dateA = parseDateSafely(a.startDate);
-    } else if (a.eventDate) {
-      // Try to parse eventDate if it's a date string
-      if (typeof a.eventDate === 'string' && a.eventDate.includes('GMT')) {
-        dateA = new Date(a.eventDate);
-      } else if (a.eventDate instanceof Date) {
-        dateA = a.eventDate;
+    // Helper function to extract a sortable date from various formats
+    const getSortableDate = (proposal) => {
+      // Priority 1: Use timestamp for historical projects
+      if (proposal.isHistorical && proposal.timestamp) {
+        return new Date(proposal.timestamp);
       }
-    }
+      
+      // Priority 2: Use startDate if it's a valid date string (YYYY-MM-DD)
+      if (proposal.startDate) {
+        if (typeof proposal.startDate === 'string' && /^\d{4}-\d{2}-\d{2}/.test(proposal.startDate.trim())) {
+          const parsed = parseDateSafely(proposal.startDate);
+          if (parsed && !isNaN(parsed.getTime())) {
+            return parsed;
+          }
+        } else if (proposal.startDate instanceof Date) {
+          return proposal.startDate;
+        }
+      }
+      
+      // Priority 3: Try to parse eventDate
+      if (proposal.eventDate) {
+        if (proposal.eventDate instanceof Date) {
+          return proposal.eventDate;
+        } else if (typeof proposal.eventDate === 'string') {
+          // Check if it's a GMT date string
+          if (proposal.eventDate.includes('GMT') || proposal.eventDate.match(/^\w{3}\s+\w{3}\s+\d{1,2}\s+\d{4}/)) {
+            const parsed = new Date(proposal.eventDate);
+            if (!isNaN(parsed.getTime())) {
+              return parsed;
+            }
+          } else {
+            // Try to parse formatted date strings like "April 5 - 13, 2025" or "April 5, 2025"
+            // Extract the first date from the string
+            const dateMatch = proposal.eventDate.match(/(\w+)\s+(\d+)(?:\s*-\s*\d+)?,?\s+(\d{4})/);
+            if (dateMatch) {
+              const monthName = dateMatch[1];
+              const day = parseInt(dateMatch[2]);
+              const year = parseInt(dateMatch[3]);
+              const monthMap = {
+                'January': 0, 'February': 1, 'March': 2, 'April': 3, 'May': 4, 'June': 5,
+                'July': 6, 'August': 7, 'September': 8, 'October': 9, 'November': 10, 'December': 11
+              };
+              const month = monthMap[monthName];
+              if (month !== undefined) {
+                const parsed = new Date(year, month, day);
+                if (!isNaN(parsed.getTime())) {
+                  return parsed;
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      return null;
+    };
     
-    let dateB = null;
-    if (b.isHistorical && b.timestamp) {
-      dateB = new Date(b.timestamp);
-    } else if (b.startDate) {
-      dateB = parseDateSafely(b.startDate);
-    } else if (b.eventDate) {
-      // Try to parse eventDate if it's a date string
-      if (typeof b.eventDate === 'string' && b.eventDate.includes('GMT')) {
-        dateB = new Date(b.eventDate);
-      } else if (b.eventDate instanceof Date) {
-        dateB = b.eventDate;
-      }
-    }
+    const dateA = getSortableDate(a);
+    const dateB = getSortableDate(b);
     
     // Most recent first (descending order)
     const timeA = dateA ? dateA.getTime() : 0;
@@ -3523,35 +3553,65 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
     const proposalYear = start.getFullYear();
     return proposalYear === currentYear;
   }).sort((a, b) => {
-    // Sort by date - most recent first (descending)
-    // Use timestamp for historical, startDate for regular, eventDate as fallback
-    let dateA = null;
-    if (a.isHistorical && a.timestamp) {
-      dateA = new Date(a.timestamp);
-    } else if (a.startDate) {
-      dateA = parseDateSafely(a.startDate);
-    } else if (a.eventDate) {
-      // Try to parse eventDate if it's a date string
-      if (typeof a.eventDate === 'string' && a.eventDate.includes('GMT')) {
-        dateA = new Date(a.eventDate);
-      } else if (a.eventDate instanceof Date) {
-        dateA = a.eventDate;
+    // Helper function to extract a sortable date from various formats
+    const getSortableDate = (proposal) => {
+      // Priority 1: Use timestamp for historical projects
+      if (proposal.isHistorical && proposal.timestamp) {
+        return new Date(proposal.timestamp);
       }
-    }
+      
+      // Priority 2: Use startDate if it's a valid date string (YYYY-MM-DD)
+      if (proposal.startDate) {
+        if (typeof proposal.startDate === 'string' && /^\d{4}-\d{2}-\d{2}/.test(proposal.startDate.trim())) {
+          const parsed = parseDateSafely(proposal.startDate);
+          if (parsed && !isNaN(parsed.getTime())) {
+            return parsed;
+          }
+        } else if (proposal.startDate instanceof Date) {
+          return proposal.startDate;
+        }
+      }
+      
+      // Priority 3: Try to parse eventDate
+      if (proposal.eventDate) {
+        if (proposal.eventDate instanceof Date) {
+          return proposal.eventDate;
+        } else if (typeof proposal.eventDate === 'string') {
+          // Check if it's a GMT date string
+          if (proposal.eventDate.includes('GMT') || proposal.eventDate.match(/^\w{3}\s+\w{3}\s+\d{1,2}\s+\d{4}/)) {
+            const parsed = new Date(proposal.eventDate);
+            if (!isNaN(parsed.getTime())) {
+              return parsed;
+            }
+          } else {
+            // Try to parse formatted date strings like "April 5 - 13, 2025" or "April 5, 2025"
+            // Extract the first date from the string
+            const dateMatch = proposal.eventDate.match(/(\w+)\s+(\d+)(?:\s*-\s*\d+)?,?\s+(\d{4})/);
+            if (dateMatch) {
+              const monthName = dateMatch[1];
+              const day = parseInt(dateMatch[2]);
+              const year = parseInt(dateMatch[3]);
+              const monthMap = {
+                'January': 0, 'February': 1, 'March': 2, 'April': 3, 'May': 4, 'June': 5,
+                'July': 6, 'August': 7, 'September': 8, 'October': 9, 'November': 10, 'December': 11
+              };
+              const month = monthMap[monthName];
+              if (month !== undefined) {
+                const parsed = new Date(year, month, day);
+                if (!isNaN(parsed.getTime())) {
+                  return parsed;
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      return null;
+    };
     
-    let dateB = null;
-    if (b.isHistorical && b.timestamp) {
-      dateB = new Date(b.timestamp);
-    } else if (b.startDate) {
-      dateB = parseDateSafely(b.startDate);
-    } else if (b.eventDate) {
-      // Try to parse eventDate if it's a date string
-      if (typeof b.eventDate === 'string' && b.eventDate.includes('GMT')) {
-        dateB = new Date(b.eventDate);
-      } else if (b.eventDate instanceof Date) {
-        dateB = b.eventDate;
-      }
-    }
+    const dateA = getSortableDate(a);
+    const dateB = getSortableDate(b);
     
     // Most recent first (descending order)
     const timeA = dateA ? dateA.getTime() : 0;
@@ -3570,7 +3630,8 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
     try {
       // For historical projects, use historicalDiscount from Column G
       if (proposal.isHistorical) {
-        const histDiscount = proposal.historicalDiscount !== undefined && proposal.historicalDiscount !== null 
+        // Check multiple possible property names for the discount
+        const histDiscount = proposal.historicalDiscount !== undefined && proposal.historicalDiscount !== null && proposal.historicalDiscount !== '' 
           ? parseFloat(proposal.historicalDiscount) 
           : 0;
         if (!isNaN(histDiscount) && histDiscount > 0) {
