@@ -410,11 +410,25 @@ function formatDateRange(proposal) {
   // First priority: Use eventDate if available (it's already formatted from the backend)
   // This works for both historical and regular projects that have eventDate set
   // Check eventDate first - this should be set for all projects (historical and regular)
-  if (proposal.eventDate && typeof proposal.eventDate === 'string' && proposal.eventDate.trim()) {
-    const eventDateStr = proposal.eventDate.trim();
-    // Normalize spacing around hyphens to be consistent (spaces around dash)
-    // This handles both "April 5-13, 2025" and "April 5 - 13, 2025"
-    return eventDateStr.replace(/\s*-\s*/g, ' - ');
+  if (proposal.eventDate) {
+    let eventDateStr = '';
+    
+    // Handle Date objects (shouldn't happen but just in case)
+    if (proposal.eventDate instanceof Date) {
+      eventDateStr = proposal.eventDate.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+    } else if (typeof proposal.eventDate === 'string' && proposal.eventDate.trim()) {
+      eventDateStr = proposal.eventDate.trim();
+    }
+    
+    if (eventDateStr) {
+      // Normalize spacing around hyphens to be consistent (spaces around dash)
+      // This handles both "April 5-13, 2025" and "April 5 - 13, 2025"
+      return eventDateStr.replace(/\s*-\s*/g, ' - ');
+    }
   }
   
   // Second priority: Try to use startDate and endDate if available
@@ -1697,10 +1711,37 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
   
   const currentYear = new Date().getFullYear();
   const yearProposals = proposals.filter(p => {
-    if (!p.startDate || p.status === 'Cancelled') return false;
-    const proposalYear = new Date(p.startDate).getFullYear();
+    if (p.status === 'Cancelled') return false;
+    
+    // For historical projects, check eventDate or use timestamp
+    if (p.isHistorical) {
+      if (p.eventDate) {
+        // Try to extract year from eventDate string (e.g., "April 5, 2025" or "April 5-13, 2025")
+        const yearMatch = p.eventDate.match(/\d{4}/);
+        if (yearMatch) {
+          return parseInt(yearMatch[0]) === currentYear;
+        }
+      }
+      // Fall back to timestamp if available
+      if (p.timestamp) {
+        const proposalYear = new Date(p.timestamp).getFullYear();
+        return proposalYear === currentYear;
+      }
+      return false;
+    }
+    
+    // For regular projects, use startDate
+    if (!p.startDate) return false;
+    const start = parseDateSafely(p.startDate);
+    if (!start || isNaN(start.getTime())) return false;
+    const proposalYear = start.getFullYear();
     return proposalYear === currentYear;
-  }).sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+  }).sort((a, b) => {
+    // Sort by date - use timestamp for historical, startDate for regular
+    const dateA = a.isHistorical && a.timestamp ? new Date(a.timestamp) : (a.startDate ? parseDateSafely(a.startDate) : new Date(0));
+    const dateB = b.isHistorical && b.timestamp ? new Date(b.timestamp) : (b.startDate ? parseDateSafely(b.startDate) : new Date(0));
+    return (dateB || new Date(0)) - (dateA || new Date(0));
+  });
   
   const currentYearSpend = yearProposals.reduce((total, proposal) => {
     return total + calculateProductSpend(proposal);
@@ -1711,8 +1752,28 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
   
   if (currentYear >= 2026) {
     const year2025Proposals = proposals.filter(p => {
-      if (!p.startDate || p.status === 'Cancelled') return false;
-      const proposalYear = new Date(p.startDate).getFullYear();
+      if (p.status === 'Cancelled') return false;
+      
+      // For historical projects, check eventDate or use timestamp
+      if (p.isHistorical) {
+        if (p.eventDate) {
+          const yearMatch = p.eventDate.match(/\d{4}/);
+          if (yearMatch) {
+            return parseInt(yearMatch[0]) === 2025;
+          }
+        }
+        if (p.timestamp) {
+          const proposalYear = new Date(p.timestamp).getFullYear();
+          return proposalYear === 2025;
+        }
+        return false;
+      }
+      
+      // For regular projects, use startDate
+      if (!p.startDate) return false;
+      const start = parseDateSafely(p.startDate);
+      if (!start || isNaN(start.getTime())) return false;
+      const proposalYear = start.getFullYear();
       return proposalYear === 2025;
     });
     
@@ -3034,10 +3095,37 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
   // Get current year proposals for YTD points
   const currentYear = new Date().getFullYear();
   const yearProposals = proposals.filter(p => {
-    if (!p.startDate || p.status === 'Cancelled') return false;
-    const proposalYear = new Date(p.startDate).getFullYear();
+    if (p.status === 'Cancelled') return false;
+    
+    // For historical projects, check eventDate or use timestamp
+    if (p.isHistorical) {
+      if (p.eventDate) {
+        // Try to extract year from eventDate string (e.g., "April 5, 2025" or "April 5-13, 2025")
+        const yearMatch = p.eventDate.match(/\d{4}/);
+        if (yearMatch) {
+          return parseInt(yearMatch[0]) === currentYear;
+        }
+      }
+      // Fall back to timestamp if available
+      if (p.timestamp) {
+        const proposalYear = new Date(p.timestamp).getFullYear();
+        return proposalYear === currentYear;
+      }
+      return false;
+    }
+    
+    // For regular projects, use startDate
+    if (!p.startDate) return false;
+    const start = parseDateSafely(p.startDate);
+    if (!start || isNaN(start.getTime())) return false;
+    const proposalYear = start.getFullYear();
     return proposalYear === currentYear;
-  }).sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+  }).sort((a, b) => {
+    // Sort by date - use timestamp for historical, startDate for regular
+    const dateA = a.isHistorical && a.timestamp ? new Date(a.timestamp) : (a.startDate ? parseDateSafely(a.startDate) : new Date(0));
+    const dateB = b.isHistorical && b.timestamp ? new Date(b.timestamp) : (b.startDate ? parseDateSafely(b.startDate) : new Date(0));
+    return (dateB || new Date(0)) - (dateA || new Date(0));
+  });
   
   // Calculate current year YTD spend from product spend (not invoice total)
   const currentYearSpend = yearProposals.reduce((total, proposal) => {
