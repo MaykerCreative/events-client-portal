@@ -407,27 +407,30 @@ function parseDateSafely(dateStr) {
 }
 
 function formatDateRange(proposal) {
-  // For historical projects, use eventDate if available (single date)
+  // For historical projects, eventDate is already a formatted string, so use it directly
   if (proposal.isHistorical && proposal.eventDate) {
-    const date = parseDateSafely(proposal.eventDate);
-    if (date && !isNaN(date.getTime())) {
-      return date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      });
-    }
-  }
-  
-  // For historical projects without eventDate, try to use startDate as single date
-  if (proposal.isHistorical && proposal.startDate && !proposal.endDate) {
-    const date = parseDateSafely(proposal.startDate);
-    if (date && !isNaN(date.getTime())) {
-      return date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      });
+    // eventDate is already formatted (e.g., "Mar 21-23, 2025"), but we want full month names
+    // Try to parse it, or use it as-is if it's already well-formatted
+    if (typeof proposal.eventDate === 'string' && proposal.eventDate.trim()) {
+      // If it's already a nice format, use it; otherwise try to parse startDate/endDate
+      if (proposal.startDate) {
+        const start = parseDateSafely(proposal.startDate);
+        if (start && !isNaN(start.getTime())) {
+          if (proposal.endDate) {
+            const end = parseDateSafely(proposal.endDate);
+            if (end && !isNaN(end.getTime())) {
+              return formatAllDates(start, end);
+            }
+          }
+          return start.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          });
+        }
+      }
+      // Fallback: use eventDate as-is
+      return proposal.eventDate;
     }
   }
   
@@ -447,36 +450,59 @@ function formatDateRange(proposal) {
     return '';
   }
   
-  // If we have both dates, format as range
+  // If we have both dates, format showing all dates
   if (start && end && !isNaN(start.getTime()) && !isNaN(end.getTime())) {
-    const startMonth = start.toLocaleDateString('en-US', { month: 'long' });
-    const endMonth = end.toLocaleDateString('en-US', { month: 'long' });
-    const startDay = start.getDate();
-    const endDay = end.getDate();
-    const year = start.getFullYear();
-    
-    if (startMonth === endMonth && startDay === endDay) {
-      return `${startMonth} ${startDay}, ${year}`;
-    } else if (startMonth === endMonth) {
-      return `${startMonth} ${startDay} - ${endDay}, ${year}`;
-    } else {
-      return `${startMonth} ${startDay} - ${endMonth} ${endDay}, ${year}`;
-    }
+    return formatAllDates(start, end);
   }
   
-  // Fallback: try eventDate if available
-  if (proposal.eventDate) {
-    const date = parseDateSafely(proposal.eventDate);
-    if (date && !isNaN(date.getTime())) {
-      return date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      });
-    }
+  // Fallback: try eventDate if available (as formatted string)
+  if (proposal.eventDate && typeof proposal.eventDate === 'string') {
+    return proposal.eventDate;
   }
   
   return '';
+}
+
+// Helper function to format all dates in a range (e.g., "March 21, 22, 23, 2025")
+function formatAllDates(start, end) {
+  if (!start || !end || isNaN(start.getTime()) || isNaN(end.getTime())) {
+    return '';
+  }
+  
+  const startMonth = start.toLocaleDateString('en-US', { month: 'long' });
+  const endMonth = end.toLocaleDateString('en-US', { month: 'long' });
+  const startDay = start.getDate();
+  const endDay = end.getDate();
+  const year = start.getFullYear();
+  
+  // Same day
+  if (startMonth === endMonth && startDay === endDay && start.getFullYear() === end.getFullYear()) {
+    return `${startMonth} ${startDay}, ${year}`;
+  }
+  
+  // Same month, different days - show all dates
+  if (startMonth === endMonth && start.getFullYear() === end.getFullYear()) {
+    const days = [];
+    const currentDate = new Date(start);
+    while (currentDate <= end) {
+      days.push(currentDate.getDate());
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return `${startMonth} ${days.join(', ')}, ${year}`;
+  }
+  
+  // Different months - show all dates
+  const dates = [];
+  const currentDate = new Date(start);
+  while (currentDate <= end) {
+    const month = currentDate.toLocaleDateString('en-US', { month: 'long' });
+    const day = currentDate.getDate();
+    const currentYear = currentDate.getFullYear();
+    dates.push(`${month} ${day}`);
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+  const yearStr = start.getFullYear();
+  return `${dates.join(', ')}, ${yearStr}`;
 }
 
 function calculateTotal(proposal) {
@@ -4067,21 +4093,7 @@ function ProposalsSection({ proposals, proposalTab, setProposalTab, setSelectedP
                         fontSize: '14px',
                         color: brandCharcoal
                       }}>
-                        {dateRange || (proposal.eventDate ? (() => {
-                          const date = parseDateSafely(proposal.eventDate);
-                          return date && !isNaN(date.getTime()) ? date.toLocaleDateString('en-US', { 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric' 
-                          }) : 'N/A';
-                        })() : (proposal.startDate ? (() => {
-                          const date = parseDateSafely(proposal.startDate);
-                          return date && !isNaN(date.getTime()) ? date.toLocaleDateString('en-US', { 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric' 
-                          }) : 'N/A';
-                        })() : 'N/A'))}
+                        {dateRange || 'N/A'}
                       </td>
                       <td style={{ 
                         padding: '14px 16px', 
