@@ -410,36 +410,36 @@ function formatDateRange(proposal) {
   // First priority: Use eventDate if available (it's already formatted from the backend)
   // This works for both historical and regular projects that have eventDate set
   if (proposal.eventDate && typeof proposal.eventDate === 'string' && proposal.eventDate.trim()) {
-    // eventDate is already formatted (e.g., "April 5-13, 2025" or "April 5 - 13, 2025")
-    // Check if it looks like a formatted date string (contains month name and year)
-    // If it does, use it directly and normalize spacing around hyphens
     const eventDateStr = proposal.eventDate.trim();
-    // Check if it contains a month name (common months)
-    const hasMonthName = /(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/i.test(eventDateStr);
-    if (hasMonthName) {
-      // It's a formatted date string - normalize spacing around hyphens
-      return eventDateStr.replace(/\s*-\s*/g, ' - ');
-    }
-    // If it doesn't look like a formatted date, it might be a date string we need to parse
-    // Fall through to try parsing startDate/endDate
+    // Normalize spacing around hyphens to be consistent (spaces around dash)
+    // This handles both "April 5-13, 2025" and "April 5 - 13, 2025"
+    return eventDateStr.replace(/\s*-\s*/g, ' - ');
   }
   
   // Second priority: Try to use startDate and endDate if available
-  // Only parse if they exist and are valid date strings
+  // Only parse if they exist and are valid date strings (YYYY-MM-DD format)
   let start = null;
   let end = null;
   
   if (proposal.startDate && typeof proposal.startDate === 'string' && proposal.startDate.trim()) {
-    start = parseDateSafely(proposal.startDate);
-    if (start && isNaN(start.getTime())) {
-      start = null; // Invalid date
+    // Only parse if it looks like a date string (YYYY-MM-DD), not a formatted string
+    const startDateStr = proposal.startDate.trim();
+    if (/^\d{4}-\d{2}-\d{2}/.test(startDateStr)) {
+      start = parseDateSafely(startDateStr);
+      if (start && isNaN(start.getTime())) {
+        start = null; // Invalid date
+      }
     }
   }
   
   if (proposal.endDate && typeof proposal.endDate === 'string' && proposal.endDate.trim()) {
-    end = parseDateSafely(proposal.endDate);
-    if (end && isNaN(end.getTime())) {
-      end = null; // Invalid date
+    // Only parse if it looks like a date string (YYYY-MM-DD), not a formatted string
+    const endDateStr = proposal.endDate.trim();
+    if (/^\d{4}-\d{2}-\d{2}/.test(endDateStr)) {
+      end = parseDateSafely(endDateStr);
+      if (end && isNaN(end.getTime())) {
+        end = null; // Invalid date
+      }
     }
   }
   
@@ -455,11 +455,6 @@ function formatDateRange(proposal) {
   // If we have both dates, format showing all dates
   if (start && end) {
     return formatAllDates(start, end);
-  }
-  
-  // Final fallback: if eventDate exists but didn't match our check, try to use it anyway
-  if (proposal.eventDate && typeof proposal.eventDate === 'string' && proposal.eventDate.trim()) {
-    return proposal.eventDate.trim();
   }
   
   return '';
