@@ -2430,15 +2430,14 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
           minHeight: '500px'
         }}
       >
-        {/* Left: Image - 50% width, no cropping */}
+        {/* Left: Image - 50% width, maintains aspect ratio like Member Perk */}
         <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          position: 'relative',
           overflow: 'hidden',
           borderRadius: '20px 0 0 20px',
           backgroundColor: '#DED6CE',
-          padding: '0'
+          padding: 0,
+          aspectRatio: '4 / 3'
         }}>
           <img 
             src="/featured-member.jpg" 
@@ -2447,9 +2446,10 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             style={{
               width: '100%',
               height: '100%',
-              objectFit: 'contain',
-              objectPosition: 'center',
-              display: 'block'
+              objectFit: 'cover',
+              position: 'absolute',
+              top: 0,
+              left: 0
             }}
             onError={(e) => {
               if (!e.target.src.includes('/assets/')) {
@@ -2565,15 +2565,17 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
           grid-template-columns: 1fr 1fr !important;
         }
         .featured-member-section > div:first-child {
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
+          position: relative !important;
+          overflow: hidden !important;
+          aspect-ratio: 4 / 3 !important;
         }
         .featured-member-section > div:first-child img {
           width: 100% !important;
           height: 100% !important;
-          object-fit: contain !important;
-          object-position: center !important;
+          object-fit: cover !important;
+          position: absolute !important;
+          top: 0 !important;
+          left: 0 !important;
         }
         @media (max-width: 768px) {
           /* Mobile: Stack vertically */
@@ -2583,13 +2585,15 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
           }
           .featured-member-section > div:first-child {
             border-radius: 20px 20px 0 0 !important;
-            min-height: 300px !important;
+            aspect-ratio: 4 / 3 !important;
           }
           .featured-member-section > div:first-child img {
             width: 100% !important;
-            height: auto !important;
-            max-height: 400px !important;
-            object-fit: contain !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
           }
           .featured-member-section > div:last-child {
             border-radius: 0 0 20px 20px !important;
