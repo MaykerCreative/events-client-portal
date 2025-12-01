@@ -6204,8 +6204,17 @@ function DashboardView({ clientInfo, onLogout }) {
           eventDate: p.eventDate,
           startDate: p.startDate,
           timestamp: p.timestamp,
-          isHistorical: p.isHistorical
+          isHistorical: p.isHistorical,
+          historicalDiscount: p.historicalDiscount,
+          hasHistoricalDiscount: 'historicalDiscount' in p
         });
+      });
+      
+      // Debug: Check all historical proposals for historicalDiscount
+      const historicalProposals = rawProposals.filter(p => p.isHistorical);
+      console.log(`Found ${historicalProposals.length} historical proposals`);
+      historicalProposals.forEach((p, i) => {
+        console.log(`Historical ${i + 1}: historicalDiscount=${p.historicalDiscount}, type=${typeof p.historicalDiscount}, hasProperty=${'historicalDiscount' in p}`);
       });
       
       const sortedProposals = sortProposalsByDate(rawProposals);
