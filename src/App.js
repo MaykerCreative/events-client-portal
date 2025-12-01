@@ -3782,10 +3782,19 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
       // For historical projects, use historicalDiscount from Column G
       if (proposal.isHistorical) {
         // Check multiple possible property names for the discount
-        const histDiscount = proposal.historicalDiscount !== undefined && proposal.historicalDiscount !== null && proposal.historicalDiscount !== '' 
-          ? parseFloat(proposal.historicalDiscount) 
-          : 0;
-        if (!isNaN(histDiscount) && histDiscount > 0) {
+        let histDiscount = 0;
+        if (proposal.historicalDiscount !== undefined && proposal.historicalDiscount !== null) {
+          // Handle both string and number values
+          const discountStr = String(proposal.historicalDiscount).trim();
+          if (discountStr !== '' && discountStr !== 'undefined' && discountStr !== 'null') {
+            histDiscount = parseFloat(discountStr);
+            if (isNaN(histDiscount)) {
+              histDiscount = 0;
+            }
+          }
+        }
+        console.log(`[Money Saved] Historical project ${proposal.projectNumber || 'N/A'}: raw historicalDiscount="${proposal.historicalDiscount}" (type: ${typeof proposal.historicalDiscount}), parsed=${histDiscount}`);
+        if (histDiscount > 0) {
           return total + histDiscount;
         }
         // If no historicalDiscount, return total (no discount for this project)
@@ -3795,6 +3804,7 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
       // For regular projects, only calculate discount for confirmed/approved/completed projects
       // (not pending, as those haven't been finalized yet)
       if (proposal.status === 'Pending' || proposal.status === 'Active') {
+        console.log(`[Money Saved] Skipping ${proposal.status} project ${proposal.projectNumber || 'N/A'}`);
         return total; // Don't count pending/active projects
       }
       
@@ -3844,12 +3854,16 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
         ? discountValue 
         : extendedProductTotal * (discountValue / 100);
       
+      console.log(`[Money Saved] Regular project ${proposal.projectNumber || 'N/A'} (${proposal.status}): baseTotal=${baseProductTotal}, extendedTotal=${extendedProductTotal}, discountValue=${discountValue}, discountType=${discountType}, discount=${standardRateDiscount}`);
+      
       return total + standardRateDiscount;
     } catch (e) {
-      console.error('Error calculating discount for proposal:', e);
+      console.error('Error calculating discount for proposal:', e, proposal);
       return total;
     }
   }, 0);
+  
+  console.log(`[Money Saved] Total for ${new Date().getFullYear()}: $${currentYearMoneySaved.toFixed(2)}`);
   
   // For 2026+, calculate 2025 total to determine tier status (carryover)
   // For 2025, use current year spend
