@@ -4895,26 +4895,22 @@ function FAQSection({ brandCharcoal = '#2C2C2C' }) {
                         }}>
                           {item.question}
                         </span>
-                        {/* Thin-line chevron */}
-                        <svg
-                          width="12"
-                          height="8"
-                          viewBox="0 0 12 8"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                          style={{
-                            transition: 'transform 0.2s ease',
-                            transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)'
-                          }}
-                        >
-                          <path
-                            d="M1 1L6 6L11 1"
-                            stroke={isOpen ? maykerOlive : mediumGrey}
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
+                        {/* Plus/Minus symbol */}
+                        <div style={{
+                          fontSize: '20px',
+                          fontWeight: '300',
+                          fontFamily: "'NeueHaasUnica', sans-serif",
+                          color: isOpen ? maykerOlive : mediumGrey,
+                          lineHeight: '1',
+                          width: '20px',
+                          height: '20px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transition: 'color 0.2s ease'
+                        }}>
+                          {isOpen ? '−' : '+'}
+                        </div>
                       </button>
                       <div
                         style={{
