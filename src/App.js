@@ -476,7 +476,8 @@ function formatDateRange(proposal) {
   return '';
 }
 
-// Helper function to format all dates in a range (e.g., "March 21, 22, 23, 2025")
+// Helper function to format date ranges in the correct format
+// Examples: "March 1, 2026" / "March 1-3, 2026" / "March 29 - April 3, 2026"
 function formatAllDates(start, end) {
   if (!start || !end || isNaN(start.getTime()) || isNaN(end.getTime())) {
     return '';
@@ -493,29 +494,13 @@ function formatAllDates(start, end) {
     return `${startMonth} ${startDay}, ${year}`;
   }
   
-  // Same month, different days - show all dates
+  // Same month, different days - format as range
   if (startMonth === endMonth && start.getFullYear() === end.getFullYear()) {
-    const days = [];
-    const currentDate = new Date(start);
-    while (currentDate <= end) {
-      days.push(currentDate.getDate());
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-    return `${startMonth} ${days.join(', ')}, ${year}`;
+    return `${startMonth} ${startDay}-${endDay}, ${year}`;
   }
   
-  // Different months - show all dates
-  const dates = [];
-  const currentDate = new Date(start);
-  while (currentDate <= end) {
-    const month = currentDate.toLocaleDateString('en-US', { month: 'long' });
-    const day = currentDate.getDate();
-    const currentYear = currentDate.getFullYear();
-    dates.push(`${month} ${day}`);
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-  const yearStr = start.getFullYear();
-  return `${dates.join(', ')}, ${yearStr}`;
+  // Different months - format as range with both months
+  return `${startMonth} ${startDay} - ${endMonth} ${endDay}, ${year}`;
 }
 
 function calculateTotal(proposal) {
@@ -3162,7 +3147,12 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
   // Calculate total money saved (discounts) for current year
   const currentYearMoneySaved = yearProposals.reduce((total, proposal) => {
     try {
-      // Use the same logic as calculateDetailedTotals
+      // For historical projects, use historicalDiscount if available (from Column G)
+      if (proposal.isHistorical && proposal.historicalDiscount !== undefined) {
+        return total + (parseFloat(proposal.historicalDiscount) || 0);
+      }
+      
+      // For regular projects, use the same logic as calculateDetailedTotals
       const sections = JSON.parse(proposal.sectionsJSON || '[]');
       
       // Calculate base product total
@@ -3589,7 +3579,7 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
             letterSpacing: '-0.03em',
             lineHeight: '1.1'
           }}>
-            {spendData?.proposalCount || 0}
+            {yearProposals.length}
           </div>
         </div>
         
@@ -3799,6 +3789,43 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
             }}>
               At 100,000 points
             </div>
+            {tier.tier === 'Founders Estate' && (
+              <div style={{
+                marginTop: '24px',
+                paddingTop: '24px',
+                borderTop: '1px solid #e5e7eb'
+              }}>
+                <div style={{
+                  fontSize: '14px',
+                  color: brandCharcoal,
+                  fontFamily: "'NeueHaasUnica', sans-serif",
+                  fontWeight: '400',
+                  lineHeight: '1.6',
+                  marginBottom: '16px'
+                }}>
+                  As a Founders Estate member, you receive 25% off all rental orders.
+                </div>
+                <div style={{
+                  fontSize: '13px',
+                  color: '#8b8b8b',
+                  fontFamily: "'NeueHaasUnica', sans-serif",
+                  fontWeight: '400',
+                  lineHeight: '1.6'
+                }}>
+                  Points YTD: {Math.round(currentYearSpend).toLocaleString()}
+                </div>
+                <div style={{
+                  fontSize: '13px',
+                  color: '#8b8b8b',
+                  fontFamily: "'NeueHaasUnica', sans-serif",
+                  fontWeight: '400',
+                  lineHeight: '1.6',
+                  marginTop: '4px'
+                }}>
+                  Projects YTD: {yearProposals.length}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
