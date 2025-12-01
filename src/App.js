@@ -4439,11 +4439,36 @@ function ContactSection({ brandCharcoal = '#2C2C2C' }) {
 }
 
 function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
-  // TODO: Fetch resources from API
-  const resources = [
-    { name: 'Rental Product Catalog', type: 'PNG', category: 'Products' },
-    // Add more resources as needed
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Product library - images should be in /public/products/ folder
+  // Format: product-name.png (will be converted to "Product Name" for display)
+  const products = [
+    // Example products - replace with actual product list
+    // Images should be uploaded to /public/products/ folder
+    { id: 'accent-chair', name: 'Accent Chair', image: '/products/accent-chair.png' },
+    { id: 'bar-cart', name: 'Bar Cart', image: '/products/bar-cart.png' },
+    { id: 'dining-table', name: 'Dining Table', image: '/products/dining-table.png' },
+    { id: 'lounge-sofa', name: 'Lounge Sofa', image: '/products/lounge-sofa.png' },
+    { id: 'pendant-light', name: 'Pendant Light', image: '/products/pendant-light.png' },
+    { id: 'side-table', name: 'Side Table', image: '/products/side-table.png' },
+    // Add more products as images are uploaded
   ];
+
+  // Filter products based on search query
+  const filteredProducts = products.filter(product =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  ).sort((a, b) => a.name.localeCompare(b.name)); // Alphabetize
+
+  const handleDownload = (product) => {
+    // Create a temporary anchor element to trigger download
+    const link = document.createElement('a');
+    link.href = product.image;
+    link.download = `${product.name.replace(/\s+/g, '-').toLowerCase()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div>
@@ -4458,53 +4483,167 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
         Resources
       </h2>
       
-      <div style={{ marginBottom: '24px' }}>
-        <h3 style={{ fontSize: '18px', fontWeight: '300', color: brandCharcoal, marginBottom: '16px', fontFamily: "'Domaine Text', serif" }}>Downloadable Product Images</h3>
-        <p style={{ fontSize: '14px', color: '#666', marginBottom: '24px' }}>
-          Download PNG images of all rental products for your reference.
+      <div style={{ marginBottom: '32px' }}>
+        <h3 style={{ 
+          fontSize: '18px', 
+          fontWeight: '300', 
+          color: brandCharcoal, 
+          marginBottom: '16px',
+          fontFamily: "'Domaine Text', serif"
+        }}>
+          Product Visual Library
+        </h3>
+        <p style={{ 
+          fontSize: '14px', 
+          color: '#666', 
+          marginBottom: '24px',
+          fontFamily: "'NeueHaasUnica', sans-serif",
+          lineHeight: '1.6'
+        }}>
+          Search and download PNG images of all rental products for your reference.
         </p>
         
-        {resources.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '48px', color: '#999' }}>
-            No resources available at this time.
+        {/* Search Bar */}
+        <div style={{ marginBottom: '32px' }}>
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{
+              width: '100%',
+              maxWidth: '500px',
+              padding: '12px 16px',
+              fontSize: '14px',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              border: '1px solid #e5e7eb',
+              borderRadius: '8px',
+              backgroundColor: '#fff',
+              color: brandCharcoal,
+              outline: 'none',
+              transition: 'border-color 0.2s'
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#6b7d47';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = '#e5e7eb';
+            }}
+          />
+        </div>
+
+        {/* Product Grid */}
+        {filteredProducts.length === 0 ? (
+          <div style={{ 
+            textAlign: 'center', 
+            padding: '48px', 
+            color: '#999',
+            fontFamily: "'NeueHaasUnica', sans-serif",
+            fontSize: '14px'
+          }}>
+            {searchQuery ? `No products found matching "${searchQuery}"` : 'No products available at this time.'}
           </div>
         ) : (
-          <div style={{ display: 'grid', gap: '16px' }}>
-            {resources.map((resource, index) => (
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+            gap: '32px',
+            marginBottom: '48px'
+          }}>
+            {filteredProducts.map((product) => (
               <div
-                key={index}
+                key={product.id}
                 style={{
-                  padding: '20px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  transition: 'transform 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+                onClick={() => handleDownload(product)}
+              >
+                {/* Product Image */}
+                <div style={{
+                  width: '100%',
+                  aspectRatio: '1 / 1',
                   backgroundColor: '#f9fafb',
-                  borderRadius: '8px',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  marginBottom: '12px',
                   border: '1px solid #e5e7eb',
                   display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: '16px', fontWeight: '600', color: brandCharcoal, marginBottom: '4px' }}>
-                    {resource.name}
-                  </div>
-                  <div style={{ fontSize: '14px', color: '#666' }}>
-                    {resource.type} • {resource.category}
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'relative'
+                }}>
+                  <img 
+                    src={product.image}
+                    alt={product.name}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain',
+                      padding: '12px'
+                    }}
+                    onError={(e) => {
+                      // Show placeholder if image doesn't exist
+                      e.target.style.display = 'none';
+                      const placeholder = e.target.parentElement;
+                      placeholder.innerHTML = '<div style="color: #999; font-size: 12px; text-align: center; padding: 20px;">Image not found</div>';
+                    }}
+                  />
+                  {/* Download overlay on hover */}
+                  <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    opacity: 0,
+                    transition: 'opacity 0.2s ease',
+                    borderRadius: '12px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.opacity = 1;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.opacity = 0;
+                  }}
+                  >
+                    <div style={{
+                      color: 'white',
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      fontFamily: "'NeueHaasUnica', sans-serif",
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em'
+                    }}>
+                      Click to Download
+                    </div>
                   </div>
                 </div>
-                <button
-                  style={{
-                    padding: '10px 20px',
-                    backgroundColor: brandCharcoal,
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: '500'
-                  }}
-                >
-                  Download
-                </button>
+                
+                {/* Product Name */}
+                <div style={{
+                  fontSize: '13px',
+                  fontWeight: '400',
+                  color: brandCharcoal,
+                  fontFamily: "'NeueHaasUnica', sans-serif",
+                  textAlign: 'center',
+                  lineHeight: '1.4'
+                }}>
+                  {product.name}
+                </div>
               </div>
             ))}
           </div>
@@ -5179,7 +5318,7 @@ function DashboardView({ clientInfo, onLogout }) {
     { key: 'activity', label: 'ACTIVITY', section: 'activity' },
     { key: 'projects', label: 'PROJECTS', section: 'proposals' },
     { key: 'account', label: 'ACCOUNT', section: 'profile' },
-    // { key: 'resources', label: 'RESOURCES', section: 'resources' }, // Temporarily hidden
+    { key: 'resources', label: 'RESOURCES', section: 'resources' },
     { key: 'faq', label: 'FAQ', section: 'faq' },
     { key: 'contact', label: 'CONTACT', section: 'contact' }
   ];
@@ -5320,8 +5459,7 @@ function DashboardView({ clientInfo, onLogout }) {
             />
           )}
           
-          {/* Resources section temporarily hidden */}
-          {false && activeSection === 'resources' && (
+          {activeSection === 'resources' && (
             <ResourcesSection brandCharcoal={brandCharcoal} />
           )}
           
