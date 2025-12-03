@@ -4759,6 +4759,17 @@ function ProposalsSection({ proposals, proposalTab, setProposalTab, setSelectedP
                   }}>
                     Status
                   </th>
+                  <th style={{ 
+                    padding: '14px 16px', 
+                    textAlign: 'center', 
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    color: brandCharcoal,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em'
+                  }}>
+                    View
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -4843,6 +4854,49 @@ function ProposalsSection({ proposals, proposalTab, setProposalTab, setSelectedP
                         }}>
                           {proposal.status || 'Pending'}
                         </span>
+                      </td>
+                      <td style={{ 
+                        padding: '14px 16px', 
+                        fontSize: '14px',
+                        textAlign: 'center'
+                      }}>
+                        {proposal.projectNumber ? (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const clientUrl = `${CLIENT_PROPOSAL_VIEW_URL}/client/${proposal.projectNumber}${proposal.version ? `/${proposal.version}` : ''}`;
+                              window.open(clientUrl, '_blank');
+                            }}
+                            style={{
+                              padding: '6px 16px',
+                              backgroundColor: '#6b7d47',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '6px',
+                              fontSize: '12px',
+                              fontWeight: '500',
+                              fontFamily: "'NeueHaasUnica', sans-serif",
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.backgroundColor = '#5a6b3a';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.backgroundColor = '#6b7d47';
+                            }}
+                          >
+                            View
+                          </button>
+                        ) : (
+                          <span style={{ 
+                            color: '#999',
+                            fontSize: '12px',
+                            fontFamily: "'NeueHaasUnica', sans-serif"
+                          }}>
+                            N/A
+                          </span>
+                        )}
                       </td>
                     </tr>
                   );
