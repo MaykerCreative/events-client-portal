@@ -3182,7 +3182,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                   {proposal.projectNumber && (
                     <button
                       onClick={() => {
-                        const clientUrl = `${CLIENT_PROPOSAL_VIEW_URL}/client/${proposal.projectNumber}${proposal.version ? `/${proposal.version}` : ''}`;
+                        const clientUrl = `${CLIENT_PROPOSAL_VIEW_URL}/client/${proposal.projectNumber}${proposal.version ? `/${proposal.version}` : ''}?fromClientPortal=true`;
                         window.open(clientUrl, '_blank');
                       }}
                       style={{
@@ -4633,7 +4633,7 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                const clientUrl = `${CLIENT_PROPOSAL_VIEW_URL}/client/${proposal.projectNumber}${proposal.version ? `/${proposal.version}` : ''}`;
+                                const clientUrl = `${CLIENT_PROPOSAL_VIEW_URL}/client/${proposal.projectNumber}${proposal.version ? `/${proposal.version}` : ''}?fromClientPortal=true`;
                                 window.open(clientUrl, '_blank');
                               }}
                               style={{
@@ -5026,7 +5026,7 @@ function ProposalsSection({ proposals, proposalTab, setProposalTab, setSelectedP
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              const clientUrl = `${CLIENT_PROPOSAL_VIEW_URL}/client/${proposal.projectNumber}${proposal.version ? `/${proposal.version}` : ''}`;
+                              const clientUrl = `${CLIENT_PROPOSAL_VIEW_URL}/client/${proposal.projectNumber}${proposal.version ? `/${proposal.version}` : ''}?fromClientPortal=true`;
                               window.open(clientUrl, '_blank');
                             }}
                             style={{
@@ -6452,7 +6452,7 @@ function DashboardView({ clientInfo, onLogout }) {
   
   // If a proposal is selected and has a projectNumber, redirect to client-facing proposal view
   if (selectedProposal && selectedProposal.projectNumber) {
-    const clientUrl = `${CLIENT_PROPOSAL_VIEW_URL}/client/${selectedProposal.projectNumber}${selectedProposal.version ? `/${selectedProposal.version}` : ''}`;
+    const clientUrl = `${CLIENT_PROPOSAL_VIEW_URL}/client/${selectedProposal.projectNumber}${selectedProposal.version ? `/${selectedProposal.version}` : ''}?fromClientPortal=true`;
     window.open(clientUrl, '_blank');
     setSelectedProposal(null); // Clear selection after opening
     return null; // Don't render anything while redirecting
@@ -7228,7 +7228,7 @@ function ProposalDetailView({ proposal, onBack, onLogout }) {
           <div style={{ display: 'flex', gap: '12px' }}>
             {CLIENT_PROPOSAL_VIEW_URL && proposal.projectNumber && (
               <a
-                href={`${CLIENT_PROPOSAL_VIEW_URL}/client/${proposal.projectNumber}${proposal.version ? `/${proposal.version}` : ''}`}
+                href={`${CLIENT_PROPOSAL_VIEW_URL}/client/${proposal.projectNumber}${proposal.version ? `/${proposal.version}` : ''}?fromClientPortal=true`}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ padding: '8px 20px', backgroundColor: '#059669', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif", textDecoration: 'none', display: 'inline-block' }}
