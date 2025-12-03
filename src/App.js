@@ -2988,8 +2988,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                     fontSize: '14px',
                     fontFamily: "'NeueHaasUnica', sans-serif",
                     fontWeight: '500',
-                    transition: 'all 0.2s ease',
-                    cursor: 'pointer'
+                    transition: 'all 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
                     e.target.style.backgroundColor = '#5a6b3a';
@@ -3120,12 +3119,6 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             {activeProposals.map((proposal, index) => (
               <div
                 key={index}
-                onClick={() => {
-                  if (proposal.projectNumber) {
-                    const clientUrl = `${CLIENT_PROPOSAL_VIEW_URL}/client/${proposal.projectNumber}${proposal.version ? `/${proposal.version}` : ''}`;
-                    window.open(clientUrl, '_blank');
-                  }
-                }}
                 style={{
                   backgroundColor: 'white',
                   padding: '20px',
@@ -3134,18 +3127,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  transition: 'all 0.2s ease',
-                  cursor: proposal.projectNumber ? 'pointer' : 'default'
-                }}
-                onMouseEnter={(e) => {
-                  if (proposal.projectNumber) {
-                    e.currentTarget.style.backgroundColor = '#f9fafb';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (proposal.projectNumber) {
-                    e.currentTarget.style.backgroundColor = 'white';
-                  }
+                  transition: 'all 0.2s ease'
                 }}
               >
                 <div style={{ flex: 1 }}>
@@ -3205,17 +3187,183 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
         </div>
       )}
 
-        {/* Responsive Styles for Featured Member Section */}
-        <style dangerouslySetInnerHTML={{ __html: `
+      {/* 8. Featured Member Section - Editorial Block */}
+      <div 
+        className="featured-member-section"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          marginBottom: '48px',
+          borderRadius: '20px',
+          overflow: 'hidden',
+          backgroundColor: '#FAF8F3',
+          alignItems: 'stretch'
+        }}
+      >
+        {/* Left: Image - 50% width, maintains aspect ratio like Member Perk */}
+        <div style={{
+          position: 'relative',
+          overflow: 'hidden',
+          borderRadius: '20px 0 0 20px',
+          backgroundColor: '#DED6CE',
+          padding: 0,
+          aspectRatio: '4 / 3'
+        }}>
+          <img 
+            src="/featured-member.jpg" 
+            alt="Hill & Co. Creative"
+            loading="lazy"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              position: 'absolute',
+              top: 0,
+              left: 0
+            }}
+            onError={(e) => {
+              if (!e.target.src.includes('/assets/')) {
+                e.target.src = '/assets/featured-member.jpg';
+              } else {
+                e.target.style.display = 'none';
+              }
+            }}
+          />
+        </div>
+        
+        {/* Right: Editorial Text Block - 50% width, matches image height */}
+        <div style={{
+          backgroundColor: '#DED6CE',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '80px 60px',
+          borderRadius: '0 20px 20px 0',
+          height: '100%',
+          minHeight: '100%'
+        }}>
+          <div style={{
+            width: '100%',
+            maxWidth: '560px'
+          }}>
+            {/* Label */}
+            <div style={{
+              fontSize: '10px',
+              fontWeight: '500',
+              color: '#6b6b6b',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              marginBottom: '32px',
+              lineHeight: '1.4'
+            }}>
+              FEATURED MEMBER
+            </div>
+            
+            {/* Headline */}
+            <div style={{
+              fontSize: '42px',
+              fontWeight: '300',
+              color: '#1a1a1a',
+              fontFamily: "'Domaine Text', serif",
+              letterSpacing: '-0.02em',
+              lineHeight: '1.2',
+              marginBottom: '12px'
+            }}>
+              Hill and Co.
+            </div>
+            
+            {/* Subheadline */}
+            <div style={{
+              fontSize: '11px',
+              fontWeight: '400',
+              color: '#6b6b6b',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              marginBottom: '40px',
+              lineHeight: '1.5'
+            }}>
+              CHARLESTON, SC
+            </div>
+            
+            {/* Body Copy */}
+            <div style={{
+              fontSize: '14px',
+              fontWeight: '400',
+              color: '#2a2a2a',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              lineHeight: '1.8',
+              letterSpacing: '0.01em',
+              marginBottom: '32px'
+            }}>
+              Hill and Co. brings a quiet confidence to color, pattern, and texture—spaces that feel considered, layered, and beautifully lived in.
+            </div>
+            
+            {/* Link */}
+            <a 
+              href="https://www.hillandcocreative.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontSize: '14px',
+                color: '#6b7d47',
+                fontFamily: "'NeueHaasUnica', sans-serif",
+                textDecoration: 'none',
+                fontWeight: '400',
+                letterSpacing: '0.01em',
+                transition: 'all 0.2s ease',
+                display: 'inline-block'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.textDecoration = 'underline';
+                e.target.style.color = '#5a6b3a';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.textDecoration = 'none';
+                e.target.style.color = '#6b7d47';
+              }}
+            >
+              hillandcocreative.com
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      {/* Responsive Styles for Featured Member Section */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        .featured-member-section {
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+          align-items: stretch !important;
+        }
+        .featured-member-section > div:first-child {
+          position: relative !important;
+          overflow: hidden !important;
+          aspect-ratio: 4 / 3 !important;
+        }
+        .featured-member-section > div:first-child img {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover !important;
+          position: absolute !important;
+          top: 0 !important;
+          left: 0 !important;
+        }
+        .featured-member-section > div:last-child {
+          height: 100% !important;
+          min-height: 100% !important;
+        }
+        @media (max-width: 900px) {
+          /* Tablet and below: Stack vertically for better readability */
           .featured-member-section {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr !important;
-            align-items: stretch !important;
+            grid-template-columns: 1fr !important;
+            grid-template-rows: auto auto !important;
           }
           .featured-member-section > div:first-child {
-            position: relative !important;
-            overflow: hidden !important;
+            border-radius: 20px 20px 0 0 !important;
             aspect-ratio: 4 / 3 !important;
+            width: 100% !important;
           }
           .featured-member-section > div:first-child img {
             width: 100% !important;
@@ -3226,39 +3374,13 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             left: 0 !important;
           }
           .featured-member-section > div:last-child {
-            height: 100% !important;
-            min-height: 100% !important;
+            border-radius: 0 0 20px 20px !important;
+            padding: 64px 40px !important;
+            height: auto !important;
+            min-height: auto !important;
           }
-          @media (max-width: 900px) {
-            /* Tablet and below: Stack vertically for better readability */
-            .featured-member-section {
-              grid-template-columns: 1fr !important;
-              grid-template-rows: auto auto !important;
-            }
-            .featured-member-section > div:first-child {
-              border-radius: 20px 20px 0 0 !important;
-              aspect-ratio: 4 / 3 !important;
-              width: 100% !important;
-            }
-            .featured-member-section > div:first-child img {
-              width: 100% !important;
-              height: 100% !important;
-              object-fit: cover !important;
-              position: absolute !important;
-              top: 0 !important;
-              left: 0 !important;
-            }
-            .featured-member-section > div:last-child {
-              border-radius: 0 0 20px 20px !important;
-              padding: 64px 40px !important;
-              height: auto !important;
-              min-height: auto !important;
-            }
-          }
-        ` }} />
-
-      </div>
-      
+        }
+      ` }} />
 
       {/* 9. Concierge Section - Editorial 3-Column Layout */}
       <div style={{
@@ -4436,26 +4558,9 @@ function PerformanceSection({ spendData, proposals = [], brandCharcoal = '#2C2C2
                     return (
                       <tr 
                         key={index}
-                        onClick={() => {
-                          if (proposal.projectNumber) {
-                            const clientUrl = `${CLIENT_PROPOSAL_VIEW_URL}/client/${proposal.projectNumber}${proposal.version ? `/${proposal.version}` : ''}`;
-                            window.open(clientUrl, '_blank');
-                          }
-                        }}
                         style={{ 
-                          borderBottom: index < yearProposals.length - 1 ? '1px solid #e5e7eb' : 'none',
-                          cursor: proposal.projectNumber ? 'pointer' : 'default'
+                          borderBottom: index < yearProposals.length - 1 ? '1px solid #e5e7eb' : 'none'
                         }}
-                        onMouseEnter={(e) => {
-                          if (proposal.projectNumber) {
-                            e.currentTarget.style.backgroundColor = '#f9fafb';
-                          }
-                        }}
-                        onMouseLeave={(e) => {
-                          if (proposal.projectNumber) {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                          }
-                        }}}
                       >
                         <td style={{ 
                           padding: '14px 16px', 
@@ -4781,26 +4886,9 @@ function ProposalsSection({ proposals, proposalTab, setProposalTab, setSelectedP
                   return (
                     <tr 
                       key={proposal.id || index}
-                      onClick={() => {
-                        if (proposal.projectNumber) {
-                          const clientUrl = `${CLIENT_PROPOSAL_VIEW_URL}/client/${proposal.projectNumber}${proposal.version ? `/${proposal.version}` : ''}`;
-                          window.open(clientUrl, '_blank');
-                        }
-                      }}
                       style={{ 
-                        borderBottom: index < getProposalsForTab().length - 1 ? '1px solid #e5e7eb' : 'none',
-                        cursor: proposal.projectNumber ? 'pointer' : 'default'
+                        borderBottom: index < getProposalsForTab().length - 1 ? '1px solid #e5e7eb' : 'none'
                       }}
-                      onMouseEnter={(e) => {
-                        if (proposal.projectNumber) {
-                          e.currentTarget.style.backgroundColor = '#f9fafb';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (proposal.projectNumber) {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                        }
-                      }}}
                     >
                       <td style={{ 
                         padding: '14px 16px', 
@@ -7287,4 +7375,3 @@ function ProposalDetailView({ proposal, onBack, onLogout }) {
     </div>
   );
 }
-
