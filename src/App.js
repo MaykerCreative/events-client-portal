@@ -3203,40 +3203,17 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             ))}
           </div>
         </div>
-      {/* Responsive Styles for Featured Member Section */}
-      <style dangerouslySetInnerHTML={{ __html: `
-        .featured-member-section {
-          display: grid !important;
-          grid-template-columns: 1fr 1fr !important;
-          align-items: stretch !important;
-        }
-        .featured-member-section > div:first-child {
-          position: relative !important;
-          overflow: hidden !important;
-          aspect-ratio: 4 / 3 !important;
-        }
-        .featured-member-section > div:first-child img {
-          width: 100% !important;
-          height: 100% !important;
-          object-fit: cover !important;
-          position: absolute !important;
-          top: 0 !important;
-          left: 0 !important;
-        }
-        .featured-member-section > div:last-child {
-          height: 100% !important;
-          min-height: 100% !important;
-        }
-        @media (max-width: 900px) {
-          /* Tablet and below: Stack vertically for better readability */
+        {/* Responsive Styles for Featured Member Section */}
+        <style dangerouslySetInnerHTML={{ __html: `
           .featured-member-section {
-            grid-template-columns: 1fr !important;
-            grid-template-rows: auto auto !important;
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            align-items: stretch !important;
           }
           .featured-member-section > div:first-child {
-            border-radius: 20px 20px 0 0 !important;
+            position: relative !important;
+            overflow: hidden !important;
             aspect-ratio: 4 / 3 !important;
-            width: 100% !important;
           }
           .featured-member-section > div:first-child img {
             width: 100% !important;
@@ -3247,13 +3224,37 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             left: 0 !important;
           }
           .featured-member-section > div:last-child {
-            border-radius: 0 0 20px 20px !important;
-            padding: 64px 40px !important;
-            height: auto !important;
-            min-height: auto !important;
+            height: 100% !important;
+            min-height: 100% !important;
           }
-        }
-      ` }} />
+          @media (max-width: 900px) {
+            /* Tablet and below: Stack vertically for better readability */
+            .featured-member-section {
+              grid-template-columns: 1fr !important;
+              grid-template-rows: auto auto !important;
+            }
+            .featured-member-section > div:first-child {
+              border-radius: 20px 20px 0 0 !important;
+              aspect-ratio: 4 / 3 !important;
+              width: 100% !important;
+            }
+            .featured-member-section > div:first-child img {
+              width: 100% !important;
+              height: 100% !important;
+              object-fit: cover !important;
+              position: absolute !important;
+              top: 0 !important;
+              left: 0 !important;
+            }
+            .featured-member-section > div:last-child {
+              border-radius: 0 0 20px 20px !important;
+              padding: 64px 40px !important;
+              height: auto !important;
+              min-height: auto !important;
+            }
+          }
+        ` }} />
+
       </div>
       
 
