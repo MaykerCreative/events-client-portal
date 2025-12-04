@@ -24,9 +24,9 @@ const PROPOSALS_API_URL = 'https://script.google.com/macros/s/AKfycbzB7gHa5o-gBe
 
 // Custom Alert Modal Component
 function AlertModal({ message, onClose, isOpen }) {
-  const brandCharcoal = '#2C2C2C';
-  const brandTaupe = '#545142';
-  const brandCream = '#fafaf8';
+  const brandMahogany = '#3E0D12';
+  const brandSage = '#545142';
+  const brandWheat = '#DABE86';
   
   if (!isOpen) return null;
   
@@ -45,26 +45,37 @@ function AlertModal({ message, onClose, isOpen }) {
       fontFamily: "'Neue Haas Unica', 'Inter', sans-serif"
     }} onClick={onClose}>
       <div style={{
-        backgroundColor: brandCream,
+        backgroundColor: brandWheat,
         borderRadius: '8px',
         padding: '32px',
         maxWidth: '400px',
         width: '90%',
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-        border: `1px solid ${brandTaupe}30`
+        border: `1px solid ${brandSage}30`
       }} onClick={(e) => e.stopPropagation()}>
         <div style={{
-          fontSize: '18px',
-          fontWeight: '500',
-          color: brandCharcoal,
-          marginBottom: '16px',
-          fontFamily: "'Domaine Text', serif"
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: '16px'
         }}>
-          Mayker Events
+          <img 
+            src="/mayker_icon-black.svg" 
+            alt="Mayker Events" 
+            style={{ height: '40px', width: '40px' }}
+            onError={(e) => {
+              if (!e.target.src.includes('/assets/')) {
+                e.target.src = '/assets/mayker_icon-black.svg';
+              } else if (!e.target.src.includes('cdn')) {
+                e.target.src = 'https://cdn.jsdelivr.net/gh/MaykerCreative/mayker-proposals@main/public/mayker_icon-black.svg';
+              } else {
+                e.target.style.display = 'none';
+              }
+            }}
+          />
         </div>
         <div style={{
           fontSize: '15px',
-          color: brandCharcoal,
+          color: brandMahogany,
           marginBottom: '24px',
           lineHeight: '1.5'
         }}>
@@ -74,7 +85,7 @@ function AlertModal({ message, onClose, isOpen }) {
           onClick={onClose}
           style={{
             padding: '10px 24px',
-            backgroundColor: brandCharcoal,
+            backgroundColor: brandMahogany,
             color: 'white',
             border: 'none',
             borderRadius: '4px',
@@ -97,9 +108,9 @@ function AlertModal({ message, onClose, isOpen }) {
 
 // Custom Confirm Modal Component
 function ConfirmModal({ message, onConfirm, onCancel, isOpen }) {
-  const brandCharcoal = '#2C2C2C';
-  const brandTaupe = '#545142';
-  const brandCream = '#fafaf8';
+  const brandMahogany = '#3E0D12';
+  const brandSage = '#545142';
+  const brandWheat = '#DABE86';
   
   if (!isOpen) return null;
   
@@ -118,26 +129,37 @@ function ConfirmModal({ message, onConfirm, onCancel, isOpen }) {
       fontFamily: "'Neue Haas Unica', 'Inter', sans-serif"
     }} onClick={onCancel}>
       <div style={{
-        backgroundColor: brandCream,
+        backgroundColor: brandWheat,
         borderRadius: '8px',
         padding: '32px',
         maxWidth: '400px',
         width: '90%',
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-        border: `1px solid ${brandTaupe}30`
+        border: `1px solid ${brandSage}30`
       }} onClick={(e) => e.stopPropagation()}>
         <div style={{
-          fontSize: '18px',
-          fontWeight: '500',
-          color: brandCharcoal,
-          marginBottom: '16px',
-          fontFamily: "'Domaine Text', serif"
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: '16px'
         }}>
-          Mayker Events
+          <img 
+            src="/mayker_icon-black.svg" 
+            alt="Mayker Events" 
+            style={{ height: '40px', width: '40px' }}
+            onError={(e) => {
+              if (!e.target.src.includes('/assets/')) {
+                e.target.src = '/assets/mayker_icon-black.svg';
+              } else if (!e.target.src.includes('cdn')) {
+                e.target.src = 'https://cdn.jsdelivr.net/gh/MaykerCreative/mayker-proposals@main/public/mayker_icon-black.svg';
+              } else {
+                e.target.style.display = 'none';
+              }
+            }}
+          />
         </div>
         <div style={{
           fontSize: '15px',
-          color: brandCharcoal,
+          color: brandMahogany,
           marginBottom: '24px',
           lineHeight: '1.5'
         }}>
@@ -153,8 +175,8 @@ function ConfirmModal({ message, onConfirm, onCancel, isOpen }) {
             style={{
               padding: '10px 24px',
               backgroundColor: '#f3f4f6',
-              color: brandCharcoal,
-              border: `1px solid ${brandTaupe}30`,
+              color: brandMahogany,
+              border: `1px solid ${brandSage}30`,
               borderRadius: '4px',
               cursor: 'pointer',
               fontSize: '14px',
@@ -171,7 +193,7 @@ function ConfirmModal({ message, onConfirm, onCancel, isOpen }) {
             onClick={onConfirm}
             style={{
               padding: '10px 24px',
-              backgroundColor: brandCharcoal,
+              backgroundColor: brandMahogany,
               color: 'white',
               border: 'none',
               borderRadius: '4px',
@@ -194,9 +216,9 @@ function ConfirmModal({ message, onConfirm, onCancel, isOpen }) {
 
 // Custom Prompt Modal Component
 function PromptModal({ message, placeholder, onConfirm, onCancel, isOpen, defaultValue = '' }) {
-  const brandCharcoal = '#2C2C2C';
-  const brandTaupe = '#545142';
-  const brandCream = '#fafaf8';
+  const brandMahogany = '#3E0D12';
+  const brandSage = '#545142';
+  const brandWheat = '#DABE86';
   const [inputValue, setInputValue] = React.useState(defaultValue);
   
   React.useEffect(() => {
@@ -234,26 +256,37 @@ function PromptModal({ message, placeholder, onConfirm, onCancel, isOpen, defaul
       fontFamily: "'Neue Haas Unica', 'Inter', sans-serif"
     }} onClick={onCancel}>
       <div style={{
-        backgroundColor: brandCream,
+        backgroundColor: brandWheat,
         borderRadius: '8px',
         padding: '32px',
         maxWidth: '400px',
         width: '90%',
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-        border: `1px solid ${brandTaupe}30`
+        border: `1px solid ${brandSage}30`
       }} onClick={(e) => e.stopPropagation()}>
         <div style={{
-          fontSize: '18px',
-          fontWeight: '500',
-          color: brandCharcoal,
-          marginBottom: '16px',
-          fontFamily: "'Domaine Text', serif"
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: '16px'
         }}>
-          Mayker Events
+          <img 
+            src="/mayker_icon-black.svg" 
+            alt="Mayker Events" 
+            style={{ height: '40px', width: '40px' }}
+            onError={(e) => {
+              if (!e.target.src.includes('/assets/')) {
+                e.target.src = '/assets/mayker_icon-black.svg';
+              } else if (!e.target.src.includes('cdn')) {
+                e.target.src = 'https://cdn.jsdelivr.net/gh/MaykerCreative/mayker-proposals@main/public/mayker_icon-black.svg';
+              } else {
+                e.target.style.display = 'none';
+              }
+            }}
+          />
         </div>
         <div style={{
           fontSize: '15px',
-          color: brandCharcoal,
+          color: brandMahogany,
           marginBottom: '16px',
           lineHeight: '1.5'
         }}>
@@ -269,11 +302,11 @@ function PromptModal({ message, placeholder, onConfirm, onCancel, isOpen, defaul
           style={{
             width: '100%',
             padding: '10px',
-            border: `1px solid ${brandTaupe}40`,
+            border: `1px solid ${brandSage}40`,
             borderRadius: '4px',
             fontSize: '14px',
             fontFamily: "'Neue Haas Unica', 'Inter', sans-serif",
-            color: brandCharcoal,
+            color: brandMahogany,
             marginBottom: '24px',
             boxSizing: 'border-box'
           }}
@@ -288,8 +321,8 @@ function PromptModal({ message, placeholder, onConfirm, onCancel, isOpen, defaul
             style={{
               padding: '10px 24px',
               backgroundColor: '#f3f4f6',
-              color: brandCharcoal,
-              border: `1px solid ${brandTaupe}30`,
+              color: brandMahogany,
+              border: `1px solid ${brandSage}30`,
               borderRadius: '4px',
               cursor: 'pointer',
               fontSize: '14px',
@@ -307,7 +340,7 @@ function PromptModal({ message, placeholder, onConfirm, onCancel, isOpen, defaul
             disabled={!inputValue.trim()}
             style={{
               padding: '10px 24px',
-              backgroundColor: inputValue.trim() ? brandCharcoal : '#9ca3af',
+              backgroundColor: inputValue.trim() ? brandMahogany : '#9ca3af',
               color: 'white',
               border: 'none',
               borderRadius: '4px',
@@ -1622,7 +1655,11 @@ function LoginView({ onLogin, showAlert, showPrompt }) {
     }
   };
   
-  const brandCharcoal = '#2C2C2C';
+  const brandMahogany = '#3E0D12';
+  const brandSage = '#545142';
+  const brandWheat = '#DABE86';
+  const brandSlate = '#577591';
+  const brandCharcoal = brandMahogany; // Legacy name
   
   return (
     <div style={{ minHeight: '100vh', display: 'flex' }}>
@@ -6852,9 +6889,13 @@ function DashboardView({ clientInfo, onLogout, showAlert, showConfirm, showPromp
     p.status === 'Cancelled'
   );
   
-  const brandCharcoal = '#2C2C2C';
-  const brandBrown = '#603f27';
-  const brandBlue = '#7693a9';
+  const brandMahogany = '#3E0D12';
+  const brandSage = '#545142';
+  const brandWheat = '#DABE86';
+  const brandSlate = '#577591';
+  const brandCharcoal = brandMahogany; // Legacy name
+  const brandBrown = '#603f27'; // Keep for compatibility
+  const brandBlue = brandSlate; // Use Slate instead
   
   if (loading) {
     return (
@@ -7606,8 +7647,12 @@ function DashboardView({ clientInfo, onLogout, showAlert, showConfirm, showPromp
 function ProposalDetailView({ proposal, onBack, onLogout, showAlert, showConfirm, showPrompt }) {
   const [isChangeRequestMode, setIsChangeRequestMode] = useState(false);
   const [catalog, setCatalog] = useState([]);
-  const brandTaupe = '#545142';
-  const brandCharcoal = '#2C2C2C';
+  const brandMahogany = '#3E0D12';
+  const brandSage = '#545142';
+  const brandWheat = '#DABE86';
+  const brandSlate = '#577591';
+  const brandTaupe = brandSage; // Legacy name
+  const brandCharcoal = brandMahogany; // Legacy name
   
   // Scroll to top when this view mounts
   useEffect(() => {
@@ -8411,11 +8456,16 @@ function ChangeRequestView({ proposal, sections, onCancel, catalog, showAlert, s
   const [productInputValue, setProductInputValue] = useState('');
   const [customSections, setCustomSections] = useState([]); // Track custom sections added
   
-  const brandCharcoal = '#2C2C2C';
-  const brandTaupe = '#545142';
+  const brandMahogany = '#3E0D12'; // Dark text/buttons
+  const brandSage = '#545142'; // Accents/borders
+  const brandWheat = '#DABE86'; // Backgrounds
+  const brandSlate = '#577591'; // Secondary accents
+  // Legacy names for compatibility
+  const brandCharcoal = brandMahogany;
+  const brandTaupe = brandSage;
   const brandBrown = '#603f27';
-  // Use brandTaupe for highlights instead of blue
-  const highlightColor = brandTaupe;
+  // Use brandSage for highlights instead of blue
+  const highlightColor = brandSage;
   
   const [miscNotes, setMiscNotes] = useState('');
   
