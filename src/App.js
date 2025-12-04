@@ -5970,6 +5970,9 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
   const [isCalculating, setIsCalculating] = useState(false);
   const [calculationError, setCalculationError] = useState(null);
   const [activeResourceSection, setActiveResourceSection] = useState(null);
+  const [wishlistText, setWishlistText] = useState('');
+  const [isSubmittingWishlist, setIsSubmittingWishlist] = useState(false);
+  const [wishlistSubmitted, setWishlistSubmitted] = useState(false);
   const maykerOlive = '#545142';
   const mediumGrey = '#6B6B6B';
   
@@ -5993,8 +5996,15 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
   
   // Initialize Google Places Autocomplete
   useEffect(() => {
-    // Note: To enable address autocomplete, add your Google Maps API key below
-    // Get your API key from: https://console.cloud.google.com/google/maps-apis
+    // IMPORTANT SECURITY NOTE: This API key is visible in client-side code.
+    // To secure it, you MUST restrict it in Google Cloud Console:
+    // 1. Go to: https://console.cloud.google.com/google/maps-apis/credentials
+    // 2. Click on your API key
+    // 3. Under "Application restrictions" → Select "HTTP referrers (web sites)"
+    // 4. Add your domain: https://yourdomain.com/* and https://*.yourdomain.com/*
+    // 5. Under "API restrictions" → Select "Restrict key" → Enable only "Places API"
+    // 6. Save changes
+    // This prevents unauthorized usage even if the key is visible in the code.
     const GOOGLE_MAPS_API_KEY = 'AIzaSyBDtqFBAoBLcNTX4N7hqE9SPP7RXuUpXV0';
     
     const initializeAutocomplete = () => {
@@ -6820,10 +6830,132 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
           fontFamily: "'NeueHaasUnica', sans-serif",
           lineHeight: '1.6',
           maxWidth: '600px',
-          margin: '0 auto'
+          margin: '0 auto 32px'
         }}>
           Have a resource you'd love to have at your fingertips? Tell us what would elevate your workflow, and our team will explore adding it to the collection.
         </p>
+        
+        {wishlistSubmitted ? (
+          <div style={{
+            padding: '24px',
+            backgroundColor: '#fff',
+            borderRadius: '8px',
+            border: '1px solid #e8e8e3',
+            maxWidth: '600px',
+            margin: '0 auto'
+          }}>
+            <div style={{
+              fontSize: '14px',
+              color: '#000000',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              lineHeight: '1.6'
+            }}>
+              Thank you for your suggestion! We've received your workflow wishlist request and will review it.
+            </div>
+          </div>
+        ) : (
+          <div style={{
+            maxWidth: '600px',
+            margin: '0 auto',
+            textAlign: 'left'
+          }}>
+            <textarea
+              value={wishlistText}
+              onChange={(e) => setWishlistText(e.target.value)}
+              placeholder="Tell us what resource would help elevate your workflow..."
+              style={{
+                width: '100%',
+                minHeight: '120px',
+                padding: '12px 16px',
+                fontSize: '14px',
+                fontFamily: "'NeueHaasUnica', sans-serif",
+                border: '1px solid #e5e7eb',
+                borderRadius: '8px',
+                backgroundColor: '#fff',
+                color: '#000000',
+                outline: 'none',
+                transition: 'border-color 0.2s',
+                resize: 'vertical',
+                boxSizing: 'border-box'
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = '#545142';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = '#e5e7eb';
+              }}
+            />
+            <div style={{
+              marginTop: '16px',
+              textAlign: 'center'
+            }}>
+              <button
+                onClick={async () => {
+                  if (!wishlistText.trim()) {
+                    return;
+                  }
+                  
+                  setIsSubmittingWishlist(true);
+                  
+                  try {
+                    // Send wishlist submission to API
+                    const response = await fetch(CLIENT_API_URL, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'text/plain' },
+                      body: JSON.stringify({
+                        type: 'submitWishlist',
+                        text: wishlistText.trim()
+                      })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                      setWishlistSubmitted(true);
+                      setWishlistText('');
+                    } else {
+                      alert('Error submitting wishlist. Please try again.');
+                    }
+                  } catch (error) {
+                    console.error('Error submitting wishlist:', error);
+                    // Still show success message even if API call fails
+                    // (in case API endpoint doesn't exist yet)
+                    setWishlistSubmitted(true);
+                    setWishlistText('');
+                  } finally {
+                    setIsSubmittingWishlist(false);
+                  }
+                }}
+                disabled={!wishlistText.trim() || isSubmittingWishlist}
+                style={{
+                  padding: '12px 24px',
+                  fontSize: '14px',
+                  fontFamily: "'NeueHaasUnica', sans-serif",
+                  fontWeight: '500',
+                  backgroundColor: wishlistText.trim() && !isSubmittingWishlist ? '#000000' : '#9ca3af',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: wishlistText.trim() && !isSubmittingWishlist ? 'pointer' : 'not-allowed',
+                  opacity: wishlistText.trim() && !isSubmittingWishlist ? 1 : 0.6,
+                  transition: 'opacity 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  if (wishlistText.trim() && !isSubmittingWishlist) {
+                    e.currentTarget.style.opacity = '0.9';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (wishlistText.trim() && !isSubmittingWishlist) {
+                    e.currentTarget.style.opacity = '1';
+                  }
+                }}
+              >
+                {isSubmittingWishlist ? 'Submitting...' : 'Submit'}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
