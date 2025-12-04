@@ -85,8 +85,8 @@ function AlertModal({ message, onClose, isOpen }) {
           onClick={onClose}
           style={{
             padding: '10px 24px',
-            backgroundColor: '#E5CBA4',
-            color: 'white',
+            backgroundColor: '#F7F6F0',
+            color: '#000000',
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
@@ -193,7 +193,7 @@ function ConfirmModal({ message, onConfirm, onCancel, isOpen }) {
             onClick={onConfirm}
             style={{
               padding: '10px 24px',
-              backgroundColor: '#E5CBA4',
+              backgroundColor: '#F7F6F0',
               color: 'white',
               border: 'none',
               borderRadius: '4px',
@@ -340,8 +340,8 @@ function PromptModal({ message, placeholder, onConfirm, onCancel, isOpen, defaul
             disabled={!inputValue.trim()}
             style={{
               padding: '10px 24px',
-              backgroundColor: inputValue.trim() ? '#E5CBA4' : '#9ca3af',
-              color: 'white',
+              backgroundColor: inputValue.trim() ? '#F7F6F0' : '#9ca3af',
+              color: inputValue.trim() ? '#000000' : 'white',
               border: 'none',
               borderRadius: '4px',
               cursor: inputValue.trim() ? 'pointer' : 'not-allowed',
@@ -1857,7 +1857,7 @@ function LoginView({ onLogin, showAlert, showPrompt }) {
                 style={{
                   flex: 1,
                   padding: '10px 16px',
-                  backgroundColor: '#E5CBA4',
+                  backgroundColor: '#F7F6F0',
                   color: 'white',
                   border: 'none',
                   borderRadius: '6px',
@@ -2577,7 +2577,7 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
               }}
               style={{
                 padding: '14px 28px',
-                backgroundColor: '#E5CBA4',
+                backgroundColor: '#F7F6F0',
                 color: '#fafaf8',
                 border: 'none',
                 borderRadius: '12px',
@@ -2596,7 +2596,7 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
                 e.currentTarget.style.transform = 'translateY(-1px)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#E5CBA4';
+                e.currentTarget.style.backgroundColor = '#F7F6F0';
                 e.currentTarget.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.08)';
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
@@ -2657,7 +2657,7 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
               onClick={handleSave}
               style={{
                 padding: '14px 28px',
-                backgroundColor: '#E5CBA4',
+                backgroundColor: '#F7F6F0',
                 color: '#fafaf8',
                 border: 'none',
                 borderRadius: '12px',
@@ -2676,7 +2676,7 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
                 e.currentTarget.style.transform = 'translateY(-1px)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#E5CBA4';
+                e.currentTarget.style.backgroundColor = '#F7F6F0';
                 e.currentTarget.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.08)';
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
@@ -3174,7 +3174,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               <div style={{
                 width: '60px',
                 height: '1px',
-                backgroundColor: '#E5CBA4',
+                backgroundColor: '#F7F6F0',
                 marginBottom: '20px',
                 opacity: 0.3
               }} />
@@ -3328,7 +3328,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             <div style={{
               width: '60px',
               height: '1px',
-              backgroundColor: '#E5CBA4',
+              backgroundColor: '#F7F6F0',
               marginBottom: '12px',
               opacity: 0.4
             }} />
@@ -3463,7 +3463,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                       }}
                       style={{
                         padding: '6px 16px',
-                        backgroundColor: '#E5CBA4',
+                        backgroundColor: '#F7F6F0',
                         color: 'white',
                         border: 'none',
                         borderRadius: '6px',
@@ -3474,10 +3474,10 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                         transition: 'all 0.2s ease'
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#E5CBA4';
+                        e.currentTarget.style.backgroundColor = '#F7F6F0';
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = '#E5CBA4';
+                        e.currentTarget.style.backgroundColor = '#F7F6F0';
                       }}
                     >
                       View
@@ -3568,7 +3568,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                   style={{
                     display: 'inline-block',
                     padding: '12px 24px',
-                    backgroundColor: '#E5CBA4',
+                    backgroundColor: '#F7F6F0',
                     color: 'white',
                     textDecoration: 'none',
                     borderRadius: '6px',
@@ -3578,10 +3578,10 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                     transition: 'all 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#E5CBA4';
+                    e.target.style.backgroundColor = '#F7F6F0';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = '#E5CBA4';
+                    e.target.style.backgroundColor = '#F7F6F0';
                   }}
                 >
                   View Product
@@ -3664,8 +3664,8 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                       transition: 'all 0.2s ease'
                     }}
                     onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = '#E5CBA4';
-                      e.target.style.color = 'white';
+                      e.target.style.backgroundColor = '#F7F6F0';
+                      e.target.style.color = '#000000';
                     }}
                     onMouseLeave={(e) => {
                       e.target.style.backgroundColor = 'transparent';
@@ -4763,7 +4763,7 @@ function PerformanceSection({ spendData, proposals = [], setSelectedProposal, br
       {/* Tier Benefits */}
       <div>
         <h3 style={{ 
-          fontSize: '18px', 
+          fontSize: '20px', 
           fontWeight: '300', 
           color: '#000000', 
           marginBottom: '24px',
@@ -5106,7 +5106,7 @@ function PerformanceSection({ spendData, proposals = [], setSelectedProposal, br
                               }}
                               style={{
                                 padding: '6px 16px',
-                                backgroundColor: '#E5CBA4',
+                                backgroundColor: '#F7F6F0',
                                 color: 'white',
                                 border: 'none',
                                 borderRadius: '6px',
@@ -5117,10 +5117,10 @@ function PerformanceSection({ spendData, proposals = [], setSelectedProposal, br
                                 transition: 'all 0.2s ease'
                               }}
                               onMouseEnter={(e) => {
-                                e.currentTarget.style.backgroundColor = '#E5CBA4';
+                                e.currentTarget.style.backgroundColor = '#F7F6F0';
                               }}
                               onMouseLeave={(e) => {
-                                e.currentTarget.style.backgroundColor = '#E5CBA4';
+                                e.currentTarget.style.backgroundColor = '#F7F6F0';
                               }}
                             >
                               View
@@ -5499,7 +5499,7 @@ function ProposalsSection({ proposals, proposalTab, setProposalTab, setSelectedP
                             }}
                             style={{
                               padding: '6px 16px',
-                              backgroundColor: '#E5CBA4',
+                              backgroundColor: '#F7F6F0',
                               color: 'white',
                               border: 'none',
                               borderRadius: '6px',
@@ -5510,10 +5510,10 @@ function ProposalsSection({ proposals, proposalTab, setProposalTab, setSelectedP
                               transition: 'all 0.2s ease'
                             }}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = '#E5CBA4';
+                              e.currentTarget.style.backgroundColor = '#F7F6F0';
                             }}
                             onMouseLeave={(e) => {
-                              e.currentTarget.style.backgroundColor = '#E5CBA4';
+                              e.currentTarget.style.backgroundColor = '#F7F6F0';
                             }}
                           >
                             View
@@ -5840,7 +5840,7 @@ function ContactSection({ brandCharcoal = '#2C2C2C' }) {
                       boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#E5CBA4';
+                      e.currentTarget.style.backgroundColor = '#F7F6F0';
                       e.currentTarget.style.color = '#fafaf8';
                       e.currentTarget.style.borderColor = brandCharcoal;
                       e.currentTarget.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.08)';
@@ -6901,7 +6901,7 @@ function DashboardView({ clientInfo, onLogout, showAlert, showConfirm, showPromp
       <div style={{ minHeight: '100vh', backgroundColor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
         <div style={{ backgroundColor: 'white', padding: '32px', borderRadius: '8px', maxWidth: '500px', textAlign: 'center' }}>
           <p style={{ fontSize: '16px', color: '#dc2626', marginBottom: '16px' }}>Error: {error}</p>
-          <button onClick={fetchData} style={{ padding: '10px 20px', backgroundColor: '#E5CBA4', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
+          <button onClick={fetchData} style={{ padding: '10px 20px', backgroundColor: '#F7F6F0', color: '#000000', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
             Retry
           </button>
         </div>
@@ -7261,21 +7261,21 @@ function DashboardView({ clientInfo, onLogout, showAlert, showConfirm, showPromp
               <div style={{
                 width: '24px',
                 height: '2px',
-                backgroundColor: '#E5CBA4',
+                backgroundColor: '#F7F6F0',
                 transition: 'all 0.3s ease',
                 transform: mobileMenuOpen ? 'rotate(45deg) translateY(8px)' : 'none'
               }} />
               <div style={{
                 width: '24px',
                 height: '2px',
-                backgroundColor: '#E5CBA4',
+                backgroundColor: '#F7F6F0',
                 transition: 'all 0.3s ease',
                 opacity: mobileMenuOpen ? 0 : 1
               }} />
               <div style={{
                 width: '24px',
                 height: '2px',
-                backgroundColor: '#E5CBA4',
+                backgroundColor: '#F7F6F0',
                 transition: 'all 0.3s ease',
                 transform: mobileMenuOpen ? 'rotate(-45deg) translateY(-8px)' : 'none'
               }} />
@@ -7898,7 +7898,7 @@ function ProposalDetailView({ proposal, onBack, onLogout, showAlert, showConfirm
             ← Back to Dashboard
           </button>
           <div style={{ display: 'flex', gap: '12px' }}>
-            <button onClick={() => setIsChangeRequestMode(true)} style={{ padding: '8px 20px', backgroundColor: '#E5CBA4', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif" }}>
+            <button onClick={() => setIsChangeRequestMode(true)} style={{ padding: '8px 20px', backgroundColor: '#F7F6F0', color: '#000000', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif" }}>
               Request Changes
             </button>
             <button onClick={async () => {
@@ -7932,10 +7932,10 @@ function ProposalDetailView({ proposal, onBack, onLogout, showAlert, showConfirm
                   await showAlert('Error approving proposal: ' + err.message);
                 }
               }
-            }} style={{ padding: '8px 20px', backgroundColor: '#E5CBA4', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif" }}>
+            }} style={{ padding: '8px 20px', backgroundColor: '#F7F6F0', color: '#000000', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif" }}>
               Approve Proposal
             </button>
-            <button onClick={handlePrintDownload} style={{ padding: '8px 20px', backgroundColor: '#E5CBA4', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif" }}>
+            <button onClick={handlePrintDownload} style={{ padding: '8px 20px', backgroundColor: '#F7F6F0', color: '#000000', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif" }}>
               Print / Export as PDF
             </button>
             <button onClick={onLogout} style={{ padding: '8px 20px', backgroundColor: '#f3f4f6', color: brandCharcoal, border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif" }}>
@@ -8813,7 +8813,7 @@ function ChangeRequestView({ proposal, sections, onCancel, catalog, showAlert, s
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <button
                             onClick={() => handleQuantityChange(sectionIdx, productIdx, Math.max(0, currentQuantity - 1))}
-                            style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#E5CBA4', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '20px', color: 'white', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif", fontWeight: '500', transition: 'opacity 0.2s' }}
+                            style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#F7F6F0', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '20px', color: '#000000', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif", fontWeight: '500', transition: 'opacity 0.2s' }}
                             onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
                             onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                           >
@@ -8828,7 +8828,7 @@ function ChangeRequestView({ proposal, sections, onCancel, catalog, showAlert, s
                           />
                           <button
                             onClick={() => handleQuantityChange(sectionIdx, productIdx, currentQuantity + 1)}
-                            style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#E5CBA4', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '20px', color: 'white', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif", fontWeight: '500', transition: 'opacity 0.2s' }}
+                            style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#F7F6F0', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '20px', color: '#000000', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif", fontWeight: '500', transition: 'opacity 0.2s' }}
                             onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
                             onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                           >
@@ -8852,7 +8852,7 @@ function ChangeRequestView({ proposal, sections, onCancel, catalog, showAlert, s
               {!showAddProduct && (
                 <button
                   onClick={() => setShowAddProduct(true)}
-                  style={{ padding: '10px 20px', backgroundColor: '#E5CBA4', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif", fontWeight: '500', transition: 'opacity 0.2s' }}
+                  style={{ padding: '10px 20px', backgroundColor: '#F7F6F0', color: '#000000', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif", fontWeight: '500', transition: 'opacity 0.2s' }}
                   onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
                   onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                 >
@@ -9010,7 +9010,7 @@ function ChangeRequestView({ proposal, sections, onCancel, catalog, showAlert, s
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button
                     onClick={handleAddNewProduct}
-                    style={{ padding: '10px 20px', backgroundColor: '#E5CBA4', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif", fontWeight: '500', transition: 'opacity 0.2s' }}
+                    style={{ padding: '10px 20px', backgroundColor: '#F7F6F0', color: '#000000', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif", fontWeight: '500', transition: 'opacity 0.2s' }}
                     onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
                     onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                   >
@@ -9049,7 +9049,7 @@ function ChangeRequestView({ proposal, sections, onCancel, catalog, showAlert, s
                     </div>
                     <button
                       onClick={() => handleRemoveNewProduct(idx)}
-                      style={{ padding: '8px 16px', backgroundColor: '#E5CBA4', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif", fontWeight: '500', transition: 'opacity 0.2s' }}
+                      style={{ padding: '8px 16px', backgroundColor: '#F7F6F0', color: '#000000', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif", fontWeight: '500', transition: 'opacity 0.2s' }}
                       onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
                       onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                     >
@@ -9089,7 +9089,7 @@ function ChangeRequestView({ proposal, sections, onCancel, catalog, showAlert, s
             <button
               onClick={handleSubmit}
               disabled={submitting || !hasChanges}
-              style={{ padding: '12px 24px', backgroundColor: hasChanges && !submitting ? '#E5CBA4' : '#9ca3af', color: 'white', border: 'none', borderRadius: '4px', cursor: (submitting || !hasChanges) ? 'not-allowed' : 'pointer', fontSize: '14px', fontWeight: '500', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif", transition: 'opacity 0.2s' }}
+              style={{ padding: '12px 24px', backgroundColor: hasChanges && !submitting ? '#F7F6F0' : '#9ca3af', color: hasChanges && !submitting ? '#000000' : 'white', border: 'none', borderRadius: '4px', cursor: (submitting || !hasChanges) ? 'not-allowed' : 'pointer', fontSize: '14px', fontWeight: '500', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif", transition: 'opacity 0.2s' }}
               onMouseEnter={(e) => !submitting && hasChanges && (e.currentTarget.style.opacity = '0.8')}
               onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
             >
