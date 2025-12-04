@@ -192,6 +192,142 @@ function ConfirmModal({ message, onConfirm, onCancel, isOpen }) {
   );
 }
 
+// Custom Prompt Modal Component
+function PromptModal({ message, placeholder, onConfirm, onCancel, isOpen, defaultValue = '' }) {
+  const brandCharcoal = '#2C2C2C';
+  const brandTaupe = '#545142';
+  const brandCream = '#fafaf8';
+  const [inputValue, setInputValue] = React.useState(defaultValue);
+  
+  React.useEffect(() => {
+    if (isOpen) {
+      setInputValue(defaultValue);
+    }
+  }, [isOpen, defaultValue]);
+  
+  if (!isOpen) return null;
+  
+  const handleConfirm = () => {
+    if (inputValue.trim()) {
+      onConfirm(inputValue.trim());
+    }
+  };
+  
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleConfirm();
+    }
+  };
+  
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 10000,
+      fontFamily: "'Neue Haas Unica', 'Inter', sans-serif"
+    }} onClick={onCancel}>
+      <div style={{
+        backgroundColor: brandCream,
+        borderRadius: '8px',
+        padding: '32px',
+        maxWidth: '400px',
+        width: '90%',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+        border: `1px solid ${brandTaupe}30`
+      }} onClick={(e) => e.stopPropagation()}>
+        <div style={{
+          fontSize: '18px',
+          fontWeight: '500',
+          color: brandCharcoal,
+          marginBottom: '16px',
+          fontFamily: "'Domaine Text', serif"
+        }}>
+          Mayker Events
+        </div>
+        <div style={{
+          fontSize: '15px',
+          color: brandCharcoal,
+          marginBottom: '16px',
+          lineHeight: '1.5'
+        }}>
+          {message}
+        </div>
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyPress={handleKeyPress}
+          placeholder={placeholder}
+          autoFocus
+          style={{
+            width: '100%',
+            padding: '10px',
+            border: `1px solid ${brandTaupe}40`,
+            borderRadius: '4px',
+            fontSize: '14px',
+            fontFamily: "'Neue Haas Unica', 'Inter', sans-serif",
+            color: brandCharcoal,
+            marginBottom: '24px',
+            boxSizing: 'border-box'
+          }}
+        />
+        <div style={{
+          display: 'flex',
+          gap: '12px',
+          justifyContent: 'flex-end'
+        }}>
+          <button
+            onClick={onCancel}
+            style={{
+              padding: '10px 24px',
+              backgroundColor: '#f3f4f6',
+              color: brandCharcoal,
+              border: `1px solid ${brandTaupe}30`,
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500',
+              fontFamily: "'Neue Haas Unica', 'Inter', sans-serif",
+              transition: 'opacity 0.2s'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleConfirm}
+            disabled={!inputValue.trim()}
+            style={{
+              padding: '10px 24px',
+              backgroundColor: inputValue.trim() ? brandCharcoal : '#9ca3af',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: inputValue.trim() ? 'pointer' : 'not-allowed',
+              fontSize: '14px',
+              fontWeight: '500',
+              fontFamily: "'Neue Haas Unica', 'Inter', sans-serif",
+              transition: 'opacity 0.2s'
+            }}
+            onMouseEnter={(e) => inputValue.trim() && (e.currentTarget.style.opacity = '0.8')}
+            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+          >
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ============================================
 // AUTHENTICATION SERVICE
 // ============================================
@@ -1244,6 +1380,7 @@ export default function App() {
   const [clientInfo, setClientInfo] = useState(null);
   const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, message: '', onConfirm: null });
+  const [promptModal, setPromptModal] = useState({ isOpen: false, message: '', placeholder: '', onConfirm: null, defaultValue: '' });
   
   // Helper function to show alert
   const showAlert = (message) => {
@@ -1268,6 +1405,26 @@ export default function App() {
         onCancel: () => {
           setConfirmModal({ isOpen: false, message: '', onConfirm: null });
           resolve(false);
+        }
+      });
+    });
+  };
+  
+  // Helper function to show prompt
+  const showPrompt = (message, placeholder = '', defaultValue = '') => {
+    return new Promise((resolve) => {
+      setPromptModal({ 
+        isOpen: true, 
+        message, 
+        placeholder,
+        defaultValue,
+        onConfirm: (value) => {
+          setPromptModal({ isOpen: false, message: '', placeholder: '', onConfirm: null, defaultValue: '' });
+          resolve(value);
+        },
+        onCancel: () => {
+          setPromptModal({ isOpen: false, message: '', placeholder: '', onConfirm: null, defaultValue: '' });
+          resolve(null);
         }
       });
     });
@@ -1382,7 +1539,7 @@ export default function App() {
   if (!isAuthenticated) {
     return (
       <>
-        <LoginView onLogin={handleLogin} showAlert={showAlert} />
+        <LoginView onLogin={handleLogin} showAlert={showAlert} showPrompt={showPrompt} />
         <AlertModal 
           isOpen={alertModal.isOpen} 
           message={alertModal.message} 
@@ -1394,13 +1551,21 @@ export default function App() {
           onConfirm={confirmModal.onConfirm} 
           onCancel={confirmModal.onCancel} 
         />
+        <PromptModal 
+          isOpen={promptModal.isOpen} 
+          message={promptModal.message} 
+          placeholder={promptModal.placeholder}
+          defaultValue={promptModal.defaultValue}
+          onConfirm={promptModal.onConfirm} 
+          onCancel={promptModal.onCancel} 
+        />
       </>
     );
   }
   
   return (
     <>
-      <DashboardView clientInfo={clientInfo} onLogout={handleLogout} showAlert={showAlert} showConfirm={showConfirm} />
+      <DashboardView clientInfo={clientInfo} onLogout={handleLogout} showAlert={showAlert} showConfirm={showConfirm} showPrompt={showPrompt} />
       <AlertModal 
         isOpen={alertModal.isOpen} 
         message={alertModal.message} 
@@ -1412,6 +1577,14 @@ export default function App() {
         onConfirm={confirmModal.onConfirm} 
         onCancel={confirmModal.onCancel} 
       />
+      <PromptModal 
+        isOpen={promptModal.isOpen} 
+        message={promptModal.message} 
+        placeholder={promptModal.placeholder}
+        defaultValue={promptModal.defaultValue}
+        onConfirm={promptModal.onConfirm} 
+        onCancel={promptModal.onCancel} 
+      />
     </>
   );
 }
@@ -1420,7 +1593,7 @@ export default function App() {
 // LOGIN VIEW
 // ============================================
 
-function LoginView({ onLogin, showAlert }) {
+function LoginView({ onLogin, showAlert, showPrompt }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -2315,13 +2488,13 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
             
             {/* Password Reset Button */}
             <button
-              onClick={() => {
-                const newPassword = prompt('Enter your new password (minimum 8 characters):');
+              onClick={async () => {
+                const newPassword = await showPrompt('Enter your new password (minimum 8 characters):', 'Password');
                 if (newPassword && newPassword.length >= 8) {
                   // TODO: Implement password reset API call
-                  showAlert('Password reset requested. Please contact support to complete the password change.');
+                  await showAlert('Password reset requested. Please contact support to complete the password change.');
                 } else if (newPassword) {
-                  showAlert('Password must be at least 8 characters long.');
+                  await showAlert('Password must be at least 8 characters long.');
                 }
               }}
               style={{
@@ -6465,7 +6638,7 @@ function FAQSection({ brandCharcoal = '#2C2C2C' }) {
 // DASHBOARD VIEW
 // ============================================
 
-function DashboardView({ clientInfo, onLogout, showAlert, showConfirm }) {
+function DashboardView({ clientInfo, onLogout, showAlert, showConfirm, showPrompt }) {
   const [proposals, setProposals] = useState([]);
   const [spendData, setSpendData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -6713,6 +6886,7 @@ function DashboardView({ clientInfo, onLogout, showAlert, showConfirm }) {
         onLogout={onLogout}
         showAlert={showAlert}
         showConfirm={showConfirm}
+        showPrompt={showPrompt}
       />
     );
   }
@@ -7426,7 +7600,7 @@ function DashboardView({ clientInfo, onLogout, showAlert, showConfirm }) {
 // PROPOSAL DETAIL VIEW
 // ============================================
 
-function ProposalDetailView({ proposal, onBack, onLogout, showAlert, showConfirm }) {
+function ProposalDetailView({ proposal, onBack, onLogout, showAlert, showConfirm, showPrompt }) {
   const [isChangeRequestMode, setIsChangeRequestMode] = useState(false);
   const [catalog, setCatalog] = useState([]);
   const brandTaupe = '#545142';
@@ -7615,6 +7789,7 @@ function ProposalDetailView({ proposal, onBack, onLogout, showAlert, showConfirm
         catalog={catalog}
         showAlert={showAlert}
         showConfirm={showConfirm}
+        showPrompt={showPrompt}
       />
     );
   }
@@ -7667,8 +7842,17 @@ function ProposalDetailView({ proposal, onBack, onLogout, showAlert, showConfirm
             ← Back to Dashboard
           </button>
           <div style={{ display: 'flex', gap: '12px' }}>
-            <button onClick={() => setIsChangeRequestMode(true)} style={{ padding: '8px 20px', backgroundColor: '#2563eb', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif" }}>
+            <button onClick={() => setIsChangeRequestMode(true)} style={{ padding: '8px 20px', backgroundColor: brandTaupe, color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif" }}>
               Request Changes
+            </button>
+            <button onClick={async () => {
+              const confirmed = await showConfirm('Are you sure you want to approve this proposal?');
+              if (confirmed) {
+                // TODO: Implement approve proposal API call
+                await showAlert('Proposal approval functionality coming soon.');
+              }
+            }} style={{ padding: '8px 20px', backgroundColor: '#059669', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif" }}>
+              Approve Proposal
             </button>
             <button onClick={handlePrintDownload} style={{ padding: '8px 20px', backgroundColor: brandCharcoal, color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif" }}>
               Print / Export as PDF
@@ -8173,7 +8357,7 @@ function ProposalDetailView({ proposal, onBack, onLogout, showAlert, showConfirm
 // CHANGE REQUEST VIEW
 // ============================================
 
-function ChangeRequestView({ proposal, sections, onCancel, catalog, showAlert, showConfirm }) {
+function ChangeRequestView({ proposal, sections, onCancel, catalog, showAlert, showConfirm, showPrompt }) {
   // Helper function to convert time string (e.g., "11:00 AM") to HH:MM format for time input
   const convertTimeToInputFormat = (timeStr) => {
     if (!timeStr || !timeStr.trim()) return '';
@@ -8602,15 +8786,16 @@ function ChangeRequestView({ proposal, sections, onCancel, catalog, showAlert, s
                       onChange={(e) => {
                         const value = e.target.value;
                         if (value === '__ADD_NEW__') {
-                          const newSectionName = window.prompt('Enter the name for the new section:');
-                          if (newSectionName && newSectionName.trim()) {
-                            const trimmedName = newSectionName.trim();
-                            // Add to custom sections if not already there
-                            if (!customSections.includes(trimmedName)) {
-                              setCustomSections([...customSections, trimmedName]);
+                          showPrompt('Enter the name for the new section:', 'Section name').then((newSectionName) => {
+                            if (newSectionName && newSectionName.trim()) {
+                              const trimmedName = newSectionName.trim();
+                              // Add to custom sections if not already there
+                              if (!customSections.includes(trimmedName)) {
+                                setCustomSections([...customSections, trimmedName]);
+                              }
+                              setNewProduct({ ...newProduct, section: trimmedName });
                             }
-                            setNewProduct({ ...newProduct, section: trimmedName });
-                          }
+                          });
                         } else {
                           setNewProduct({ ...newProduct, section: value });
                         }
