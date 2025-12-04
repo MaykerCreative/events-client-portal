@@ -7419,7 +7419,8 @@ function DashboardView({ clientInfo, onLogout, showAlert, showConfirm, showPromp
         maxWidth: '1400px', 
         margin: '0 auto', 
         width: '100%', 
-        padding: '24px 16px'
+        padding: '24px 16px',
+        paddingBottom: '200px'
       }} className="main-content">
         {/* Content Area */}
         <div style={{ 
@@ -7488,65 +7489,79 @@ function DashboardView({ clientInfo, onLogout, showAlert, showConfirm, showPromp
         </div>
 
         {/* Navigation - Elevated Soho House Style (Desktop Only) */}
-        <div style={{ 
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: '2px',
-          marginTop: '64px',
-          padding: '8px',
-          backgroundColor: '#f5f5f0',
-          borderRadius: '12px',
-          maxWidth: '900px',
+        <div style={{
+          position: 'fixed',
+          bottom: '120px',
+          left: 0,
+          right: 0,
+          backgroundColor: 'white',
+          borderTop: '1px solid #e5e7eb',
+          borderBottom: '1px solid #e5e7eb',
+          padding: '0 32px',
+          zIndex: 999,
+          maxWidth: '1400px',
           marginLeft: 'auto',
-          marginRight: 'auto',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
+          marginRight: 'auto'
         }} className="bottom-nav">
-          {navigationSections.map((nav, index) => {
-            const isActive = getCurrentNavKey() === nav.key;
-            return (
-              <button
-                key={nav.key}
-                onClick={() => handleNavClick(nav.section)}
-                style={{
-                  padding: '14px 28px',
-                  backgroundColor: isActive ? '#E5CBA4' : 'transparent',
-                  color: isActive ? 'white' : '#8b8b8b',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontSize: '12px',
-                  fontWeight: isActive ? '500' : '400',
-                  fontFamily: "'NeueHaasUnica', sans-serif",
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.1em',
-                  transition: 'all 0.3s ease',
-                  position: 'relative',
-                  whiteSpace: 'nowrap'
-                }}
-                onMouseEnter={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.color = brandCharcoal;
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.color = '#8b8b8b';
-                  }
-                }}
-              >
-                {nav.label}
-              </button>
-            );
-          })}
+          <div style={{ 
+            maxWidth: '1400px', 
+            margin: '0 auto', 
+            display: 'flex', 
+            justifyContent: 'center',
+            gap: '8px',
+            overflowX: 'auto',
+            WebkitOverflowScrolling: 'touch'
+          }}>
+            {navigationSections.map((nav) => {
+              const isActive = getCurrentNavKey() === nav.key;
+              return (
+                <button
+                  key={nav.key}
+                  onClick={() => handleNavClick(nav.section)}
+                  style={{
+                    padding: '16px 24px',
+                    background: 'none',
+                    border: 'none',
+                    borderBottom: isActive ? `2px solid ${brandCharcoal}` : '2px solid transparent',
+                    fontSize: '12px',
+                    fontWeight: '500',
+                    color: isActive ? brandCharcoal : '#666',
+                    fontFamily: "'NeueHaasUnica', sans-serif",
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    transition: 'all 0.2s ease',
+                    minHeight: '44px'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.color = brandCharcoal;
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.color = '#666';
+                    }
+                  }}
+                >
+                  {nav.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
       {/* Footer */}
       <div style={{ 
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
         backgroundColor: '#000000',
         padding: '32px',
-        marginTop: 'auto'
+        zIndex: 998
       }}>
         <div style={{ 
           maxWidth: '1400px', 
