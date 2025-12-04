@@ -5969,6 +5969,83 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
   const [rentalMinimum, setRentalMinimum] = useState(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [calculationError, setCalculationError] = useState(null);
+  const [activeResourceSection, setActiveResourceSection] = useState(null);
+  const maykerOlive = '#545142';
+  const mediumGrey = '#6B6B6B';
+  
+  const scrollToResourceSection = (sectionId) => {
+    setActiveResourceSection(sectionId);
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.history.pushState(null, '', `#${sectionId}`);
+    }
+  };
+  
+  // Initialize from URL hash
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash === 'rental-calculator' || hash === 'product-library') {
+      setActiveResourceSection(hash);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  
+  // Initialize Google Places Autocomplete
+  useEffect(() => {
+    // Note: To enable address autocomplete, add your Google Maps API key below
+    // Get your API key from: https://console.cloud.google.com/google/maps-apis
+    const GOOGLE_MAPS_API_KEY = ''; // Add your API key here
+    
+    if (GOOGLE_MAPS_API_KEY) {
+      // Load Google Places API script if not already loaded
+      if (!window.google || !window.google.maps || !window.google.maps.places) {
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+        
+        script.onload = () => {
+          initializeAutocomplete();
+        };
+        
+        script.onerror = () => {
+          console.warn('Google Places API failed to load. Address autocomplete disabled.');
+        };
+      } else {
+        initializeAutocomplete();
+      }
+    } else {
+      console.info('Google Maps API key not configured. Address autocomplete disabled. Users can still manually enter addresses.');
+    }
+    
+    return () => {
+      // Cleanup if needed
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  
+  const initializeAutocomplete = () => {
+    const input = document.getElementById('rental-address-input');
+    if (input && window.google && window.google.maps && window.google.maps.places) {
+      try {
+        const autocomplete = new window.google.maps.places.Autocomplete(input, {
+          types: ['address'],
+          componentRestrictions: { country: 'us' }
+        });
+        
+        autocomplete.addListener('place_changed', () => {
+          const place = autocomplete.getPlace();
+          if (place.formatted_address) {
+            setRentalAddress(place.formatted_address);
+          }
+        });
+      } catch (error) {
+        console.warn('Failed to initialize Google Places Autocomplete:', error);
+      }
+    }
+  };
   
   // Warehouse address
   const WAREHOUSE_ADDRESS = '258 Mason Road, La Vergne, TN 37086';
@@ -6231,18 +6308,111 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
             lineHeight: '1.6',
             fontWeight: '400'
           }}>
-            PRODUCT LIBRARY, CALCULATORS, AND HELPFUL TOOLS.
+            A COLLECTION OF REFINED RESOURCES AND MODERN TOOLS TO SIMPLIFY YOUR PROCESS AND ELEVATE YOUR CRAFT.
           </div>
         </div>
       </div>
       
-      {/* Rental Minimum Calculator */}
-      <div style={{ 
-        marginBottom: '64px',
+      {/* Sub Navigation */}
+      <nav style={{
         display: 'flex',
-        justifyContent: 'flex-start'
+        justifyContent: 'center',
+        padding: '32px 0',
+        borderBottom: '1px solid #e5e7eb',
+        marginBottom: '56px'
       }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '40px',
+          flexWrap: 'wrap'
+        }}>
+          <a
+            href="#rental-calculator"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToResourceSection('rental-calculator');
+            }}
+            style={{
+              fontSize: '12px',
+              fontWeight: '400',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              color: activeResourceSection === 'rental-calculator' ? maykerOlive : mediumGrey,
+              textDecoration: 'none',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              paddingBottom: '8px',
+              borderBottom: activeResourceSection === 'rental-calculator' ? `2px solid ${maykerOlive}` : '2px solid transparent',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              if (activeResourceSection !== 'rental-calculator') {
+                e.currentTarget.style.color = maykerOlive;
+                e.currentTarget.style.borderBottomColor = maykerOlive;
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (activeResourceSection !== 'rental-calculator') {
+                e.currentTarget.style.color = mediumGrey;
+                e.currentTarget.style.borderBottomColor = 'transparent';
+              }
+            }}
+          >
+            Rental Calculator
+          </a>
+          <a
+            href="#product-library"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToResourceSection('product-library');
+            }}
+            style={{
+              fontSize: '12px',
+              fontWeight: '400',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              color: activeResourceSection === 'product-library' ? maykerOlive : mediumGrey,
+              textDecoration: 'none',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              paddingBottom: '8px',
+              borderBottom: activeResourceSection === 'product-library' ? `2px solid ${maykerOlive}` : '2px solid transparent',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              if (activeResourceSection !== 'product-library') {
+                e.currentTarget.style.color = maykerOlive;
+                e.currentTarget.style.borderBottomColor = maykerOlive;
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (activeResourceSection !== 'product-library') {
+                e.currentTarget.style.color = mediumGrey;
+                e.currentTarget.style.borderBottomColor = 'transparent';
+              }
+            }}
+          >
+            Product Library
+          </a>
+        </div>
+      </nav>
+      
+      {/* Rental Minimum Calculator */}
+      <section
+        id="rental-calculator"
+        style={{
+          marginBottom: '80px',
+          scrollMarginTop: '80px',
+          paddingTop: '32px'
+        }}
+      >
         <div style={{ 
+          marginBottom: '64px',
+          display: 'flex',
+          justifyContent: 'flex-start'
+        }}>
+          <div style={{ 
           width: '50%',
           padding: '32px',
           backgroundColor: '#FAF8F3',
@@ -6275,6 +6445,7 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
           flexWrap: 'wrap'
         }}>
           <input
+            id="rental-address-input"
             type="text"
             placeholder="Enter event address (e.g., 123 Main St, Nashville, TN 37203)"
             value={rentalAddress}
@@ -6390,9 +6561,19 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
         )}
         </div>
       </div>
+      </section>
       
-      <div style={{ marginBottom: '32px' }}>
-        <h3 style={{ 
+      {/* Product Visual Library */}
+      <section
+        id="product-library"
+        style={{
+          marginBottom: '80px',
+          scrollMarginTop: '80px',
+          paddingTop: '32px'
+        }}
+      >
+        <div style={{ marginBottom: '32px' }}>
+          <h3 style={{ 
           fontSize: '17px', 
           fontWeight: '300', 
           color: '#000000', 
@@ -6557,6 +6738,7 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
           </div>
         )}
       </div>
+      </section>
     </div>
   );
 }
