@@ -7334,8 +7334,8 @@ function ProposalDetailView({ proposal, onBack, onLogout }) {
       {/* Separator line */}
       <div style={{ borderBottom: '1px solid #e5e7eb', marginBottom: showSectionName ? '15px' : '0' }}></div>
       {/* Section name below separator if provided */}
-      {showSectionName && sectionName && (
-        <div style={{ fontSize: '14px', fontWeight: '400', color: brandCharcoal, marginTop: '15px', fontFamily: "'Domaine Text', serif", textTransform: 'uppercase', letterSpacing: '0.02em', textAlign: 'center' }}>{sectionName}</div>
+        {showSectionName && sectionName && (
+        <div style={{ fontSize: '14px', fontWeight: '300', color: brandCharcoal, marginTop: '15px', fontFamily: "'Domaine Text', serif", textTransform: 'uppercase', letterSpacing: '0.02em', textAlign: 'center' }}>{sectionName}</div>
       )}
     </div>
   );
@@ -7442,14 +7442,40 @@ function ProposalDetailView({ proposal, onBack, onLogout }) {
       <div className="print-break-after" style={{ backgroundColor: brandTaupe, minHeight: '100vh', width: '100%', maxWidth: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '60px 48px', position: 'relative', boxSizing: 'border-box', margin: 0, pageBreakAfter: 'always', pageBreakBefore: 'auto', overflow: 'hidden' }}>
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '80px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-            <img src="/mayker_wordmark-events-whisper.svg" alt="MAYKER EVENTS" style={{ height: '32px', marginBottom: '24px' }} onError={(e) => { e.target.style.display = 'none'; }} />
+            <img 
+              src="/mayker_wordmark-events-whisper.svg" 
+              alt="MAYKER EVENTS" 
+              style={{ height: '32px', marginBottom: '24px' }} 
+              onError={(e) => {
+                if (!e.target.src.includes('/assets/')) {
+                  e.target.src = '/assets/mayker_wordmark-events-whisper.svg';
+                } else if (!e.target.src.includes('cdn')) {
+                  e.target.src = 'https://cdn.jsdelivr.net/gh/MaykerCreative/mayker-proposals@main/public/mayker_wordmark-events-whisper.svg';
+                } else {
+                  e.target.style.display = 'none';
+                }
+              }}
+            />
             <div style={{ width: '60px', height: '0.5px', backgroundColor: 'rgba(255,255,255,0.4)', marginBottom: '24px' }}></div>
             <p style={{ fontSize: '14px', color: 'white', letterSpacing: '0.1em', marginBottom: '16px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif", textTransform: 'uppercase' }}>Product Selections</p>
             <p style={{ fontSize: '18px', color: 'white', marginBottom: '6px', fontWeight: '300', fontFamily: "'Domaine Text', serif" }}>{proposal.clientName ? proposal.clientName.replace(/\s*\(V\d+\)\s*$/, '') : 'Proposal'}{proposal.status === 'Approved' ? ' (Final)' : ''}</p>
             <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.9)', marginBottom: '4px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif" }}>{proposal.venueName}</p>
             <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.9)', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif" }}>{formatDateRange(proposal)}</p>
           </div>
-          <img src="/mayker_icon-whisper.svg" alt="Mayker Events" style={{ width: '60px', height: '60px' }} onError={(e) => { e.target.style.display = 'none'; }} />
+          <img 
+            src="/mayker_icon-whisper.svg" 
+            alt="Mayker Events" 
+            style={{ width: '60px', height: '60px', marginTop: '40px' }} 
+            onError={(e) => {
+              if (!e.target.src.includes('/assets/')) {
+                e.target.src = '/assets/mayker_icon-whisper.svg';
+              } else if (!e.target.src.includes('cdn')) {
+                e.target.src = 'https://cdn.jsdelivr.net/gh/MaykerCreative/mayker-proposals@main/public/mayker_icon-whisper.svg';
+              } else {
+                e.target.style.display = 'none';
+              }
+            }}
+          />
         </div>
           </div>
           
@@ -7558,7 +7584,7 @@ function ProposalDetailView({ proposal, onBack, onLogout }) {
           <div style={{ marginBottom: '30px', pageBreakInside: 'avoid', breakInside: 'avoid', display: 'block', visibility: 'visible' }}>
             <PageHeader />
             {/* INVOICE title */}
-            <h2 style={{ fontSize: '14px', fontWeight: '400', color: brandCharcoal, marginTop: '15px', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.02em', textAlign: 'center', fontFamily: "'Domaine Text', serif" }}>
+            <h2 style={{ fontSize: '14px', fontWeight: '300', color: brandCharcoal, marginTop: '15px', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.02em', textAlign: 'center', fontFamily: "'Domaine Text', serif" }}>
               {isFirstPage ? 'Invoice' : 'Invoice (Cont.)'}
             </h2>
             {/* Column headers */}
@@ -7762,7 +7788,7 @@ function ProposalDetailView({ proposal, onBack, onLogout }) {
               {/* Totals Section - Two Column Layout */}
               <div style={{ marginBottom: '30px', display: 'flex', alignItems: 'flex-start' }}>
                 <div style={{ width: '140px', flexShrink: 0, paddingRight: '20px' }}>
-                  <h2 style={{ fontSize: '13px', fontWeight: '400', color: brandCharcoal, fontFamily: "'Domaine Text', serif", letterSpacing: '0.02em', margin: 0 }}>
+                  <h2 style={{ fontSize: '13px', fontWeight: '300', color: brandCharcoal, fontFamily: "'Domaine Text', serif", letterSpacing: '0.02em', margin: 0 }}>
                     Total
                   </h2>
                 </div>
@@ -7823,7 +7849,7 @@ function ProposalDetailView({ proposal, onBack, onLogout }) {
               {/* Project Description Section - Two Column Layout */}
               <div style={{ paddingTop: '30px', borderTop: '1px solid #e5e7eb', marginBottom: '30px', display: 'flex', alignItems: 'flex-start' }}>
                 <div style={{ width: '140px', flexShrink: 0, paddingRight: '20px' }}>
-                  <h2 style={{ fontSize: '13px', fontWeight: '400', color: brandCharcoal, fontFamily: "'Domaine Text', serif", letterSpacing: '0.02em', margin: 0 }}>
+                  <h2 style={{ fontSize: '13px', fontWeight: '300', color: brandCharcoal, fontFamily: "'Domaine Text', serif", letterSpacing: '0.02em', margin: 0 }}>
                     Project Description
                   </h2>
                 </div>
@@ -7844,7 +7870,7 @@ function ProposalDetailView({ proposal, onBack, onLogout }) {
               {/* Confirmation and Payment Section */}
               <div style={{ paddingTop: '30px', borderTop: '1px solid #e5e7eb', display: 'flex', alignItems: 'flex-start' }}>
                 <div style={{ width: '140px', flexShrink: 0, paddingRight: '20px' }}>
-                  <h2 style={{ fontSize: '13px', fontWeight: '400', color: brandCharcoal, fontFamily: "'Domaine Text', serif", letterSpacing: '0.02em', margin: 0 }}>
+                  <h2 style={{ fontSize: '13px', fontWeight: '300', color: brandCharcoal, fontFamily: "'Domaine Text', serif", letterSpacing: '0.02em', margin: 0 }}>
                     Confirmation and Payment
                   </h2>
                 </div>
@@ -7894,6 +7920,8 @@ function ChangeRequestView({ proposal, sections, onCancel, catalog }) {
   const brandBrown = '#603f27';
   // Use brandTaupe for highlights instead of blue
   const highlightColor = brandTaupe;
+  
+  const [miscNotes, setMiscNotes] = useState('');
   
   const handleQuantityChange = (sectionIdx, productIdx, newQuantity) => {
     const key = `${sectionIdx}-${productIdx}`;
@@ -8000,6 +8028,11 @@ function ChangeRequestView({ proposal, sections, onCancel, catalog }) {
     }
   };
   
+  // Scroll to top when component mounts
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   const hasChanges = 
     Object.keys(changeRequest.quantityChanges).length > 0 ||
     changeRequest.dateTimeChanges.startDate !== (proposal.startDate || '') ||
@@ -8008,13 +8041,6 @@ function ChangeRequestView({ proposal, sections, onCancel, catalog }) {
     changeRequest.dateTimeChanges.strikeTime !== (proposal.strikeTime || '') ||
     changeRequest.newProducts.length > 0 ||
     (miscNotes && miscNotes.trim().length > 0);
-  
-  const [miscNotes, setMiscNotes] = useState('');
-  
-  // Scroll to top when component mounts
-  React.useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
   
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#fafaf8', paddingTop: '100px' }}>
@@ -8064,7 +8090,7 @@ function ChangeRequestView({ proposal, sections, onCancel, catalog }) {
                 }}
               />
             </div>
-            <h1 style={{ fontSize: '32px', fontWeight: '400', color: brandCharcoal, marginBottom: '12px', fontFamily: "'Domaine Text', serif", letterSpacing: '0.02em' }}>
+            <h1 style={{ fontSize: '32px', fontWeight: '300', color: brandCharcoal, marginBottom: '12px', fontFamily: "'Domaine Text', serif", letterSpacing: '0.02em' }}>
               Request Changes
             </h1>
             <p style={{ fontSize: '15px', color: brandTaupe, fontFamily: "'Neue Haas Unica', 'Inter', sans-serif", maxWidth: '600px', margin: '0 auto', lineHeight: '1.6', marginBottom: '24px' }}>
@@ -8090,7 +8116,7 @@ function ChangeRequestView({ proposal, sections, onCancel, catalog }) {
           
           {/* Date/Time Changes */}
           <div style={{ marginBottom: '40px', padding: '28px', backgroundColor: `${brandTaupe}08`, borderRadius: '6px', border: `1px solid ${brandTaupe}30` }}>
-            <h2 style={{ fontSize: '20px', fontWeight: '400', color: brandCharcoal, marginBottom: '24px', fontFamily: "'Domaine Text', serif", textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: '300', color: brandCharcoal, marginBottom: '24px', fontFamily: "'Domaine Text', serif", textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Event Dates & Times
             </h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
@@ -8143,7 +8169,7 @@ function ChangeRequestView({ proposal, sections, onCancel, catalog }) {
           
           {/* Quantity Changes */}
           <div style={{ marginBottom: '40px' }}>
-            <h2 style={{ fontSize: '20px', fontWeight: '400', color: brandCharcoal, marginBottom: '24px', fontFamily: "'Domaine Text', serif", textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: '300', color: brandCharcoal, marginBottom: '24px', fontFamily: "'Domaine Text', serif", textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Product Quantities
             </h2>
             {sections.map((section, sectionIdx) => (
@@ -8207,7 +8233,7 @@ function ChangeRequestView({ proposal, sections, onCancel, catalog }) {
           {/* New Products */}
           <div style={{ marginBottom: '40px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: '400', color: brandCharcoal, fontFamily: "'Domaine Text', serif", textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <h2 style={{ fontSize: '20px', fontWeight: '300', color: brandCharcoal, fontFamily: "'Domaine Text', serif", textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 Request New Products
               </h2>
               {!showAddProduct && (
@@ -8332,7 +8358,7 @@ function ChangeRequestView({ proposal, sections, onCancel, catalog }) {
           
           {/* Miscellaneous Notes Section */}
           <div style={{ marginBottom: '40px', padding: '28px', backgroundColor: `${brandTaupe}08`, borderRadius: '6px', border: `1px solid ${brandTaupe}30` }}>
-            <h2 style={{ fontSize: '20px', fontWeight: '400', color: brandCharcoal, marginBottom: '24px', fontFamily: "'Domaine Text', serif", textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: '300', color: brandCharcoal, marginBottom: '24px', fontFamily: "'Domaine Text', serif", textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Additional Notes / Miscellaneous Requests
             </h2>
             <textarea
