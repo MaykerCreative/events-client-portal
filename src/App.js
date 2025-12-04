@@ -19,6 +19,180 @@ const CLIENT_PROPOSAL_VIEW_URL = 'https://clients.maykerevents.com';
 const PROPOSALS_API_URL = 'https://script.google.com/macros/s/AKfycbzB7gHa5o-gBep98SJgQsG-z2EsEspSWC6NXvLFwurYBGpxpkI-weD-HVcfY2LDA4Yz/exec';
 
 // ============================================
+// CUSTOM MODAL COMPONENTS
+// ============================================
+
+// Custom Alert Modal Component
+function AlertModal({ message, onClose, isOpen }) {
+  const brandCharcoal = '#2C2C2C';
+  const brandTaupe = '#545142';
+  const brandCream = '#fafaf8';
+  
+  if (!isOpen) return null;
+  
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 10000,
+      fontFamily: "'Neue Haas Unica', 'Inter', sans-serif"
+    }} onClick={onClose}>
+      <div style={{
+        backgroundColor: brandCream,
+        borderRadius: '8px',
+        padding: '32px',
+        maxWidth: '400px',
+        width: '90%',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+        border: `1px solid ${brandTaupe}30`
+      }} onClick={(e) => e.stopPropagation()}>
+        <div style={{
+          fontSize: '18px',
+          fontWeight: '500',
+          color: brandCharcoal,
+          marginBottom: '16px',
+          fontFamily: "'Domaine Text', serif"
+        }}>
+          Mayker Events
+        </div>
+        <div style={{
+          fontSize: '15px',
+          color: brandCharcoal,
+          marginBottom: '24px',
+          lineHeight: '1.5'
+        }}>
+          {message}
+        </div>
+        <button
+          onClick={onClose}
+          style={{
+            padding: '10px 24px',
+            backgroundColor: brandCharcoal,
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: '500',
+            fontFamily: "'Neue Haas Unica', 'Inter', sans-serif",
+            width: '100%',
+            transition: 'opacity 0.2s'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+          onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+        >
+          OK
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Custom Confirm Modal Component
+function ConfirmModal({ message, onConfirm, onCancel, isOpen }) {
+  const brandCharcoal = '#2C2C2C';
+  const brandTaupe = '#545142';
+  const brandCream = '#fafaf8';
+  
+  if (!isOpen) return null;
+  
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 10000,
+      fontFamily: "'Neue Haas Unica', 'Inter', sans-serif"
+    }} onClick={onCancel}>
+      <div style={{
+        backgroundColor: brandCream,
+        borderRadius: '8px',
+        padding: '32px',
+        maxWidth: '400px',
+        width: '90%',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+        border: `1px solid ${brandTaupe}30`
+      }} onClick={(e) => e.stopPropagation()}>
+        <div style={{
+          fontSize: '18px',
+          fontWeight: '500',
+          color: brandCharcoal,
+          marginBottom: '16px',
+          fontFamily: "'Domaine Text', serif"
+        }}>
+          Mayker Events
+        </div>
+        <div style={{
+          fontSize: '15px',
+          color: brandCharcoal,
+          marginBottom: '24px',
+          lineHeight: '1.5'
+        }}>
+          {message}
+        </div>
+        <div style={{
+          display: 'flex',
+          gap: '12px',
+          justifyContent: 'flex-end'
+        }}>
+          <button
+            onClick={onCancel}
+            style={{
+              padding: '10px 24px',
+              backgroundColor: '#f3f4f6',
+              color: brandCharcoal,
+              border: `1px solid ${brandTaupe}30`,
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500',
+              fontFamily: "'Neue Haas Unica', 'Inter', sans-serif",
+              transition: 'opacity 0.2s'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            style={{
+              padding: '10px 24px',
+              backgroundColor: brandCharcoal,
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500',
+              fontFamily: "'Neue Haas Unica', 'Inter', sans-serif",
+              transition: 'opacity 0.2s'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================
 // AUTHENTICATION SERVICE
 // ============================================
 
@@ -1068,6 +1242,36 @@ function calculateProductSpend(proposal) {
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [clientInfo, setClientInfo] = useState(null);
+  const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, message: '', onConfirm: null });
+  
+  // Helper function to show alert
+  const showAlert = (message) => {
+    return new Promise((resolve) => {
+      setAlertModal({ isOpen: true, message, onClose: () => {
+        setAlertModal({ isOpen: false, message: '' });
+        resolve();
+      }});
+    });
+  };
+  
+  // Helper function to show confirm
+  const showConfirm = (message) => {
+    return new Promise((resolve) => {
+      setConfirmModal({ 
+        isOpen: true, 
+        message, 
+        onConfirm: () => {
+          setConfirmModal({ isOpen: false, message: '', onConfirm: null });
+          resolve(true);
+        },
+        onCancel: () => {
+          setConfirmModal({ isOpen: false, message: '', onConfirm: null });
+          resolve(false);
+        }
+      });
+    });
+  };
   
   useEffect(() => {
     // Check if user is already logged in
@@ -1176,17 +1380,47 @@ export default function App() {
   };
   
   if (!isAuthenticated) {
-    return <LoginView onLogin={handleLogin} />;
+    return (
+      <>
+        <LoginView onLogin={handleLogin} showAlert={showAlert} />
+        <AlertModal 
+          isOpen={alertModal.isOpen} 
+          message={alertModal.message} 
+          onClose={alertModal.onClose} 
+        />
+        <ConfirmModal 
+          isOpen={confirmModal.isOpen} 
+          message={confirmModal.message} 
+          onConfirm={confirmModal.onConfirm} 
+          onCancel={confirmModal.onCancel} 
+        />
+      </>
+    );
   }
   
-  return <DashboardView clientInfo={clientInfo} onLogout={handleLogout} />;
+  return (
+    <>
+      <DashboardView clientInfo={clientInfo} onLogout={handleLogout} showAlert={showAlert} showConfirm={showConfirm} />
+      <AlertModal 
+        isOpen={alertModal.isOpen} 
+        message={alertModal.message} 
+        onClose={alertModal.onClose} 
+      />
+      <ConfirmModal 
+        isOpen={confirmModal.isOpen} 
+        message={confirmModal.message} 
+        onConfirm={confirmModal.onConfirm} 
+        onCancel={confirmModal.onCancel} 
+      />
+    </>
+  );
 }
 
 // ============================================
 // LOGIN VIEW
 // ============================================
 
-function LoginView({ onLogin }) {
+function LoginView({ onLogin, showAlert }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -1381,7 +1615,7 @@ function LoginView({ onLogin }) {
                 type="button"
                 onClick={() => {
                   // TODO: Implement forgot password functionality
-                  alert('Forgot password functionality coming soon');
+                  showAlert('Forgot password functionality coming soon');
                 }}
                 style={{
                   flex: 1,
@@ -2085,9 +2319,9 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
                 const newPassword = prompt('Enter your new password (minimum 8 characters):');
                 if (newPassword && newPassword.length >= 8) {
                   // TODO: Implement password reset API call
-                  alert('Password reset requested. Please contact support to complete the password change.');
+                  showAlert('Password reset requested. Please contact support to complete the password change.');
                 } else if (newPassword) {
-                  alert('Password must be at least 8 characters long.');
+                  showAlert('Password must be at least 8 characters long.');
                 }
               }}
               style={{
@@ -2124,9 +2358,11 @@ function ProfileSection({ clientInfo, profileData, editingProfile, setEditingPro
             {/* Logout Button */}
             <button
               onClick={() => {
-                if (window.confirm('Are you sure you want to log out?')) {
-                  onLogout();
-                }
+                showConfirm('Are you sure you want to log out?').then((confirmed) => {
+                  if (confirmed) {
+                    onLogout();
+                  }
+                });
               }}
               style={{
                 padding: '14px 28px',
@@ -6229,7 +6465,7 @@ function FAQSection({ brandCharcoal = '#2C2C2C' }) {
 // DASHBOARD VIEW
 // ============================================
 
-function DashboardView({ clientInfo, onLogout }) {
+function DashboardView({ clientInfo, onLogout, showAlert, showConfirm }) {
   const [proposals, setProposals] = useState([]);
   const [spendData, setSpendData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -6475,6 +6711,8 @@ function DashboardView({ clientInfo, onLogout }) {
         proposal={selectedProposal} 
         onBack={() => setSelectedProposal(null)}
         onLogout={onLogout}
+        showAlert={showAlert}
+        showConfirm={showConfirm}
       />
     );
   }
@@ -7188,7 +7426,7 @@ function DashboardView({ clientInfo, onLogout }) {
 // PROPOSAL DETAIL VIEW
 // ============================================
 
-function ProposalDetailView({ proposal, onBack, onLogout }) {
+function ProposalDetailView({ proposal, onBack, onLogout, showAlert, showConfirm }) {
   const [isChangeRequestMode, setIsChangeRequestMode] = useState(false);
   const [catalog, setCatalog] = useState([]);
   const brandTaupe = '#545142';
@@ -7375,6 +7613,8 @@ function ProposalDetailView({ proposal, onBack, onLogout }) {
         sections={sections}
         onCancel={() => setIsChangeRequestMode(false)}
         catalog={catalog}
+        showAlert={showAlert}
+        showConfirm={showConfirm}
       />
     );
   }
@@ -7933,7 +8173,7 @@ function ProposalDetailView({ proposal, onBack, onLogout }) {
 // CHANGE REQUEST VIEW
 // ============================================
 
-function ChangeRequestView({ proposal, sections, onCancel, catalog }) {
+function ChangeRequestView({ proposal, sections, onCancel, catalog, showAlert, showConfirm }) {
   // Helper function to convert time string (e.g., "11:00 AM") to HH:MM format for time input
   const convertTimeToInputFormat = (timeStr) => {
     if (!timeStr || !timeStr.trim()) return '';
@@ -8027,9 +8267,9 @@ function ChangeRequestView({ proposal, sections, onCancel, catalog }) {
     });
   };
   
-  const handleAddNewProduct = () => {
+  const handleAddNewProduct = async () => {
     if (!newProduct.name.trim() || !newProduct.section) {
-      window.alert('Please select a section and enter a product name');
+      await showAlert('Please select a section and enter a product name');
       return;
     }
     
@@ -8069,11 +8309,12 @@ function ChangeRequestView({ proposal, sections, onCancel, catalog }) {
     const hasNewProducts = changeRequest.newProducts.length > 0;
     
     if (!hasQuantityChanges && !hasDateTimeChanges && !hasNewProducts) {
-      window.alert('Please make at least one change before submitting');
+      await showAlert('Please make at least one change before submitting');
       return;
     }
     
-    if (!window.confirm('Are you sure you want to submit this change request? The team will review and respond to your request.')) {
+    const confirmed = await showConfirm('Are you sure you want to submit this change request? The team will review and respond to your request.');
+    if (!confirmed) {
       return;
     }
     
@@ -8120,10 +8361,10 @@ function ChangeRequestView({ proposal, sections, onCancel, catalog }) {
       };
       
       await apiService.submitChangeRequest(changeRequestData);
-      window.alert('Change request submitted successfully! The team will review your request and get back to you.');
+      await showAlert('Change request submitted successfully! The team will review your request and get back to you.');
       onCancel();
     } catch (err) {
-      window.alert('Error submitting change request: ' + err.message);
+      await showAlert('Error submitting change request: ' + err.message);
     } finally {
       setSubmitting(false);
     }
