@@ -6421,146 +6421,155 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
           gap: '32px',
           alignItems: 'flex-start'
         }}>
-          <h3 style={{ 
-            fontSize: '17px', 
-            fontWeight: '300', 
-            color: '#000000', 
-            marginBottom: '16px',
-            fontFamily: "'Domaine Text', serif"
-          }}>
-            Rental Minimum Calculator
-          </h3>
-          <p style={{ 
-            fontSize: '14px', 
-            color: '#666', 
-            marginBottom: '24px',
-            fontFamily: "'NeueHaasUnica', sans-serif",
-            lineHeight: '1.6'
-          }}>
-            Enter your event address to see the rental minimum for your area. If you have concerns about meeting the minimum, connect with your Client Coordinator and share any relevant details—our team is here to help find the best solution.
-          </p>
-        
-        <div style={{ 
-          display: 'flex', 
-          gap: '12px', 
-          marginBottom: '24px',
-          flexWrap: 'wrap'
-        }}>
-          <input
-            id="rental-address-input"
-            type="text"
-            placeholder="Enter event address (e.g., 123 Main St, Nashville, TN 37203)"
-            value={rentalAddress}
-            onChange={(e) => setRentalAddress(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter') {
-                calculateDistance();
-              }
-            }}
-            style={{
-              flex: '1',
-              minWidth: '300px',
-              padding: '12px 16px',
-              fontSize: '14px',
-              fontFamily: "'NeueHaasUnica', sans-serif",
-              border: '1px solid #e5e7eb',
-              borderRadius: '8px',
-              backgroundColor: '#fff',
-              color: '#000000',
-              outline: 'none',
-              transition: 'border-color 0.2s'
-            }}
-            onFocus={(e) => {
-              e.target.style.borderColor = '#545142';
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = '#e5e7eb';
-            }}
-          />
-          <button
-            onClick={calculateDistance}
-            disabled={isCalculating}
-            style={{
-              padding: '12px 24px',
-              fontSize: '14px',
-              fontFamily: "'NeueHaasUnica', sans-serif",
-              fontWeight: '500',
-              backgroundColor: '#000000',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: isCalculating ? 'not-allowed' : 'pointer',
-              opacity: isCalculating ? 0.6 : 1,
-              transition: 'opacity 0.2s'
-            }}
-            onMouseEnter={(e) => {
-              if (!isCalculating) {
-                e.currentTarget.style.opacity = '0.9';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isCalculating) {
-                e.currentTarget.style.opacity = '1';
-              }
-            }}
-          >
-            {isCalculating ? 'Calculating...' : 'Calculate'}
-          </button>
-        </div>
-        
-        {calculationError && (
           <div style={{
-            padding: '12px 16px',
-            backgroundColor: '#fee2e2',
-            color: '#dc2626',
-            borderRadius: '8px',
-            marginBottom: '24px',
-            fontSize: '14px',
-            fontFamily: "'NeueHaasUnica', sans-serif"
+            flex: '1',
+            display: 'flex',
+            flexDirection: 'column'
           }}>
-            {calculationError}
-          </div>
-        )}
-        
-        {rentalMinimum && (
-          <div style={{
-            padding: '24px',
-            backgroundColor: '#fff',
-            borderRadius: '8px',
-            border: '1px solid #e8e8e3',
-            marginTop: '24px'
-          }}>
-            <div style={{
-              fontSize: '12px',
-              color: '#8b8b8b',
-              fontFamily: "'NeueHaasUnica', sans-serif",
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              marginBottom: '12px'
+            <h3 style={{ 
+              fontSize: '17px', 
+              fontWeight: '300', 
+              color: '#000000', 
+              marginBottom: '16px',
+              fontFamily: "'Domaine Text', serif"
             }}>
-              Rental Minimum
+              Rental Minimum Calculator
+            </h3>
+            <p style={{ 
+              fontSize: '14px', 
+              color: '#666', 
+              marginBottom: '24px',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              lineHeight: '1.6'
+            }}>
+              Enter your event address to see the rental minimum for your area. If you have concerns about meeting the minimum, connect with your Client Coordinator and share any relevant details—our team is here to help find the best solution.
+            </p>
+            
+            <div style={{ 
+              marginBottom: '16px'
+            }}>
+              <input
+                id="rental-address-input"
+                type="text"
+                placeholder="Enter event address (e.g., 123 Main St, Nashville, TN 37203)"
+                value={rentalAddress}
+                onChange={(e) => setRentalAddress(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    calculateDistance();
+                  }
+                }}
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  fontSize: '14px',
+                  fontFamily: "'NeueHaasUnica', sans-serif",
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  backgroundColor: '#fff',
+                  color: '#000000',
+                  outline: 'none',
+                  transition: 'border-color 0.2s',
+                  boxSizing: 'border-box'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#545142';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#e5e7eb';
+                }}
+              />
             </div>
-            {rentalMinimum.amount ? (
+            
+            <div style={{ 
+              marginBottom: '24px'
+            }}>
+              <button
+                onClick={calculateDistance}
+                disabled={isCalculating}
+                style={{
+                  padding: '12px 24px',
+                  fontSize: '14px',
+                  fontFamily: "'NeueHaasUnica', sans-serif",
+                  fontWeight: '500',
+                  backgroundColor: '#000000',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: isCalculating ? 'not-allowed' : 'pointer',
+                  opacity: isCalculating ? 0.6 : 1,
+                  transition: 'opacity 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  if (!isCalculating) {
+                    e.currentTarget.style.opacity = '0.9';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isCalculating) {
+                    e.currentTarget.style.opacity = '1';
+                  }
+                }}
+              >
+                {isCalculating ? 'Calculating...' : 'Calculate'}
+              </button>
+            </div>
+            
+            {calculationError && (
               <div style={{
-                fontSize: '32px',
-                fontWeight: '300',
-                color: brandCharcoal,
-                fontFamily: "'Domaine Text', serif"
-              }}>
-                ${rentalMinimum.amount.toLocaleString()}
-              </div>
-            ) : (
-              <div style={{
-                fontSize: '16px',
-                fontWeight: '400',
-                color: '#000000',
+                padding: '12px 16px',
+                backgroundColor: '#fee2e2',
+                color: '#dc2626',
+                borderRadius: '8px',
+                marginBottom: '24px',
+                fontSize: '14px',
                 fontFamily: "'NeueHaasUnica', sans-serif"
               }}>
-                {rentalMinimum.range}
+                {calculationError}
+              </div>
+            )}
+            
+            {rentalMinimum && (
+              <div style={{
+                padding: '24px',
+                backgroundColor: '#fff',
+                borderRadius: '8px',
+                border: '1px solid #e8e8e3',
+                marginTop: '24px'
+              }}>
+                <div style={{
+                  fontSize: '12px',
+                  color: '#8b8b8b',
+                  fontFamily: "'NeueHaasUnica', sans-serif",
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
+                  marginBottom: '12px'
+                }}>
+                  Rental Minimum
+                </div>
+                {rentalMinimum.amount ? (
+                  <div style={{
+                    fontSize: '32px',
+                    fontWeight: '300',
+                    color: brandCharcoal,
+                    fontFamily: "'Domaine Text', serif"
+                  }}>
+                    ${rentalMinimum.amount.toLocaleString()}
+                  </div>
+                ) : (
+                  <div style={{
+                    fontSize: '16px',
+                    fontWeight: '400',
+                    color: '#000000',
+                    fontFamily: "'NeueHaasUnica', sans-serif"
+                  }}>
+                    {rentalMinimum.range}
+                  </div>
+                )}
               </div>
             )}
           </div>
-        )}
+          
           <div style={{
             flex: '0 0 40%',
             maxWidth: '500px',
@@ -6569,8 +6578,8 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
             justifyContent: 'center'
           }}>
             <img 
-              src="/MAP.png" 
-              alt="Service Area Map" 
+              src="/Mayker Truck.png" 
+              alt="Mayker Truck" 
               style={{
                 width: '100%',
                 height: 'auto',
@@ -6578,7 +6587,7 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
                 borderRadius: '8px'
               }}
               onError={(e) => {
-                console.error('MAP.png failed to load:', e.target.src);
+                console.error('Mayker Truck.png failed to load:', e.target.src);
                 e.target.style.display = 'none';
               }}
             />
