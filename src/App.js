@@ -7896,8 +7896,33 @@ function ProposalDetailView({ proposal, onBack, onLogout, showAlert, showConfirm
             <button onClick={async () => {
               const confirmed = await showConfirm('Are you sure you want to approve this proposal?');
               if (confirmed) {
-                // TODO: Implement approve proposal API call
-                await showAlert('Proposal approval functionality coming soon.');
+                try {
+                  const response = await fetch(PROPOSALS_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({
+                      type: 'approveProposal',
+                      projectNumber: proposal.projectNumber,
+                      version: proposal.version,
+                      clientName: proposal.clientName,
+                      venueName: proposal.venueName,
+                      eventDate: proposal.eventDate || proposal.startDate,
+                      startDate: proposal.startDate,
+                      total: proposal.total
+                    }),
+                    mode: 'cors'
+                  });
+                  
+                  const result = await response.json();
+                  
+                  if (result.success !== false) {
+                    await showAlert('Proposal approved successfully! The team has been notified.');
+                  } else {
+                    await showAlert('Error approving proposal: ' + (result.error || 'Unknown error'));
+                  }
+                } catch (err) {
+                  await showAlert('Error approving proposal: ' + err.message);
+                }
               }
             }} style={{ padding: '8px 20px', backgroundColor: brandCharcoal, color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif" }}>
               Approve Proposal
