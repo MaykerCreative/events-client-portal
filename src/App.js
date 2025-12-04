@@ -6256,7 +6256,8 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
     <div>
       {/* Image Banner */}
       <div style={{
-        width: '100%',
+        width: '100vw',
+        marginLeft: 'calc(-50vw + 50%)',
         height: '300px',
         overflow: 'hidden',
         position: 'relative',
@@ -6330,7 +6331,7 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
             lineHeight: '1.6',
             fontWeight: '400'
           }}>
-            A COLLECTION OF REFINED RESOURCES AND MODERN TOOLS TO SIMPLIFY YOUR PROCESS AND ELEVATE YOUR CRAFT.
+            A COLLECTION OF MODERN TOOLS TO SIMPLIFY YOUR PROCESS AND ELEVATE YOUR CRAFT.
           </div>
         </div>
       </div>
@@ -6381,7 +6382,7 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
               }
             }}
           >
-            Rental Calculator
+            Rental Min. Calculator
           </a>
           <a
             href="#product-library"
@@ -6794,6 +6795,36 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
         )}
       </div>
       </section>
+      
+      {/* Workflow Wishlist Prompt */}
+      <div style={{
+        marginTop: '80px',
+        padding: '48px',
+        backgroundColor: '#FAF8F3',
+        borderRadius: '8px',
+        border: '1px solid #e8e8e3',
+        textAlign: 'center'
+      }}>
+        <h3 style={{
+          fontSize: '17px',
+          fontWeight: '300',
+          color: '#000000',
+          marginBottom: '16px',
+          fontFamily: "'Domaine Text', serif"
+        }}>
+          Workflow Wishlist
+        </h3>
+        <p style={{
+          fontSize: '14px',
+          color: '#666',
+          fontFamily: "'NeueHaasUnica', sans-serif",
+          lineHeight: '1.6',
+          maxWidth: '600px',
+          margin: '0 auto'
+        }}>
+          Have a resource you'd love to have at your fingertips? Tell us what would elevate your workflow, and our team will explore adding it to the collection.
+        </p>
+      </div>
     </div>
   );
 }
