@@ -3370,6 +3370,125 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
         </div>
       </div>
 
+      {/* 5. Active Projects Snapshot */}
+      {activeProposals.length > 0 && (
+        <div style={{
+          ...panelStyle,
+          backgroundColor: '#E8E3DD'
+        }}>
+          <div style={{
+            fontSize: '18px',
+            fontWeight: '300',
+            color: brandCharcoal,
+            fontFamily: "'Domaine Text', serif",
+            letterSpacing: '-0.01em',
+            marginBottom: '24px'
+          }}>
+            Your Active Projects
+          </div>
+          
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px'
+          }}>
+            {activeProposals.map((proposal, index) => (
+              <div
+                key={index}
+                style={{
+                  backgroundColor: 'white',
+                  padding: '20px',
+                  borderRadius: '12px',
+                  border: '1px solid #e8e8e3',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <div style={{ flex: 1 }}>
+                  <div style={{
+                    fontSize: '16px',
+                    fontWeight: '500',
+                    color: brandCharcoal,
+                    fontFamily: "'NeueHaasUnica', sans-serif",
+                    marginBottom: '8px'
+                  }}>
+                    {proposal.venueName || 'Untitled Project'}
+                  </div>
+                  <div style={{
+                    fontSize: '12px',
+                    color: '#8b8b8b',
+                    fontFamily: "'NeueHaasUnica', sans-serif",
+                    marginBottom: '4px'
+                  }}>
+                    {proposal.eventDate || (proposal.startDate ? new Date(proposal.startDate).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    }) : 'Date TBD')}
+                  </div>
+                  <div style={{
+                    fontSize: '12px',
+                    color: '#8b8b8b',
+                    fontFamily: "'NeueHaasUnica', sans-serif"
+                  }}>
+                    {proposal.city}, {proposal.state}
+                  </div>
+                </div>
+                
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '16px'
+                }}>
+                  <span style={{
+                    display: 'inline-block',
+                    padding: '4px 12px',
+                    borderRadius: '12px',
+                    fontSize: '11px',
+                    fontWeight: '500',
+                    backgroundColor: proposal.status === 'Pending' ? '#f5f1e6' : proposal.status === 'Approved' ? '#e8f5e9' : '#f3f4f6',
+                    color: proposal.status === 'Pending' ? '#b8860b' : proposal.status === 'Approved' ? '#2e7d32' : '#666',
+                    fontFamily: "'NeueHaasUnica', sans-serif"
+                  }}>
+                    {proposal.status || 'Pending'}
+                  </span>
+                  
+                  {proposal.projectNumber && (
+                    <button
+                      onClick={() => {
+                        setSelectedProposal(proposal);
+                      }}
+                      style={{
+                        padding: '6px 16px',
+                        backgroundColor: '#6b7d47',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        fontFamily: "'NeueHaasUnica', sans-serif",
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = '#5a6b3a';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = '#6b7d47';
+                      }}
+                    >
+                      View
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* 4. Featured Products from Shopify */}
       {shopifyProducts.length > 0 && (
         <div style={panelStyle}>
@@ -3558,125 +3677,6 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               ))}
             </div>
           )}
-        </div>
-      )}
-
-      {/* 5. Active Projects Snapshot */}
-      {activeProposals.length > 0 && (
-        <div style={{
-          ...panelStyle,
-          backgroundColor: '#E8E3DD'
-        }}>
-          <div style={{
-            fontSize: '18px',
-            fontWeight: '300',
-            color: brandCharcoal,
-            fontFamily: "'Domaine Text', serif",
-            letterSpacing: '-0.01em',
-            marginBottom: '24px'
-          }}>
-            Your Active Projects
-          </div>
-          
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '16px'
-          }}>
-            {activeProposals.map((proposal, index) => (
-              <div
-                key={index}
-                style={{
-                  backgroundColor: 'white',
-                  padding: '20px',
-                  borderRadius: '12px',
-                  border: '1px solid #e8e8e3',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                <div style={{ flex: 1 }}>
-                  <div style={{
-                    fontSize: '16px',
-                    fontWeight: '500',
-                    color: brandCharcoal,
-                    fontFamily: "'NeueHaasUnica', sans-serif",
-                    marginBottom: '8px'
-                  }}>
-                    {proposal.venueName || 'Untitled Project'}
-                  </div>
-                  <div style={{
-                    fontSize: '12px',
-                    color: '#8b8b8b',
-                    fontFamily: "'NeueHaasUnica', sans-serif",
-                    marginBottom: '4px'
-                  }}>
-                    {proposal.eventDate || (proposal.startDate ? new Date(proposal.startDate).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric'
-                    }) : 'Date TBD')}
-                  </div>
-                  <div style={{
-                    fontSize: '12px',
-                    color: '#8b8b8b',
-                    fontFamily: "'NeueHaasUnica', sans-serif"
-                  }}>
-                    {proposal.city}, {proposal.state}
-                  </div>
-                </div>
-                
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '16px'
-                }}>
-                  <span style={{
-                    display: 'inline-block',
-                    padding: '4px 12px',
-                    borderRadius: '12px',
-                    fontSize: '11px',
-                    fontWeight: '500',
-                    backgroundColor: proposal.status === 'Pending' ? '#f5f1e6' : proposal.status === 'Approved' ? '#e8f5e9' : '#f3f4f6',
-                    color: proposal.status === 'Pending' ? '#b8860b' : proposal.status === 'Approved' ? '#2e7d32' : '#666',
-                    fontFamily: "'NeueHaasUnica', sans-serif"
-                  }}>
-                    {proposal.status || 'Pending'}
-                  </span>
-                  
-                  {proposal.projectNumber && (
-                    <button
-                      onClick={() => {
-                        setSelectedProposal(proposal);
-                      }}
-                      style={{
-                        padding: '6px 16px',
-                        backgroundColor: '#6b7d47',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        fontSize: '12px',
-                        fontWeight: '500',
-                        fontFamily: "'NeueHaasUnica', sans-serif",
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#5a6b3a';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = '#6b7d47';
-                      }}
-                    >
-                      View
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       )}
 
@@ -7899,7 +7899,7 @@ function ProposalDetailView({ proposal, onBack, onLogout, showAlert, showConfirm
                 // TODO: Implement approve proposal API call
                 await showAlert('Proposal approval functionality coming soon.');
               }
-            }} style={{ padding: '8px 20px', backgroundColor: '#059669', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif" }}>
+            }} style={{ padding: '8px 20px', backgroundColor: brandCharcoal, color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif" }}>
               Approve Proposal
             </button>
             <button onClick={handlePrintDownload} style={{ padding: '8px 20px', backgroundColor: brandCharcoal, color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontFamily: "'Neue Haas Unica', 'Inter', sans-serif" }}>
