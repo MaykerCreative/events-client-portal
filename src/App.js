@@ -168,7 +168,7 @@ function ConfirmModal({ message, onConfirm, onCancel, isOpen }) {
         <div style={{
           display: 'flex',
           gap: '12px',
-          justifyContent: 'flex-end'
+          justifyContent: 'center'
         }}>
           <button
             onClick={onCancel}
@@ -193,9 +193,9 @@ function ConfirmModal({ message, onConfirm, onCancel, isOpen }) {
             onClick={onConfirm}
             style={{
               padding: '10px 24px',
-              backgroundColor: '#F7F6F0',
-              color: 'white',
-              border: 'none',
+              backgroundColor: '#f3f4f6',
+              color: '#000000',
+              border: `1px solid ${brandSage}30`,
               borderRadius: '4px',
               cursor: 'pointer',
               fontSize: '14px',
@@ -5995,25 +5995,68 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
   useEffect(() => {
     // Note: To enable address autocomplete, add your Google Maps API key below
     // Get your API key from: https://console.cloud.google.com/google/maps-apis
-    const GOOGLE_MAPS_API_KEY = ''; // Add your API key here
+    const GOOGLE_MAPS_API_KEY = 'AIzaSyBDtqFBAoBLcNTX4N7hqE9SPP7RXuUpXV0';
+    
+    const initializeAutocomplete = () => {
+      // Wait for input to be available in the DOM
+      const checkInput = () => {
+        const input = document.getElementById('rental-address-input');
+        if (input && window.google && window.google.maps && window.google.maps.places) {
+          try {
+            // Check if autocomplete is already attached to avoid duplicates
+            if (input.dataset.autocompleteInitialized === 'true') {
+              return;
+            }
+            
+            const autocomplete = new window.google.maps.places.Autocomplete(input, {
+              types: ['address'],
+              componentRestrictions: { country: 'us' }
+            });
+            
+            // Mark as initialized
+            input.dataset.autocompleteInitialized = 'true';
+            
+            autocomplete.addListener('place_changed', () => {
+              const place = autocomplete.getPlace();
+              if (place.formatted_address) {
+                setRentalAddress(place.formatted_address);
+              }
+            });
+          } catch (error) {
+            console.warn('Failed to initialize Google Places Autocomplete:', error);
+          }
+        } else if (input && !window.google) {
+          // Input exists but Google Maps not loaded yet, try again
+          setTimeout(checkInput, 100);
+        }
+      };
+      
+      // Try immediately, then with a small delay to ensure DOM is ready
+      checkInput();
+      setTimeout(checkInput, 100);
+    };
     
     if (GOOGLE_MAPS_API_KEY) {
       // Load Google Places API script if not already loaded
       if (!window.google || !window.google.maps || !window.google.maps.places) {
+        // Check if script is already being loaded
+        const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
+        if (existingScript) {
+          existingScript.addEventListener('load', initializeAutocomplete);
+          return;
+        }
+        
         const script = document.createElement('script');
         script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
         script.async = true;
         script.defer = true;
-        document.head.appendChild(script);
-        
-        script.onload = () => {
-          initializeAutocomplete();
-        };
-        
+        script.onload = initializeAutocomplete;
         script.onerror = () => {
           console.warn('Google Places API failed to load. Address autocomplete disabled.');
         };
+        document.head.appendChild(script);
       } else {
+        // Google Maps already loaded, initialize immediately
         initializeAutocomplete();
       }
     } else {
@@ -6025,27 +6068,6 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  
-  const initializeAutocomplete = () => {
-    const input = document.getElementById('rental-address-input');
-    if (input && window.google && window.google.maps && window.google.maps.places) {
-      try {
-        const autocomplete = new window.google.maps.places.Autocomplete(input, {
-          types: ['address'],
-          componentRestrictions: { country: 'us' }
-        });
-        
-        autocomplete.addListener('place_changed', () => {
-          const place = autocomplete.getPlace();
-          if (place.formatted_address) {
-            setRentalAddress(place.formatted_address);
-          }
-        });
-      } catch (error) {
-        console.warn('Failed to initialize Google Places Autocomplete:', error);
-      }
-    }
-  };
   
   // Warehouse address
   const WAREHOUSE_ADDRESS = '258 Mason Road, La Vergne, TN 37086';
