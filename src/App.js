@@ -1441,7 +1441,7 @@ function isPastDate(dateStr) {
 }
 
 // Calculate product spend for a proposal (used for points calculation)
-// Points = Invoice Total - Delivery Fee - Tax - Discount
+// Points = Product Total + Service Fee + Product Care - Discount
 function calculateProductSpend(proposal) {
   try {
     if (proposal.isHistorical && proposal.historicalProductTotal) {
@@ -1451,8 +1451,10 @@ function calculateProductSpend(proposal) {
     // Use calculateDetailedTotals to get all invoice components
     const totals = calculateDetailedTotals(proposal);
     
-    // Points = Invoice Total - Delivery Fee - Tax - Discount
-    const points = totals.total - totals.delivery - totals.tax - totals.discount;
+    // Points = Product Total + Service Fee + Product Care - Discount
+    // Product Total = productSubtotal (extendedProductTotal before discount)
+    // Note: rentalTotal already has discount subtracted, so we use productSubtotal
+    const points = totals.productSubtotal + totals.serviceFee + totals.productCare - totals.discount;
     
     return Math.max(0, points); // Ensure non-negative
   } catch (e) {
@@ -2666,7 +2668,13 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
   
   const currentYear = new Date().getFullYear();
   const yearProposals = proposals.filter(p => {
+    // Exclude cancelled projects
     if (p.status === 'Cancelled') return false;
+    
+    // Only include Confirmed and Completed projects (exclude Pending, Approved, and Cancelled)
+    if (p.status !== 'Confirmed' && p.status !== 'Completed') {
+      return false;
+    }
     
     // For historical projects, check eventDate or use timestamp
     if (p.isHistorical) {
@@ -2805,8 +2813,9 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
   const progressPercent = Math.round(tier.progress);
   
   // Get active proposals (up to 3) - most recent first
+  // Active = Pending, Approved (future events), or Confirmed (future events)
   const activeProposals = proposals.filter(p => 
-    p.status === 'Pending' || p.status === 'Active' || (p.status === 'Approved' && isFutureDate(p.startDate)) || (p.status === 'Confirmed' && isFutureDate(p.startDate))
+    p.status === 'Pending' || (p.status === 'Approved' && isFutureDate(p.startDate)) || (p.status === 'Confirmed' && isFutureDate(p.startDate))
   )
   .sort((a, b) => {
     // Get dates for sorting - most recent first
@@ -3553,8 +3562,8 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                     borderRadius: '12px',
                     fontSize: '10px',
                     fontWeight: '500',
-                    backgroundColor: proposal.status === 'Pending' ? '#f5f1e6' : proposal.status === 'Approved' ? '#e8f5e9' : proposal.status === 'Confirmed' ? '#e3f2fd' : '#f3f4f6',
-                    color: proposal.status === 'Pending' ? '#b8860b' : proposal.status === 'Approved' ? '#2e7d32' : proposal.status === 'Confirmed' ? '#1976d2' : '#666',
+                    backgroundColor: proposal.status === 'Pending' ? '#f5f1e6' : proposal.status === 'Approved' ? '#e8f5e9' : proposal.status === 'Confirmed' ? '#e3f2fd' : proposal.status === 'Completed' ? '#e8f5e9' : proposal.status === 'Cancelled' ? '#fee2e2' : '#f3f4f6',
+                    color: proposal.status === 'Pending' ? '#b8860b' : proposal.status === 'Approved' ? '#2e7d32' : proposal.status === 'Confirmed' ? '#1976d2' : proposal.status === 'Completed' ? '#2e7d32' : proposal.status === 'Cancelled' ? '#dc2626' : '#666',
                     fontFamily: "'NeueHaasUnica', sans-serif",
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em'
@@ -4300,21 +4309,40 @@ function PerformanceSection({ spendData, proposals = [], setSelectedProposal, br
     // Exclude cancelled projects
     if (p.status === 'Cancelled') return false;
     
-    // Only include Approved, Confirmed, or Completed projects (exclude Pending)
-    if (p.status !== 'Approved' && p.status !== 'Confirmed' && p.status !== 'Completed') {
+    // Only include Confirmed and Completed projects (exclude Pending, Approved, and Cancelled)
+    if (p.status !== 'Confirmed' && p.status !== 'Completed') {
       return false;
     }
     
-    // Use timestamp (booking date) to determine the year the project was booked
-    // This applies to both historical and regular projects
+    // For historical projects, check eventDate or use timestamp
+    if (p.isHistorical) {
+      if (p.eventDate) {
+        // Try to extract year from eventDate string (e.g., "April 5, 2025" or "April 5-13, 2025")
+        const yearMatch = p.eventDate.match(/\d{4}/);
+        if (yearMatch) {
+          return parseInt(yearMatch[0]) === currentYear;
+        }
+      }
+      // Fall back to timestamp if available
+      if (p.timestamp) {
+        const proposalYear = new Date(p.timestamp).getFullYear();
+        return proposalYear === currentYear;
+      }
+      return false;
+    }
+    
+    // For regular projects, prefer timestamp (booking date), fallback to startDate
     if (p.timestamp) {
       const bookingYear = new Date(p.timestamp).getFullYear();
       return bookingYear === currentYear;
     }
     
-    // Fallback: if no timestamp, try to use created date or other date fields
-    // But prefer timestamp as it represents when the project was booked
-    return false;
+    // Fallback to startDate if no timestamp
+    if (!p.startDate) return false;
+    const start = parseDateSafely(p.startDate);
+    if (!start || isNaN(start.getTime())) return false;
+    const proposalYear = start.getFullYear();
+    return proposalYear === currentYear;
   }).sort((a, b) => {
     // Use shared utility function for consistent sorting
     const dateA = getSortableDateFromProposal(a);
@@ -4364,11 +4392,11 @@ function PerformanceSection({ spendData, proposals = [], setSelectedProposal, br
         return total;
       }
       
-      // For regular projects, only calculate discount for confirmed/approved/completed projects
-      // (not pending, as those haven't been finalized yet)
-      if (proposal.status === 'Pending' || proposal.status === 'Active') {
+      // For regular projects, only calculate discount for confirmed/completed projects
+      // (not pending or approved, as those haven't been finalized yet)
+      if (proposal.status === 'Pending' || proposal.status === 'Approved') {
         console.log(`[Money Saved] Skipping ${proposal.status} project ${proposal.projectNumber || 'N/A'}`);
-        return total; // Don't count pending/active projects
+        return total; // Don't count pending/approved projects
       }
       
       // For regular projects (Confirmed, Approved, Completed), use the same logic as calculateDetailedTotals
@@ -5308,8 +5336,9 @@ function ProposalsSection({ proposals, proposalTab, setProposalTab, setSelectedP
   };
   
   // Use same filtering logic as DashboardView - match how Contributing Projects filters
+  // Active = Pending, Approved (future events), or Confirmed (future events)
   const activeProposals = proposals.filter(p => 
-    p.status === 'Pending' || p.status === 'Active' || (p.status === 'Approved' && isFutureDate(p.startDate)) || (p.status === 'Confirmed' && isFutureDate(p.startDate))
+    p.status === 'Pending' || (p.status === 'Approved' && isFutureDate(p.startDate)) || (p.status === 'Confirmed' && isFutureDate(p.startDate))
   ).sort((a, b) => {
     const dateA = getSortableDate(a);
     const dateB = getSortableDate(b);
@@ -5601,9 +5630,11 @@ function ProposalsSection({ proposals, proposalTab, setProposalTab, setSelectedP
                           fontSize: '12px',
                           fontWeight: '500',
                           backgroundColor: proposal.status === 'Approved' || proposal.status === 'Confirmed' ? '#d1fae5' : 
+                                         proposal.status === 'Completed' ? '#d1fae5' :
                                          proposal.status === 'Pending' ? '#fef3c7' : 
                                          proposal.status === 'Cancelled' ? '#fee2e2' : '#e5e7eb',
                           color: proposal.status === 'Approved' || proposal.status === 'Confirmed' ? '#065f46' :
+                                 proposal.status === 'Completed' ? '#065f46' :
                                  proposal.status === 'Pending' ? '#92400e' : 
                                  proposal.status === 'Cancelled' ? '#991b1b' : '#666'
                         }}>
@@ -9679,66 +9710,69 @@ function ProposalDetailView({ proposal, onBack, onLogout, showAlert, showConfirm
             <button onClick={() => setIsChangeRequestMode(true)} style={smallButtonStyle} onMouseEnter={smallButtonHover} onMouseLeave={smallButtonLeave}>
               Request Changes
             </button>
-            <button onClick={async () => {
-              const confirmed = await showConfirm('Are you sure you want to approve this proposal?');
-              if (confirmed) {
-                try {
-                  // Ensure we have the required fields
-                  if (!proposal.projectNumber) {
-                    await showAlert('Error: Proposal project number is missing. Cannot approve.');
-                    return;
+            {/* Only show Approve button for Pending proposals - clients can only approve pending proposals */}
+            {proposal.status === 'Pending' && (
+              <button onClick={async () => {
+                const confirmed = await showConfirm('Are you sure you want to approve this proposal?');
+                if (confirmed) {
+                  try {
+                    // Ensure we have the required fields
+                    if (!proposal.projectNumber) {
+                      await showAlert('Error: Proposal project number is missing. Cannot approve.');
+                      return;
+                    }
+                    
+                    // Extract version - handle both number and string formats
+                    let versionValue = proposal.version;
+                    if (versionValue === undefined || versionValue === null) {
+                      versionValue = 1; // Default to version 1 if not specified
+                    }
+                    // Convert to string for backend comparison
+                    const versionStr = String(versionValue).trim();
+                    
+                    const approvalData = {
+                      type: 'approveProposal',
+                      projectNumber: String(proposal.projectNumber).trim(),
+                      version: versionStr,
+                      clientName: proposal.clientName,
+                      venueName: proposal.venueName,
+                      eventDate: proposal.eventDate || proposal.startDate,
+                      startDate: proposal.startDate,
+                      total: proposal.total,
+                      isClientInitiated: true // Flag to send Slack notification
+                    };
+                    
+                    console.log('Proposal object:', proposal);
+                    console.log('Sending approval request:', approvalData);
+                    
+                    const response = await fetch(PROPOSALS_API_URL, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'text/plain' },
+                      body: JSON.stringify(approvalData),
+                      mode: 'cors'
+                    });
+                    
+                    const result = await response.json();
+                    console.log('Approval response:', result);
+                    
+                    if (result.success !== false) {
+                      await showAlert('Proposal approved successfully! The team has been notified.');
+                      // Navigate back to refresh the proposals list
+                      setTimeout(() => {
+                        onBack();
+                      }, 1500);
+                    } else {
+                      await showAlert('Error approving proposal: ' + (result.error || 'Unknown error'));
+                    }
+                  } catch (err) {
+                    console.error('Approval error:', err);
+                    await showAlert('Error approving proposal: ' + err.message);
                   }
-                  
-                  // Extract version - handle both number and string formats
-                  let versionValue = proposal.version;
-                  if (versionValue === undefined || versionValue === null) {
-                    versionValue = 1; // Default to version 1 if not specified
-                  }
-                  // Convert to string for backend comparison
-                  const versionStr = String(versionValue).trim();
-                  
-                  const approvalData = {
-                    type: 'approveProposal',
-                    projectNumber: String(proposal.projectNumber).trim(),
-                    version: versionStr,
-                    clientName: proposal.clientName,
-                    venueName: proposal.venueName,
-                    eventDate: proposal.eventDate || proposal.startDate,
-                    startDate: proposal.startDate,
-                    total: proposal.total,
-                    isClientInitiated: true // Flag to send Slack notification
-                  };
-                  
-                  console.log('Proposal object:', proposal);
-                  console.log('Sending approval request:', approvalData);
-                  
-                  const response = await fetch(PROPOSALS_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify(approvalData),
-                    mode: 'cors'
-                  });
-                  
-                  const result = await response.json();
-                  console.log('Approval response:', result);
-                  
-                  if (result.success !== false) {
-                    await showAlert('Proposal approved successfully! The team has been notified.');
-                    // Navigate back to refresh the proposals list
-                    setTimeout(() => {
-                      onBack();
-                    }, 1500);
-                  } else {
-                    await showAlert('Error approving proposal: ' + (result.error || 'Unknown error'));
-                  }
-                } catch (err) {
-                  console.error('Approval error:', err);
-                  await showAlert('Error approving proposal: ' + err.message);
                 }
-              }
-            }} style={smallButtonStyle} onMouseEnter={smallButtonHover} onMouseLeave={smallButtonLeave}>
-              Approve Proposal
-            </button>
+              }} style={smallButtonStyle} onMouseEnter={smallButtonHover} onMouseLeave={smallButtonLeave}>
+                Approve Proposal
+              </button>
+            )}
             <button onClick={handlePrintDownload} style={smallButtonStyle} onMouseEnter={smallButtonHover} onMouseLeave={smallButtonLeave}>
               Print / Export as PDF
             </button>
