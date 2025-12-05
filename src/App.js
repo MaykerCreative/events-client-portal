@@ -8400,7 +8400,7 @@ function DashboardView({ clientInfo, onLogout, showAlert, showConfirm, showPromp
         padding: '0 32px',
         display: 'none',
         position: 'sticky',
-        top: '80px',
+        top: '56px',
         zIndex: 999,
         marginTop: '0'
       }} className="desktop-nav">
@@ -8956,10 +8956,10 @@ function ProposalDetailView({ proposal, onBack, onLogout, showAlert, showConfirm
                   
                   if (result.success !== false) {
                     await showAlert('Proposal approved successfully! The team has been notified.');
-                    // Refresh proposals to show updated status
-                    if (onRefresh) {
-                      onRefresh();
-                    }
+                    // Navigate back to refresh the proposals list
+                    setTimeout(() => {
+                      onBack();
+                    }, 1500);
                   } else {
                     await showAlert('Error approving proposal: ' + (result.error || 'Unknown error'));
                   }
