@@ -7948,10 +7948,6 @@ function FAQSection({ brandCharcoal = '#2C2C2C' }) {
         {
           question: 'When does my discount apply?',
           answer: 'Your discount is applied automatically to your invoice for all standard rental fees. It does not apply to extended rental terms, custom fabrication, or procurement projects.'
-        },
-        {
-          question: 'What\'s the welcome gift about?',
-          answer: 'You\'ll receive something good in your mailbox—an actual, physical surprise. Not just another welcome email.'
         }
       ]
     },
@@ -7964,6 +7960,10 @@ function FAQSection({ brandCharcoal = '#2C2C2C' }) {
           answer: 'We\'re a design resource company. Since 2013, we\'ve provided furniture rentals, custom fabrication, procurement services, and design guidance to brands and individuals. We started in our hometown of Nashville, expanded throughout the Southeast, and now regularly service clients nationwide. We really enjoy getting to know and partnering with the brands, planners, and designers who know that every detail matters.'
         },
         {
+          question: 'What types of projects does Mayker work on?',
+          answer: 'We work across corporate experiences and activations to social gatherings. Whether it\'s an intimate dinner for twenty or a conference for 2,000, we provide the furniture, fabrication, and flexibility to make it happen seamlessly.'
+        },
+        {
           question: 'What can I rent?',
           answer: 'We have six core collections: Bars, Furnishings, Lighting, Upholstery, Seating, and Textiles. We focus on the fundamentals, the statement changers, and lean into quality, design versatility, and lasting impressions.'
         },
@@ -7972,16 +7972,16 @@ function FAQSection({ brandCharcoal = '#2C2C2C' }) {
           answer: 'Absolutely. The most memorable details are always authentic. If you\'re looking for something personalized, our Custom Team concepts and delivers original solutions—custom bars, stage fronts, backdrops, display solutions, signage. We also source hand-selected products, whether you need more of something we carry or something entirely new.'
         },
         {
-          question: 'What types of projects does Mayker work on?',
-          answer: 'We work across corporate experiences and activations to social gatherings. Whether it\'s an intimate dinner for twenty or a conference for 2,000, we provide the furniture, fabrication, and flexibility to make it happen seamlessly.'
-        },
-        {
           question: 'What\'s the investment for custom services?',
           answer: 'Custom projects are approached on a case-by-case basis. We have a $2,500 project minimum and provide pricing based on project plan, materials, complexity, and timeline.'
         },
         {
           question: 'How do I get started with a custom project?',
           answer: 'Submit an inquiry online with as much detail as you have—concept, install date, target budget range. If you have dimensions or inspiration photos, send those as well. The more the merrier really rings true here.'
+        },
+        {
+          question: 'Do you have any rental minimums?',
+          answer: 'Our rental minimums are based on location. Visit our resources page and use the rental minimum calculator to see what the minimum is for your project.'
         }
       ]
     },
