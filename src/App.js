@@ -7536,6 +7536,14 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({
           type: 'submitNewProject',
+          clientName: (() => {
+            try {
+              const clientInfo = JSON.parse(localStorage.getItem('clientInfo') || '{}');
+              return clientInfo.clientCompanyName || '';
+            } catch {
+              return '';
+            }
+          })(),
           venueName: formData.venueName,
           venueAddress: formData.venueAddress,
           loadInDate: formData.loadInDate,
