@@ -7742,38 +7742,53 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
       
       {submitted ? (
         <div style={{
-          padding: '32px',
-          backgroundColor: '#f0f9f4',
-          border: '1px solid #86efac',
+          maxWidth: '600px',
+          margin: '0 auto',
+          padding: '40px 32px',
+          backgroundColor: '#F8F7F4',
+          border: '1px solid #e8e8e3',
           borderRadius: '8px',
           textAlign: 'center'
         }}>
-          <div style={{
-            fontSize: '16px',
-            color: '#166534',
+          <h3 style={{
+            fontSize: '18px',
+            fontWeight: '500',
+            color: '#2C2C2C',
             fontFamily: "'NeueHaasUnica', sans-serif",
             marginBottom: '16px',
-            fontWeight: '500'
+            letterSpacing: '0.02em',
+            marginTop: '0'
           }}>
-            Thank you for your inquiry!
-          </div>
-          <div style={{
-            fontSize: '14px',
-            color: '#166534',
-            fontFamily: "'NeueHaasUnica', sans-serif"
+            Thank you for your submission.
+          </h3>
+          <p style={{
+            fontSize: '15px',
+            color: '#333',
+            fontFamily: "'NeueHaasUnica', sans-serif",
+            lineHeight: '1.7',
+            marginBottom: '32px',
+            marginTop: '0',
+            fontWeight: '400'
           }}>
-            We've received your project request and will review it shortly. Our team will be in touch soon.
-          </div>
+            Our team has received your project request and will review the details shortly. We'll be in touch with next steps.
+          </p>
           <button
             onClick={() => setSubmitted(false)}
             style={{
               ...primaryButtonStyle,
-              marginTop: '24px'
+              marginTop: '0'
             }}
             onMouseEnter={primaryButtonHover}
             onMouseLeave={primaryButtonLeave}
+            onFocus={(e) => {
+              e.currentTarget.style.outline = '2px solid #2C2C2C';
+              e.currentTarget.style.outlineOffset = '2px';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.outline = 'none';
+            }}
           >
-            Submit Another Request
+            SUBMIT ANOTHER REQUEST
           </button>
         </div>
       ) : (
