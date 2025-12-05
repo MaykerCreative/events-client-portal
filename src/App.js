@@ -3082,18 +3082,35 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
       <div style={{
         marginBottom: '48px'
       }}>
-        {/* Section Label */}
+        {/* Section Labels - Matching Style */}
         <div style={{
-          fontSize: '11px',
-          fontWeight: '400',
-          color: '#6b6b6b',
-          fontFamily: "'NeueHaasUnica', sans-serif",
-          letterSpacing: '0.15em',
-          textTransform: 'uppercase',
-          marginBottom: '16px',
-          textAlign: 'left'
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '48px',
+          marginBottom: '16px'
         }}>
-          Your Reserve Highlights
+          <div style={{
+            fontSize: '11px',
+            fontWeight: '400',
+            color: '#6b6b6b',
+            fontFamily: "'NeueHaasUnica', sans-serif",
+            letterSpacing: '0.15em',
+            textTransform: 'uppercase',
+            textAlign: 'left'
+          }}>
+            Your Reserve Highlights
+          </div>
+          <div style={{
+            fontSize: '11px',
+            fontWeight: '400',
+            color: '#6b6b6b',
+            fontFamily: "'NeueHaasUnica', sans-serif",
+            letterSpacing: '0.15em',
+            textTransform: 'uppercase',
+            textAlign: 'left'
+          }}>
+            This Month's Member Perk
+          </div>
         </div>
         
         <div style={{
@@ -3107,11 +3124,13 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
           ...panelStyle,
           position: 'relative',
           marginBottom: 0,
+          paddingTop: '48px',
           background: `
+            radial-gradient(circle at center, rgba(84, 81, 66, 0.02) 0%, rgba(84, 81, 66, 0.03) 50%, rgba(250, 250, 248, 0.4) 100%),
             radial-gradient(circle at center, rgba(250, 250, 248, 0.4) 0%, rgba(250, 250, 248, 0.8) 50%, #fafaf8 100%),
             url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='linen' x='0' y='0' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3Cpath d='M0 0h100v100H0z' fill='%23fafaf8'/%3E%3Cpath d='M0 0h1v100H0z' fill='%23f5f5f0' opacity='0.3'/%3E%3Cpath d='M0 0h100v1H0z' fill='%23f5f5f0' opacity='0.3'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100' height='100' fill='url(%23linen)'/%3E%3C/svg%3E") repeat
           `,
-          backgroundSize: 'auto, 100px 100px'
+          backgroundSize: 'auto, auto, 100px 100px'
         }}>
           {/* Icon watermark */}
           <div style={{
@@ -3170,15 +3189,32 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               background: `radial-gradient(circle, rgba(${tier.tier === 'House Member' ? '107, 125, 71' : tier.tier === 'Inner Circle' ? '212, 175, 55' : '44, 44, 44'}, 0.08) 0%, transparent 70%)`,
               zIndex: 0
             }} />
-            <div style={{
-              position: 'absolute',
-              width: '200px',
-              height: '200px',
-              borderRadius: '50%',
-              border: tier.tier === 'House Member' ? '3px solid #545142' : tier.tier === 'Inner Circle' ? '3px solid #d4af37' : '3px solid #2C2C2C',
-              backgroundColor: 'transparent',
-              zIndex: 1
-            }} />
+            {/* Hand-drawn style circle - using SVG for organic feel */}
+            <svg 
+              width="200" 
+              height="200" 
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                zIndex: 1,
+                pointerEvents: 'none'
+              }}
+            >
+              <circle
+                cx="100"
+                cy="100"
+                r="98"
+                fill="none"
+                stroke={tier.tier === 'House Member' ? '#545142' : tier.tier === 'Inner Circle' ? '#d4af37' : '#545142'}
+                strokeWidth="4"
+                strokeLinecap="round"
+                style={{
+                  filter: 'drop-shadow(0 1px 1px rgba(0,0,0,0.1))',
+                  opacity: 0.95
+                }}
+              />
+            </svg>
             <div style={{
               textAlign: 'center',
               zIndex: 2,
@@ -3186,11 +3222,11 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               padding: '24px'
             }}>
               <div style={{
-                fontSize: '20px',
+                fontSize: '28px',
                 fontWeight: '300',
-                color: '#000000',
+                color: '#2C2C2C',
                 fontFamily: "'Domaine Text', serif",
-                letterSpacing: '-0.02em',
+                letterSpacing: '0.4px',
                 lineHeight: '1.2',
                 marginBottom: '8px'
               }}>
@@ -3217,11 +3253,11 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               flexDirection: 'column',
               alignItems: 'center'
             }}>
-              {/* Thin horizontal olive rule */}
+              {/* Thin horizontal olive rule - matching right card */}
               <div style={{
                 width: '60px',
                 height: '1px',
-                backgroundColor: '#F7F6F0',
+                backgroundColor: '#545142',
                 marginBottom: '20px',
                 opacity: 0.3
               }} />
@@ -3290,7 +3326,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             <div style={{
               marginTop: '32px',
               paddingTop: '32px',
-              borderTop: '1px solid #e5e7eb',
+              borderTop: '1px solid rgba(84, 81, 66, 0.15)',
               width: '100%',
               maxWidth: '500px'
             }}>
@@ -3378,10 +3414,11 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
           marginBottom: 0,
           position: 'relative',
           padding: '48px',
+          paddingTop: '48px',
           minHeight: '100%',
           overflow: 'hidden',
           borderRadius: '20px',
-          backgroundColor: '#545142',
+          backgroundColor: '#5a5849',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'flex-start',
@@ -3397,7 +3434,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               marginBottom: '32px',
               display: 'block',
               filter: 'brightness(0) invert(1)',
-              opacity: 0.9
+              opacity: 0.85
             }}
             onError={(e) => {
               e.target.style.display = 'none';
@@ -3409,7 +3446,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             color: '#FFFFFF',
             width: '100%'
           }}>
-            {/* Thin white rule above title */}
+            {/* Thin white rule above title - matching left card */}
             <div style={{
               width: '60px',
               height: '1px',
@@ -3417,37 +3454,37 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               marginBottom: '12px'
             }} />
             <div style={{
-              fontSize: '34px',
+              fontSize: '28px',
               fontWeight: '300',
               color: '#FFFFFF',
               fontFamily: "'Domaine Text', serif",
               letterSpacing: '0.4px',
               lineHeight: '1.2',
-              marginBottom: '10px'
+              marginBottom: '12px'
             }}>
               {currentMonth} Member Perk
             </div>
             <div style={{
-              fontSize: '15px',
+              fontSize: '14px',
               color: 'rgba(255, 255, 255, 0.9)',
               fontFamily: "'NeueHaasUnica', sans-serif",
               fontWeight: '400',
-              lineHeight: '1.5',
-              marginBottom: '14px'
+              lineHeight: '1.6',
+              marginBottom: '16px'
             }}>
               A year-end thank you: Reserve Members receive 25% off all rental products.
             </div>
             <div style={{
               fontSize: '11px',
-              color: 'rgba(255, 255, 255, 0.8)',
+              color: 'rgba(255, 255, 255, 0.75)',
               fontFamily: "'NeueHaasUnica', sans-serif",
               fontWeight: '400',
-              lineHeight: '1.6',
+              lineHeight: '1.7',
               letterSpacing: '0.01em'
             }}>
-              <div style={{ marginBottom: '4px' }}>Projects opened + closed between Dec 1–31, 2025</div>
-              <div style={{ marginBottom: '4px' }}>Events occurring between Dec 1, 2025 – Mar 31, 2026</div>
-              <div style={{ marginBottom: '4px' }}>Applies to rental products only</div>
+              <div style={{ marginBottom: '6px' }}>Projects opened + closed between Dec 1–31, 2025</div>
+              <div style={{ marginBottom: '6px' }}>Events occurring between Dec 1, 2025 – Mar 31, 2026</div>
+              <div style={{ marginBottom: '6px' }}>Applies to rental products only</div>
               <div>Excludes custom fabrication + procurement</div>
             </div>
           </div>
