@@ -8006,36 +8006,13 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
             </div>
           </div>
           
-          {/* Notes */}
-          <div style={{ marginBottom: '32px' }}>
-            <label style={labelStyle}>Notes</label>
-            <textarea
-              value={formData.notes}
-              onChange={(e) => handleInputChange('notes', e.target.value)}
-              rows={4}
-              style={{
-                ...inputStyle,
-                resize: 'vertical',
-                minHeight: '100px'
-              }}
-              placeholder="Any additional details about your project..."
-            />
-          </div>
-          
-          {/* Schedule Call Dropdown */}
-          <div style={{ marginBottom: '32px' }}>
-            <label style={labelStyle}>Would you like to schedule a call to discuss your project?</label>
-            <select
-              value={formData.scheduleCall}
-              onChange={(e) => handleInputChange('scheduleCall', e.target.value)}
-              style={inputStyle}
-            >
-              <option value="">Select an option...</option>
-              <option value="Yes">Yes</option>
-              <option value="Not necessary">Not necessary</option>
-              <option value="If helpful">If helpful</option>
-            </select>
-          </div>
+          {/* Separator Line */}
+          <div style={{
+            width: '100%',
+            height: '1px',
+            background: '#e8e8e3',
+            margin: '32px 0'
+          }} />
           
           {/* Resources Section */}
           <div style={{ marginBottom: '32px' }}>
