@@ -486,6 +486,9 @@ const authService = {
       }
       
       console.log('Login response data:', data);
+      console.log('Login response keys:', Object.keys(data));
+      console.log('clientCompanyName in response:', data.clientCompanyName);
+      console.log('companyName in response:', data.companyName);
       
       if (data.success && data.token) {
         // Store session in localStorage
@@ -494,15 +497,23 @@ const authService = {
         console.log('Token length:', token.length);
         console.log('Full token:', token);
         
+        // Get clientCompanyName from response (try multiple field names)
+        const clientCompanyName = data.clientCompanyName || data.companyName || data.client_name || '';
+        console.log('Storing clientCompanyName:', clientCompanyName);
+        
         localStorage.setItem('clientToken', token);
         localStorage.setItem('clientInfo', JSON.stringify({
           email: data.email,
-          clientCompanyName: data.clientCompanyName,
+          clientCompanyName: clientCompanyName,
           fullName: data.fullName || `${data.firstName || ''} ${data.lastName || ''}`.trim(),
           firstName: data.firstName || '',
           lastName: data.lastName || '',
           title: data.title || ''
         }));
+        
+        // Verify clientCompanyName was stored
+        const storedClientInfo = JSON.parse(localStorage.getItem('clientInfo') || '{}');
+        console.log('Stored clientCompanyName:', storedClientInfo.clientCompanyName);
         
         // Verify token was stored
         const storedToken = localStorage.getItem('clientToken');
@@ -7534,19 +7545,57 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
       // Get client name from session at submission time
       let clientName = '';
       try {
+        // Try multiple methods to get client name
         const session = authService.getSession();
-        if (session && session.clientInfo && session.clientInfo.clientCompanyName) {
-          clientName = session.clientInfo.clientCompanyName;
-        } else {
-          // Fallback to localStorage directly
-          const clientInfo = JSON.parse(localStorage.getItem('clientInfo') || '{}');
-          clientName = clientInfo.clientCompanyName || '';
+        console.log('Session retrieved:', session);
+        console.log('Session clientInfo:', session?.clientInfo);
+        
+        if (session && session.clientInfo) {
+          // Try multiple possible field names
+          clientName = session.clientInfo.clientCompanyName || 
+                      session.clientInfo.companyName || 
+                      session.clientInfo.client_name ||
+                      '';
+          console.log('Got client name from session:', clientName);
+        }
+        
+        // If still empty, fallback to localStorage directly
+        if (!clientName) {
+          const clientInfoStr = localStorage.getItem('clientInfo');
+          console.log('clientInfo from localStorage:', clientInfoStr);
+          
+          if (clientInfoStr) {
+            try {
+              const clientInfo = JSON.parse(clientInfoStr);
+              console.log('Parsed clientInfo:', clientInfo);
+              console.log('clientInfo keys:', Object.keys(clientInfo));
+              
+              // Try all possible field names
+              clientName = clientInfo.clientCompanyName || 
+                          clientInfo.companyName || 
+                          clientInfo.client_name ||
+                          clientInfo.name ||
+                          '';
+              console.log('Got client name from localStorage:', clientName);
+            } catch (parseError) {
+              console.error('Error parsing clientInfo:', parseError);
+            }
+          }
+        }
+        
+        // Final check - log what we have
+        if (!clientName) {
+          console.warn('WARNING: No client name found!');
+          console.log('All localStorage keys:', Object.keys(localStorage));
+          const allClientInfo = localStorage.getItem('clientInfo');
+          console.log('Full clientInfo string:', allClientInfo);
         }
       } catch (error) {
         console.error('Error getting client name:', error);
+        console.error('Error stack:', error.stack);
       }
       
-      console.log('Submitting with client name:', clientName);
+      console.log('Final client name being submitted:', clientName || '(empty)');
       
       const response = await fetch(CLIENT_API_URL, {
         method: 'POST',
