@@ -5792,25 +5792,27 @@ function ContactSection({ brandCharcoal = '#2C2C2C' }) {
           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
         }}>
           {/* Low-opacity initials background (Soho vibe) */}
-          <div 
-            className="bg-initials"
-            style={{
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '120px',
-              fontWeight: '300',
-              color: 'rgba(139, 139, 139, 0.15)',
-              fontFamily: "'Domaine Text', serif",
-              zIndex: 0,
-              pointerEvents: 'none'
-            }}
-          >
-            {initials}
-          </div>
+          {!member.hideBackgroundInitials && (
+            <div 
+              className="bg-initials"
+              style={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '120px',
+                fontWeight: '300',
+                color: 'rgba(139, 139, 139, 0.15)',
+                fontFamily: "'Domaine Text', serif",
+                zIndex: 0,
+                pointerEvents: 'none'
+              }}
+            >
+              {initials}
+            </div>
+          )}
           
           {/* Photo */}
           {member.photo && (
@@ -6083,12 +6085,9 @@ function ContactSection({ brandCharcoal = '#2C2C2C' }) {
             justifyContent: 'flex-start'
           }}>
             {teamMembers.filter(member => 
-              member.name === 'Megan Proby' || 
               member.name === 'Noelle Powell' || 
               member.name === 'Lindsey Soklin' || 
-              member.name === 'Mara Meisberger' ||
-              member.name === 'Becca Farris' ||
-              member.name === 'Robert Hamm'
+              member.name === 'Mara Meisberger'
             ).map((member, index) => (
               <ContactCard key={index} member={member} brandCharcoal={brandCharcoal} />
             ))}
@@ -6139,7 +6138,7 @@ function ContactSection({ brandCharcoal = '#2C2C2C' }) {
           </div>
         </div>
 
-        {/* Delivery Supervisors Section */}
+        {/* Logistics & Delivery Section */}
         <div style={{ marginBottom: '64px' }}>
           <h3 style={{ 
             fontSize: '13px', 
@@ -6150,7 +6149,7 @@ function ContactSection({ brandCharcoal = '#2C2C2C' }) {
             letterSpacing: '0.1em',
             marginBottom: '16px'
           }}>
-            Delivery Supervisors
+            Logistics & Delivery
           </h3>
           <p style={{
             fontSize: '15px',
@@ -6175,6 +6174,11 @@ function ContactSection({ brandCharcoal = '#2C2C2C' }) {
             gap: '32px',
             justifyContent: 'flex-start'
           }}>
+            {teamMembers.filter(member => 
+              member.name === 'Becca Farris'
+            ).map((member, index) => (
+              <ContactCard key={index} member={member} brandCharcoal={brandCharcoal} />
+            ))}
             <ContactCard 
               member={{
                 name: 'Delivery Supervisors',
@@ -6183,7 +6187,8 @@ function ContactSection({ brandCharcoal = '#2C2C2C' }) {
                 photo: '',
                 firstName: 'DS',
                 initials: 'DS',
-                phone: '(615) 970-1244'
+                phone: '(629) 213-4475',
+                hideBackgroundInitials: true
               }} 
               brandCharcoal={brandCharcoal} 
             />
