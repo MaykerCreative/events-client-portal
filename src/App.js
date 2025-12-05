@@ -2944,8 +2944,9 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
       {/* 1. Welcome Hero Section with Background Image */}
       <style dangerouslySetInnerHTML={{ __html: `
         .overview-hero {
-          max-width: 1400px;
-          margin: 0 auto 64px;
+          width: 100vw;
+          margin-left: calc(-50vw + 50%);
+          margin-bottom: 64px;
           min-height: 500px;
           position: relative;
           display: flex;
@@ -2955,8 +2956,6 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
           background-size: cover;
           background-position: center;
           background-repeat: no-repeat;
-          border-radius: 8px;
-          overflow: hidden;
         }
         .overview-hero__overlay {
           position: absolute;
@@ -3003,8 +3002,6 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
         @media (max-width: 768px) {
           .overview-hero {
             min-height: 400px;
-            margin-left: 24px;
-            margin-right: 24px;
           }
           .overview-hero__content {
             padding: 64px 32px;
@@ -3024,8 +3021,6 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
         @media (max-width: 480px) {
           .overview-hero {
             min-height: 350px;
-            margin-left: 16px;
-            margin-right: 16px;
           }
           .overview-hero__content {
             padding: 48px 24px;
@@ -3376,61 +3371,52 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
         </div>
         </div>
 
-        {/* Monthly Perk - Square with text overlay */}
+        {/* Monthly Perk - Square with solid background */}
         <div style={{
           ...panelStyle,
           marginBottom: 0,
           position: 'relative',
-          padding: 0,
+          padding: '48px',
           aspectRatio: '1 / 1',
           overflow: 'hidden',
-          borderRadius: '20px'
+          borderRadius: '20px',
+          backgroundColor: '#545142',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start'
         }}>
+          {/* Perk Icon at the top */}
           <img 
-            src="/december-perk.jpg" 
-            alt={`${currentMonth} Member Perk`}
-            loading="lazy"
+            src="/Perk.png" 
+            alt="Perk Icon"
             style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              position: 'absolute',
-              top: 0,
-              left: 0
+              width: '60px',
+              height: '60px',
+              marginBottom: '24px',
+              display: 'block'
             }}
             onError={(e) => {
-              if (!e.target.src.includes('/assets/')) {
-                e.target.src = '/assets/december-perk.jpg';
-              } else if (!e.target.src.includes('december-perk')) {
-                e.target.src = '/december-perk.png';
-              } else {
-                e.target.style.display = 'none';
-              }
+              e.target.style.display = 'none';
             }}
           />
-          {/* Text overlay - moved up for better balance */}
+          
+          {/* Content */}
           <div style={{
-            position: 'absolute',
-            top: '35%',
-            left: 0,
-            right: 0,
-            transform: 'translateY(-50%)',
-            background: 'linear-gradient(to bottom, rgba(250, 248, 243, 0.82) 0%, rgba(250, 248, 243, 0.78) 40%, rgba(250, 248, 243, 0.00) 100%)',
-            padding: '48px',
-            color: brandCharcoal
+            color: '#FFFFFF',
+            width: '100%'
           }}>
-            {/* Thin olive rule above title */}
+            {/* Thin white rule above title */}
             <div style={{
               width: '60px',
               height: '1px',
-              backgroundColor: '#F7F6F0',
-              marginBottom: '12px',
-              opacity: 0.4
+              backgroundColor: 'rgba(255, 255, 255, 0.4)',
+              marginBottom: '12px'
             }} />
             <div style={{
               fontSize: '34px',
               fontWeight: '300',
-              color: '#080808',
+              color: '#FFFFFF',
               fontFamily: "'Domaine Text', serif",
               letterSpacing: '0.4px',
               lineHeight: '1.2',
@@ -3440,7 +3426,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             </div>
             <div style={{
               fontSize: '15px',
-              color: '#2a2a2a',
+              color: 'rgba(255, 255, 255, 0.9)',
               fontFamily: "'NeueHaasUnica', sans-serif",
               fontWeight: '400',
               lineHeight: '1.5',
@@ -3450,7 +3436,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             </div>
             <div style={{
               fontSize: '11px',
-              color: '#5a5a5a',
+              color: 'rgba(255, 255, 255, 0.8)',
               fontFamily: "'NeueHaasUnica', sans-serif",
               fontWeight: '400',
               lineHeight: '1.6',
