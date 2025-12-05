@@ -7584,7 +7584,7 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
         loadOutTime: '',
         notes: '',
         resourceLinks: '',
-        scheduleCall: ''
+        scheduleCall: false
       });
       setProducts([]);
       setUploadedFiles([]);
@@ -7593,29 +7593,60 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
     }
   };
   
+  // Premium input styling - warm, editorial feel
   const inputStyle = {
     width: '100%',
-    padding: '12px 16px',
+    padding: '12px 0',
     fontSize: '14px',
     fontFamily: "'NeueHaasUnica', sans-serif",
-    border: '1px solid #e5e7eb',
-    borderRadius: '8px',
-    backgroundColor: '#fff',
+    border: 'none',
+    borderBottom: '1px solid #e8e8e3',
+    borderRadius: '0',
+    backgroundColor: 'transparent',
     color: '#000000',
     outline: 'none',
-    transition: 'border-color 0.2s',
+    transition: 'border-color 0.2s ease',
     boxSizing: 'border-box'
   };
   
+  const inputStyleFull = {
+    ...inputStyle,
+    border: '1px solid #e8e8e3',
+    borderRadius: '6px',
+    padding: '12px 16px',
+    backgroundColor: '#fff'
+  };
+  
+  const inputStyleFullHover = {
+    borderColor: '#d1d5db',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)'
+  };
+  
+  const inputStyleFullFocus = {
+    borderColor: '#a8a8a0',
+    boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)'
+  };
+  
+  // Section heading style
+  const sectionHeadingStyle = {
+    fontSize: '11px',
+    fontWeight: '500',
+    letterSpacing: '0.1em',
+    textTransform: 'uppercase',
+    color: '#666',
+    fontFamily: "'NeueHaasUnica', sans-serif",
+    marginBottom: '16px',
+    marginTop: '0'
+  };
+  
+  // Field label style
   const labelStyle = {
     display: 'block',
     fontSize: '13px',
-    fontWeight: '600',
+    fontWeight: '500',
     marginBottom: '8px',
     color: '#000000',
-    fontFamily: "'NeueHaasUnica', sans-serif",
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em'
+    fontFamily: "'NeueHaasUnica', sans-serif"
   };
   
   return (
@@ -7747,95 +7778,218 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
         </div>
       ) : (
         <form onSubmit={handleSubmit}>
-          {/* Venue Name */}
-          <div style={{ marginBottom: '24px' }}>
-            <label style={labelStyle}>Venue Name</label>
-            <input
-              type="text"
-              value={formData.venueName}
-              onChange={(e) => handleInputChange('venueName', e.target.value)}
-              style={inputStyle}
-              required
-            />
+          {/* Intro Copy */}
+          <div style={{ marginBottom: '48px', maxWidth: '680px' }}>
+            <p style={{
+              fontSize: '15px',
+              lineHeight: '1.7',
+              color: '#333',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              fontWeight: '400',
+              margin: '0'
+            }}>
+              Planning an upcoming project? Share the details you have below. If you're still refining products or quantities, simply outline your vision in the notes or upload any inspiration. The more you share, the more thoughtfully we can support you.
+            </p>
           </div>
           
-          {/* Venue Address */}
-          <div style={{ marginBottom: '24px' }}>
-            <label style={labelStyle}>Venue Address</label>
-            <input
-              id="venue-address-input"
-              type="text"
-              value={formData.venueAddress}
-              onChange={(e) => handleInputChange('venueAddress', e.target.value)}
-              placeholder="Enter venue address (e.g., 123 Main St, Nashville, TN 37203)"
-              style={inputStyle}
-              required
-            />
-          </div>
-          
-          {/* Load-In Date and Time */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
-            <div>
-              <label style={labelStyle}>Load-In Date</label>
+          {/* Section 1: Project Details */}
+          <div style={{ marginBottom: '48px' }}>
+            <h3 style={sectionHeadingStyle}>Project Details</h3>
+            
+            <div style={{ marginBottom: '32px' }}>
+              <label style={labelStyle} htmlFor="venue-name">Venue Name</label>
               <input
-                type="date"
-                value={formData.loadInDate}
-                onChange={(e) => handleInputChange('loadInDate', e.target.value)}
-                style={inputStyle}
+                id="venue-name"
+                type="text"
+                value={formData.venueName}
+                onChange={(e) => handleInputChange('venueName', e.target.value)}
+                style={inputStyleFull}
+                onFocus={(e) => {
+                  Object.assign(e.target.style, inputStyleFullFocus);
+                }}
+                onBlur={(e) => {
+                  Object.assign(e.target.style, inputStyleFull);
+                }}
+                onMouseEnter={(e) => {
+                  if (document.activeElement !== e.target) {
+                    Object.assign(e.target.style, { ...inputStyleFull, ...inputStyleFullHover });
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (document.activeElement !== e.target) {
+                    Object.assign(e.target.style, inputStyleFull);
+                  }
+                }}
                 required
               />
             </div>
+            
             <div>
-              <label style={labelStyle}>Load-In Time</label>
+              <label style={labelStyle} htmlFor="venue-address-input">Venue Address</label>
               <input
-                type="time"
-                value={formData.loadInTime}
-                onChange={(e) => handleInputChange('loadInTime', e.target.value)}
-                style={inputStyle}
-              />
-            </div>
-          </div>
-          
-          {/* Load-Out Date and Time */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
-            <div>
-              <label style={labelStyle}>Load-Out Date</label>
-              <input
-                type="date"
-                value={formData.loadOutDate}
-                onChange={(e) => handleInputChange('loadOutDate', e.target.value)}
-                style={inputStyle}
+                id="venue-address-input"
+                type="text"
+                value={formData.venueAddress}
+                onChange={(e) => handleInputChange('venueAddress', e.target.value)}
+                placeholder="Enter venue address"
+                style={inputStyleFull}
+                onFocus={(e) => {
+                  Object.assign(e.target.style, inputStyleFullFocus);
+                }}
+                onBlur={(e) => {
+                  Object.assign(e.target.style, inputStyleFull);
+                }}
+                onMouseEnter={(e) => {
+                  if (document.activeElement !== e.target) {
+                    Object.assign(e.target.style, { ...inputStyleFull, ...inputStyleFullHover });
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (document.activeElement !== e.target) {
+                    Object.assign(e.target.style, inputStyleFull);
+                  }
+                }}
                 required
               />
             </div>
+          </div>
+          
+          {/* Section 2: Timing */}
+          <div style={{ marginBottom: '48px' }}>
+            <h3 style={sectionHeadingStyle}>Timing</h3>
+            
+            {/* Load-In */}
+            <div style={{ marginBottom: '32px' }}>
+              <label style={labelStyle}>Load-In</label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '16px', alignItems: 'end' }}>
+                <div>
+                  <input
+                    type="date"
+                    value={formData.loadInDate}
+                    onChange={(e) => handleInputChange('loadInDate', e.target.value)}
+                    style={inputStyleFull}
+                    onFocus={(e) => {
+                      Object.assign(e.target.style, inputStyleFullFocus);
+                    }}
+                    onBlur={(e) => {
+                      Object.assign(e.target.style, inputStyleFull);
+                    }}
+                    onMouseEnter={(e) => {
+                      if (document.activeElement !== e.target) {
+                        Object.assign(e.target.style, { ...inputStyleFull, ...inputStyleFullHover });
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (document.activeElement !== e.target) {
+                        Object.assign(e.target.style, inputStyleFull);
+                      }
+                    }}
+                    required
+                  />
+                </div>
+                <div style={{ width: '140px' }}>
+                  <input
+                    type="time"
+                    value={formData.loadInTime}
+                    onChange={(e) => handleInputChange('loadInTime', e.target.value)}
+                    style={inputStyleFull}
+                    onFocus={(e) => {
+                      Object.assign(e.target.style, inputStyleFullFocus);
+                    }}
+                    onBlur={(e) => {
+                      Object.assign(e.target.style, inputStyleFull);
+                    }}
+                    onMouseEnter={(e) => {
+                      if (document.activeElement !== e.target) {
+                        Object.assign(e.target.style, { ...inputStyleFull, ...inputStyleFullHover });
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (document.activeElement !== e.target) {
+                        Object.assign(e.target.style, inputStyleFull);
+                      }
+                    }}
+                    placeholder="Time (optional)"
+                  />
+                </div>
+              </div>
+            </div>
+            
+            {/* Load-Out */}
             <div>
-              <label style={labelStyle}>Load-Out Time</label>
-              <input
-                type="time"
-                value={formData.loadOutTime}
-                onChange={(e) => handleInputChange('loadOutTime', e.target.value)}
-                style={inputStyle}
-              />
+              <label style={labelStyle}>Load-Out</label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '16px', alignItems: 'end' }}>
+                <div>
+                  <input
+                    type="date"
+                    value={formData.loadOutDate}
+                    onChange={(e) => handleInputChange('loadOutDate', e.target.value)}
+                    style={inputStyleFull}
+                    onFocus={(e) => {
+                      Object.assign(e.target.style, inputStyleFullFocus);
+                    }}
+                    onBlur={(e) => {
+                      Object.assign(e.target.style, inputStyleFull);
+                    }}
+                    onMouseEnter={(e) => {
+                      if (document.activeElement !== e.target) {
+                        Object.assign(e.target.style, { ...inputStyleFull, ...inputStyleFullHover });
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (document.activeElement !== e.target) {
+                        Object.assign(e.target.style, inputStyleFull);
+                      }
+                    }}
+                    required
+                  />
+                </div>
+                <div style={{ width: '140px' }}>
+                  <input
+                    type="time"
+                    value={formData.loadOutTime}
+                    onChange={(e) => handleInputChange('loadOutTime', e.target.value)}
+                    style={inputStyleFull}
+                    onFocus={(e) => {
+                      Object.assign(e.target.style, inputStyleFullFocus);
+                    }}
+                    onBlur={(e) => {
+                      Object.assign(e.target.style, inputStyleFull);
+                    }}
+                    onMouseEnter={(e) => {
+                      if (document.activeElement !== e.target) {
+                        Object.assign(e.target.style, { ...inputStyleFull, ...inputStyleFullHover });
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (document.activeElement !== e.target) {
+                        Object.assign(e.target.style, inputStyleFull);
+                      }
+                    }}
+                    placeholder="Time (optional)"
+                  />
+                </div>
+              </div>
             </div>
           </div>
           
-          {/* Requested Products */}
-          <div style={{ marginBottom: '24px' }}>
-            <label style={labelStyle}>Requested Products and Quantities</label>
+          {/* Section 3: Products */}
+          <div style={{ marginBottom: '48px' }}>
+            <h3 style={sectionHeadingStyle}>Products</h3>
             
             {/* Product List */}
             {products.length > 0 && (
-              <div style={{ marginBottom: '16px' }}>
+              <div style={{ marginBottom: '24px' }}>
                 {products.map((product) => (
                   <div key={product.id} style={{
                     display: 'flex',
-                    gap: '12px',
+                    gap: '16px',
                     alignItems: 'center',
-                    marginBottom: '12px',
-                    padding: '12px',
+                    marginBottom: '16px',
+                    padding: '16px',
                     backgroundColor: '#fafaf8',
-                    borderRadius: '8px',
-                    border: '1px solid #e5e7eb'
+                    borderRadius: '6px',
+                    border: '1px solid #e8e8e3'
                   }}>
                     <div style={{ flex: 1 }}>
                       <input
@@ -7847,13 +8001,19 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
                           ));
                         }}
                         style={{
-                          ...inputStyle,
-                          marginBottom: '8px',
+                          ...inputStyleFull,
+                          marginBottom: '12px',
                           padding: '8px 12px'
                         }}
                         placeholder="Product name"
+                        onFocus={(e) => {
+                          Object.assign(e.target.style, { ...inputStyleFull, ...inputStyleFullFocus, padding: '8px 12px' });
+                        }}
+                        onBlur={(e) => {
+                          Object.assign(e.target.style, { ...inputStyleFull, padding: '8px 12px' });
+                        }}
                       />
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <span style={{ fontSize: '13px', color: '#666', fontFamily: "'NeueHaasUnica', sans-serif" }}>Quantity:</span>
                         <input
                           type="number"
@@ -7861,9 +8021,15 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
                           value={product.quantity}
                           onChange={(e) => handleUpdateProductQuantity(product.id, e.target.value)}
                           style={{
-                            ...inputStyle,
+                            ...inputStyleFull,
                             width: '80px',
                             padding: '8px 12px'
+                          }}
+                          onFocus={(e) => {
+                            Object.assign(e.target.style, { ...inputStyleFull, ...inputStyleFullFocus, width: '80px', padding: '8px 12px' });
+                          }}
+                          onBlur={(e) => {
+                            Object.assign(e.target.style, { ...inputStyleFull, width: '80px', padding: '8px 12px' });
                           }}
                         />
                       </div>
@@ -7871,9 +8037,29 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
                     <button
                       type="button"
                       onClick={() => handleRemoveProduct(product.id)}
-                      style={destructiveButtonStyle}
-                      onMouseEnter={destructiveButtonHover}
-                      onMouseLeave={destructiveButtonLeave}
+                      style={{
+                        padding: '8px 16px',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        color: '#666',
+                        backgroundColor: 'transparent',
+                        border: '1px solid #e8e8e3',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontFamily: "'NeueHaasUnica', sans-serif",
+                        transition: 'all 0.2s',
+                        whiteSpace: 'nowrap'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = '#f5f5f2';
+                        e.currentTarget.style.borderColor = '#d1d5db';
+                        e.currentTarget.style.color = '#000';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.borderColor = '#e8e8e3';
+                        e.currentTarget.style.color = '#666';
+                      }}
                     >
                       Remove
                     </button>
@@ -7887,7 +8073,6 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
               display: 'flex',
               gap: '12px',
               alignItems: 'flex-end',
-              marginBottom: '16px',
               position: 'relative'
             }}>
               <div style={{ flex: 1, position: 'relative' }}>
@@ -7901,14 +8086,10 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
                     }
                   }}
                   onBlur={() => {
-                    // Delay hiding suggestions to allow click
                     setTimeout(() => setShowSuggestions(false), 200);
                   }}
                   placeholder="Start typing product name..."
-                  style={{
-                    ...inputStyle,
-                    marginBottom: '8px'
-                  }}
+                  style={inputStyleFull}
                   onKeyPress={(e) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
@@ -7929,9 +8110,9 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
                     left: 0,
                     right: 0,
                     backgroundColor: 'white',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                    border: '1px solid #e8e8e3',
+                    borderRadius: '6px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.12)',
                     zIndex: 1000,
                     maxHeight: '200px',
                     overflowY: 'auto',
@@ -7964,7 +8145,7 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
                     ))}
                   </div>
                 )}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '12px' }}>
                   <span style={{ fontSize: '13px', color: '#666', fontFamily: "'NeueHaasUnica', sans-serif" }}>Quantity:</span>
                   <input
                     type="number"
@@ -7972,7 +8153,7 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
                     value={newProductQuantity}
                     onChange={(e) => setNewProductQuantity(e.target.value)}
                     style={{
-                      ...inputStyle,
+                      ...inputStyleFull,
                       width: '80px'
                     }}
                   />
@@ -7983,55 +8164,59 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
                 onClick={handleAddProduct}
                 disabled={!newProductName.trim()}
                 style={{
-                  ...smallButtonStyle,
-                  backgroundColor: newProductName.trim() ? '#FAF8F3' : '#f3f4f6',
-                  color: newProductName.trim() ? '#000000' : '#9ca3af',
-                  borderColor: newProductName.trim() ? '#e8e8e3' : '#e5e7eb',
+                  padding: '10px 20px',
+                  fontSize: '13px',
+                  fontWeight: '500',
+                  fontFamily: "'NeueHaasUnica', sans-serif",
+                  backgroundColor: newProductName.trim() ? '#FAF8F3' : '#fafaf8',
+                  color: newProductName.trim() ? '#000000' : '#999',
+                  border: `1px solid ${newProductName.trim() ? '#e8e8e3' : '#e8e8e3'}`,
+                  borderRadius: '20px',
                   cursor: newProductName.trim() ? 'pointer' : 'not-allowed',
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
+                  transition: 'all 0.2s ease',
+                  boxShadow: newProductName.trim() ? '0 1px 2px rgba(0, 0, 0, 0.05)' : 'none'
                 }}
                 onMouseEnter={(e) => {
                   if (newProductName.trim()) {
-                    smallButtonHover(e);
+                    e.currentTarget.style.backgroundColor = '#f5f5f2';
+                    e.currentTarget.style.borderColor = '#d1d5db';
+                    e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.08)';
+                    e.currentTarget.style.transform = 'translateY(-1px)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (newProductName.trim()) {
-                    smallButtonLeave(e);
+                    e.currentTarget.style.backgroundColor = '#FAF8F3';
+                    e.currentTarget.style.borderColor = '#e8e8e3';
+                    e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.05)';
+                    e.currentTarget.style.transform = 'translateY(0)';
                   }
                 }}
               >
-                Add Product
+                + Add Product
               </button>
             </div>
           </div>
           
-          {/* Separator Line */}
-          <div style={{
-            width: '100%',
-            height: '1px',
-            background: '#e8e8e3',
-            margin: '32px 0'
-          }} />
-          
-          {/* Resources Section */}
-          <div style={{ marginBottom: '32px' }}>
-            <label style={labelStyle}>Resources</label>
+          {/* Section 4: Resources */}
+          <div style={{ marginBottom: '48px' }}>
+            <h3 style={sectionHeadingStyle}>Resources & Inspiration</h3>
             <p style={{
-              fontSize: '13px',
+              fontSize: '14px',
               color: '#666',
               fontFamily: "'NeueHaasUnica', sans-serif",
-              marginBottom: '16px',
+              marginBottom: '24px',
               lineHeight: '1.6'
             }}>
-              Have design decks, inspiration images, or web-based resources you'd like us to keep in mind? Please upload or share here.
+              Have design decks, inspiration images, or web links you'd like us to keep in mind? Upload them here or paste links below.
             </p>
             
             {/* File Upload */}
-            <div style={{ marginBottom: '16px' }}>
+            <div style={{ marginBottom: '24px' }}>
               <label style={{
                 display: 'block',
-                fontSize: '12px',
+                fontSize: '13px',
                 fontWeight: '500',
                 marginBottom: '8px',
                 color: '#000000',
@@ -8046,27 +8231,36 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
                 onChange={handleFileUpload}
                 style={{
                   width: '100%',
-                  padding: '12px',
+                  padding: '12px 16px',
                   fontSize: '14px',
                   fontFamily: "'NeueHaasUnica', sans-serif",
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
+                  border: '1px solid #e8e8e3',
+                  borderRadius: '6px',
                   backgroundColor: '#fff',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#d1d5db';
+                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = '#e8e8e3';
+                  e.currentTarget.style.boxShadow = 'none';
                 }}
               />
               {uploadedFiles.length > 0 && (
-                <div style={{ marginTop: '12px' }}>
+                <div style={{ marginTop: '16px' }}>
                   {uploadedFiles.map((file) => (
                     <div key={file.id} style={{
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      padding: '8px 12px',
+                      padding: '12px 16px',
                       backgroundColor: '#fafaf8',
                       borderRadius: '6px',
                       marginBottom: '8px',
-                      border: '1px solid #e5e7eb'
+                      border: '1px solid #e8e8e3'
                     }}>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{
@@ -8096,19 +8290,24 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
                           padding: '6px 12px',
                           fontSize: '11px',
                           fontWeight: '500',
-                          color: '#dc2626',
+                          color: '#666',
                           backgroundColor: 'transparent',
-                          border: '1px solid #dc2626',
+                          border: '1px solid #e8e8e3',
                           borderRadius: '4px',
                           cursor: 'pointer',
                           fontFamily: "'NeueHaasUnica', sans-serif",
-                          transition: 'all 0.2s'
+                          transition: 'all 0.2s',
+                          marginLeft: '12px'
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = '#fee2e2';
+                          e.currentTarget.style.backgroundColor = '#f5f5f2';
+                          e.currentTarget.style.borderColor = '#d1d5db';
+                          e.currentTarget.style.color = '#000';
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.borderColor = '#e8e8e3';
+                          e.currentTarget.style.color = '#666';
                         }}
                       >
                         Remove
@@ -8123,7 +8322,7 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
             <div>
               <label style={{
                 display: 'block',
-                fontSize: '12px',
+                fontSize: '13px',
                 fontWeight: '500',
                 marginBottom: '8px',
                 color: '#000000',
@@ -8136,17 +8335,65 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
                 onChange={(e) => handleInputChange('resourceLinks', e.target.value)}
                 rows={3}
                 style={{
-                  ...inputStyle,
+                  ...inputStyleFull,
                   resize: 'vertical',
-                  minHeight: '80px'
+                  minHeight: '100px'
                 }}
                 placeholder="Paste links here (one per line or separated by commas)"
+                onFocus={(e) => {
+                  Object.assign(e.target.style, { ...inputStyleFull, ...inputStyleFullFocus, minHeight: '100px' });
+                }}
+                onBlur={(e) => {
+                  Object.assign(e.target.style, { ...inputStyleFull, minHeight: '100px' });
+                }}
+                onMouseEnter={(e) => {
+                  if (document.activeElement !== e.target) {
+                    Object.assign(e.target.style, { ...inputStyleFull, ...inputStyleFullHover, minHeight: '100px' });
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (document.activeElement !== e.target) {
+                    Object.assign(e.target.style, { ...inputStyleFull, minHeight: '100px' });
+                  }
+                }}
               />
             </div>
           </div>
           
+          {/* Section 5: Notes & Call Option */}
+          <div style={{ marginBottom: '48px' }}>
+            <h3 style={sectionHeadingStyle}>Notes</h3>
+            <textarea
+              value={formData.notes}
+              onChange={(e) => handleInputChange('notes', e.target.value)}
+              rows={5}
+              style={{
+                ...inputStyleFull,
+                resize: 'vertical',
+                minHeight: '120px'
+              }}
+              placeholder="Any additional details, context, or direction you'd like to share?"
+              onFocus={(e) => {
+                Object.assign(e.target.style, { ...inputStyleFull, ...inputStyleFullFocus, minHeight: '120px' });
+              }}
+              onBlur={(e) => {
+                Object.assign(e.target.style, { ...inputStyleFull, minHeight: '120px' });
+              }}
+              onMouseEnter={(e) => {
+                if (document.activeElement !== e.target) {
+                  Object.assign(e.target.style, { ...inputStyleFull, ...inputStyleFullHover, minHeight: '120px' });
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (document.activeElement !== e.target) {
+                  Object.assign(e.target.style, { ...inputStyleFull, minHeight: '120px' });
+                }
+              }}
+            />
+          </div>
+          
           {/* Schedule Call Checkbox */}
-          <div style={{ marginBottom: '32px' }}>
+          <div style={{ marginBottom: '40px', paddingTop: '24px', borderTop: '1px solid #f0f0f0' }}>
             <label style={{
               display: 'flex',
               alignItems: 'center',
@@ -8154,7 +8401,8 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
               cursor: 'pointer',
               fontSize: '14px',
               fontFamily: "'NeueHaasUnica', sans-serif",
-              color: '#000000'
+              color: '#000000',
+              padding: '8px 0'
             }}>
               <input
                 type="checkbox"
@@ -8164,39 +8412,35 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
                   width: '18px',
                   height: '18px',
                   cursor: 'pointer',
-                  accentColor: brandCharcoal
+                  accentColor: brandCharcoal,
+                  flexShrink: 0
                 }}
               />
-              <span>Would you like to schedule a call to discuss your project?</span>
+              <span>I'd love to schedule a call to discuss my project.</span>
             </label>
           </div>
           
-          {/* Notes */}
-          <div style={{ marginBottom: '32px' }}>
-            <label style={labelStyle}>Notes</label>
-            <textarea
-              value={formData.notes}
-              onChange={(e) => handleInputChange('notes', e.target.value)}
-              rows={4}
-              style={{
-                ...inputStyle,
-                resize: 'vertical',
-                minHeight: '100px'
-              }}
-              placeholder="Any additional details about your project..."
-            />
-          </div>
-          
-          {/* Submit Button */}
-          <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+          {/* Reassurance Copy & Submit Button */}
+          <div>
+            <p style={{
+              fontSize: '13px',
+              color: '#666',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              lineHeight: '1.6',
+              marginBottom: '24px',
+              fontStyle: 'italic'
+            }}>
+              Once you submit, a member of our team will review your details and follow up with next steps.
+            </p>
             <button
               type="submit"
               disabled={submitting}
               style={{
                 ...primaryButtonStyle,
-                padding: '12px 32px',
+                padding: '14px 36px',
                 opacity: submitting ? 0.6 : 1,
-                cursor: submitting ? 'not-allowed' : 'pointer'
+                cursor: submitting ? 'not-allowed' : 'pointer',
+                fontSize: '13px'
               }}
               onMouseEnter={(e) => {
                 if (!submitting) {
