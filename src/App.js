@@ -2941,19 +2941,48 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
         }
       ` }} />
       
-      {/* 1. Welcome Header with Logo and Signature */}
+      {/* 1. Welcome Hero Section with Background Image */}
       <style dangerouslySetInnerHTML={{ __html: `
         .overview-hero {
-          padding: 80px 96px 64px;
-          background-color: transparent;
-          margin-bottom: 48px;
+          width: 100vw;
+          margin-left: calc(-50vw + 50%);
+          min-height: 500px;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          margin-bottom: 64px;
+        }
+        .overview-hero__overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4));
+        }
+        .overview-hero__content {
+          position: relative;
+          z-index: 1;
           text-align: center;
+          padding: 80px 32px;
+          max-width: 1200px;
+          width: 100%;
         }
         .overview-hero__logo {
-          width: 120px;
-          height: 120px;
-          margin: 0 auto 32px;
+          width: 200px;
+          height: 200px;
+          margin: 0 auto 48px;
           display: block;
+          filter: brightness(0) invert(1);
+        }
+        .overview-hero__welcome {
+          margin-top: 48px;
+          padding: 0 32px;
         }
         .overview-hero__title {
           font-family: 'Domaine Text', serif;
@@ -2961,63 +2990,53 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
           line-height: 1.3;
           font-weight: 400;
           letter-spacing: -0.01em;
-          color: #3A3632;
+          color: #FFFFFF;
           margin-bottom: 16px;
         }
         .overview-hero__subtitle {
           font-family: 'NeueHaasUnica', sans-serif;
           font-size: 16px;
           line-height: 1.6;
-          color: rgba(58, 54, 50, 0.75);
+          color: rgba(255, 255, 255, 0.9);
           max-width: 600px;
-          margin: 0 auto 40px;
-        }
-        .overview-hero__signature {
-          font-family: 'Autographer', cursive;
-          font-size: 18px;
-          color: #3A3632;
-          margin-top: 40px;
-        }
-        .overview-hero__signature-line {
-          font-family: 'NeueHaasUnica', sans-serif;
-          font-size: 14px;
-          color: rgba(58, 54, 50, 0.7);
-          margin-bottom: 8px;
+          margin: 0 auto;
         }
         @media (max-width: 768px) {
           .overview-hero {
-            padding: 64px 48px 48px;
+            min-height: 400px;
+          }
+          .overview-hero__content {
+            padding: 64px 24px;
           }
           .overview-hero__logo {
-            width: 100px;
-            height: 100px;
-            margin-bottom: 24px;
+            width: 150px;
+            height: 150px;
+            margin-bottom: 32px;
           }
           .overview-hero__title {
-            font-size: 50px;
+            font-size: 36px;
           }
           .overview-hero__subtitle {
             font-size: 15px;
-            max-width: 100%;
           }
         }
         @media (max-width: 480px) {
           .overview-hero {
-            padding: 48px 24px 40px;
+            min-height: 350px;
+          }
+          .overview-hero__content {
+            padding: 48px 20px;
           }
           .overview-hero__logo {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
+            width: 120px;
+            height: 120px;
+            margin-bottom: 24px;
           }
           .overview-hero__title {
             font-size: 28px;
           }
           .overview-hero__subtitle {
             font-size: 14px;
-          }
-          .overview-hero__signature {
-            font-size: 16px;
           }
         }
         
@@ -3029,26 +3048,35 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
           }
         }
       ` }} />
-      <div className="overview-hero">
-        {/* Logo Mark */}
-        <img 
-          src="/mayker_round-stamp-lines-black.png" 
-          alt="Mayker" 
-          className="overview-hero__logo"
-          onError={(e) => {
-            // Fallback if image doesn't exist
-            e.target.style.display = 'none';
-          }}
-        />
-        
-        {/* Headline */}
-        <div className="overview-hero__title">
-          {getGreeting()}, {firstName ? firstName : 'there'}.
-        </div>
-        
-        {/* Sub-head */}
-        <div className="overview-hero__subtitle">
-          Welcome to your Mayker Reserve portal. A curated landing spot of your membership, projects, and benefits.
+      <div 
+        className="overview-hero"
+        style={{
+          backgroundImage: 'url(/overview-feature-image.png)'
+        }}
+      >
+        <div className="overview-hero__overlay"></div>
+        <div className="overview-hero__content">
+          {/* Logo Mark */}
+          <img 
+            src="/mayker_round-stamp-lines-black.png" 
+            alt="Mayker" 
+            className="overview-hero__logo"
+            onError={(e) => {
+              // Fallback if image doesn't exist
+              e.target.style.display = 'none';
+            }}
+          />
+          
+          {/* Welcome Text Below */}
+          <div className="overview-hero__welcome">
+            <div className="overview-hero__title">
+              {getGreeting()}, {firstName ? firstName : 'there'}.
+            </div>
+            
+            <div className="overview-hero__subtitle">
+              Welcome to your Mayker Reserve portal. A curated landing spot of your membership, projects, and benefits.
+            </div>
+          </div>
         </div>
       </div>
 
