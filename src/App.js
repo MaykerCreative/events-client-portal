@@ -3045,6 +3045,43 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             gap: 16px !important;
           }
         }
+        
+        /* Responsive Project Row Styles */
+        @media (max-width: 768px) {
+          .project-row {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 16px !important;
+          }
+          .project-row button {
+            width: 100%;
+            text-align: center;
+          }
+        }
+        
+        /* Responsive Products Grid Styles */
+        @media (max-width: 1024px) {
+          .products-grid {
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 24px !important;
+          }
+        }
+        @media (max-width: 768px) {
+          .products-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 20px !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .products-grid {
+            grid-template-columns: 1fr !important;
+            gap: 16px !important;
+          }
+          .single-product-layout {
+            grid-template-columns: 1fr !important;
+            gap: 32px !important;
+          }
+        }
       ` }} />
       <div 
         className="overview-hero"
@@ -3496,117 +3533,130 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
       {activeProposals.length > 0 && (
         <div style={{
           ...panelStyle,
-          backgroundColor: '#E8E3DD'
+          backgroundColor: '#E8E3DD',
+          padding: '40px 32px'
         }}>
+          {/* Section Header */}
           <div style={{
-            fontSize: '17px',
-            fontWeight: '300',
-            color: '#000000',
-            fontFamily: "'Domaine Text', serif",
-            letterSpacing: '-0.01em',
-            marginBottom: '24px'
+            fontSize: '11px',
+            fontWeight: '400',
+            color: '#6b6b6b',
+            fontFamily: "'NeueHaasUnica', sans-serif",
+            letterSpacing: '0.15em',
+            textTransform: 'uppercase',
+            marginBottom: '20px'
           }}>
             Your Active Projects
           </div>
           
+          {/* Project List */}
           <div style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '16px'
+            gap: '12px'
           }}>
             {activeProposals.map((proposal, index) => (
               <div
                 key={index}
                 style={{
                   backgroundColor: 'white',
-                  padding: '20px',
+                  padding: '20px 24px',
                   borderRadius: '12px',
-                  border: '1px solid #e8e8e3',
+                  border: '1px solid rgba(232, 232, 227, 0.6)',
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  transition: 'all 0.2s ease'
+                  transition: 'all 0.2s ease',
+                  gap: '24px'
                 }}
+                className="project-row"
               >
-                <div style={{ flex: 1 }}>
+                {/* Left: Project Info */}
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{
-                    fontSize: '16px',
-                    fontWeight: '500',
-                    color: '#000000',
-                    fontFamily: "'NeueHaasUnica', sans-serif",
-                    marginBottom: '8px'
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    marginBottom: '8px',
+                    flexWrap: 'wrap'
                   }}>
-                    {proposal.venueName || 'Untitled Project'}
+                    <div style={{
+                      fontSize: '17px',
+                      fontWeight: '500',
+                      color: '#000000',
+                      fontFamily: "'NeueHaasUnica', sans-serif",
+                      lineHeight: '1.3'
+                    }}>
+                      {proposal.venueName || 'Untitled Project'}
+                    </div>
+                    <span style={{
+                      display: 'inline-block',
+                      padding: '4px 12px',
+                      borderRadius: '12px',
+                      fontSize: '10px',
+                      fontWeight: '500',
+                      backgroundColor: proposal.status === 'Pending' ? '#f5f1e6' : proposal.status === 'Approved' ? '#e8f5e9' : proposal.status === 'Confirmed' ? '#e3f2fd' : '#f3f4f6',
+                      color: proposal.status === 'Pending' ? '#b8860b' : proposal.status === 'Approved' ? '#2e7d32' : proposal.status === 'Confirmed' ? '#1976d2' : '#666',
+                      fontFamily: "'NeueHaasUnica', sans-serif",
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em'
+                    }}>
+                      {proposal.status || 'Pending'}
+                    </span>
                   </div>
                   <div style={{
-                    fontSize: '12px',
+                    fontSize: '13px',
                     color: '#8b8b8b',
                     fontFamily: "'NeueHaasUnica', sans-serif",
-                    marginBottom: '4px'
+                    lineHeight: '1.5'
                   }}>
                     {proposal.eventDate || (proposal.startDate ? new Date(proposal.startDate).toLocaleDateString('en-US', {
                       year: 'numeric',
                       month: 'short',
                       day: 'numeric'
                     }) : 'Date TBD')}
-                  </div>
-                  <div style={{
-                    fontSize: '12px',
-                    color: '#8b8b8b',
-                    fontFamily: "'NeueHaasUnica', sans-serif"
-                  }}>
-                    {proposal.city}, {proposal.state}
+                    {proposal.city && proposal.state && (
+                      <span style={{ margin: '0 8px', opacity: 0.5 }}>·</span>
+                    )}
+                    {proposal.city && proposal.state && (
+                      <span>{proposal.city}, {proposal.state}</span>
+                    )}
                   </div>
                 </div>
                 
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '16px'
-                }}>
-                  <span style={{
-                    display: 'inline-block',
-                    padding: '4px 12px',
-                    borderRadius: '12px',
-                    fontSize: '11px',
-                    fontWeight: '500',
-                    backgroundColor: proposal.status === 'Pending' ? '#f5f1e6' : proposal.status === 'Approved' ? '#e8f5e9' : '#f3f4f6',
-                    color: proposal.status === 'Pending' ? '#b8860b' : proposal.status === 'Approved' ? '#2e7d32' : '#666',
-                    fontFamily: "'NeueHaasUnica', sans-serif"
-                  }}>
-                    {proposal.status || 'Pending'}
-                  </span>
-                  
-                  {proposal.projectNumber && (
-                    <button
-                      onClick={() => {
-                        setSelectedProposal(proposal);
-                      }}
-                      style={{
-                        padding: '6px 12px',
-                        backgroundColor: '#F7F6F0',
-                        color: '#000000',
-                        border: 'none',
-                        borderRadius: '4px',
-                        fontSize: '12px',
-                        fontWeight: '500',
-                        fontFamily: "'NeueHaasUnica', sans-serif",
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#F7F6F0';
-                        e.currentTarget.style.opacity = '0.8';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = '#F7F6F0';
-                        e.currentTarget.style.opacity = '1';
-                      }}
-                    >
-                      View
-                    </button>
-                  )}
-                </div>
+                {/* Right: View Button */}
+                {proposal.projectNumber && (
+                  <button
+                    onClick={() => {
+                      setSelectedProposal(proposal);
+                    }}
+                    style={{
+                      padding: '10px 20px',
+                      backgroundColor: 'transparent',
+                      color: '#545142',
+                      border: '1px solid #545142',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      fontFamily: "'NeueHaasUnica', sans-serif",
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#545142';
+                      e.currentTarget.style.color = '#FFFFFF';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                      e.currentTarget.style.color = '#545142';
+                    }}
+                  >
+                    View
+                  </button>
+                )}
               </div>
             ))}
           </div>
@@ -3615,14 +3665,20 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
 
       {/* 4. Featured Products from Shopify */}
       {shopifyProducts.length > 0 && (
-        <div style={panelStyle}>
+        <div style={{
+          ...panelStyle,
+          backgroundColor: '#FAFAF8',
+          padding: '40px 32px'
+        }}>
+          {/* Section Header */}
           <div style={{
-            fontSize: '17px',
-            fontWeight: '300',
-            color: '#000000',
-            fontFamily: "'Domaine Text', serif",
-            letterSpacing: '-0.01em',
-            marginBottom: '32px'
+            fontSize: '11px',
+            fontWeight: '400',
+            color: '#6b6b6b',
+            fontFamily: "'NeueHaasUnica', sans-serif",
+            letterSpacing: '0.15em',
+            textTransform: 'uppercase',
+            marginBottom: '24px'
           }}>
             Discover the Newest Releases
           </div>
@@ -3644,7 +3700,7 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
               gridTemplateColumns: '1fr 1fr',
               gap: '48px',
               alignItems: 'center'
-            }}>
+            }} className="single-product-layout">
               <div>
                 {shopifyProducts[0].imageUrl && (
                   <img 
@@ -3667,7 +3723,8 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                   color: '#000000',
                   fontFamily: "'Domaine Text', serif",
                   letterSpacing: '-0.01em',
-                  marginBottom: '16px'
+                  marginBottom: '16px',
+                  lineHeight: '1.3'
                 }}>
                   {shopifyProducts[0].title}
                 </h3>
@@ -3691,8 +3748,9 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                   style={{
                     display: 'inline-block',
                     padding: '12px 24px',
-                    backgroundColor: '#F7F6F0',
-                    color: 'white',
+                    backgroundColor: 'transparent',
+                    color: '#545142',
+                    border: '1px solid #545142',
                     textDecoration: 'none',
                     borderRadius: '6px',
                     fontSize: '14px',
@@ -3701,10 +3759,12 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                     transition: 'all 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#F7F6F0';
+                    e.target.style.backgroundColor = '#545142';
+                    e.target.style.color = '#FFFFFF';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = '#F7F6F0';
+                    e.target.style.backgroundColor = 'transparent';
+                    e.target.style.color = '#545142';
                   }}
                 >
                   View Product
@@ -3715,17 +3775,18 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
             // Multiple products - grid layout
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '24px'
-            }}>
+              gridTemplateColumns: 'repeat(4, 1fr)',
+              gap: '32px'
+            }} className="products-grid">
               {shopifyProducts.map((product) => (
                 <div
                   key={product.id}
                   style={{
                     backgroundColor: 'white',
                     borderRadius: '12px',
-                    padding: '24px',
-                    border: '1px solid #e8e8e3',
+                    padding: '20px',
+                    border: '1px solid rgba(232, 232, 227, 0.6)',
+                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
                     transition: 'all 0.2s ease',
                     display: 'flex',
                     flexDirection: 'column'
@@ -3750,22 +3811,25 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                     fontWeight: '500',
                     color: '#000000',
                     fontFamily: "'NeueHaasUnica', sans-serif",
-                    marginBottom: '8px'
+                    marginBottom: '12px',
+                    lineHeight: '1.3'
                   }}>
                     {product.title}
                   </h3>
                   {product.description && (
                     <p style={{
-                      fontSize: '12px',
+                      fontSize: '13px',
                       color: '#8b8b8b',
                       fontFamily: "'NeueHaasUnica', sans-serif",
-                      lineHeight: '1.5',
+                      lineHeight: '1.6',
                       marginBottom: '16px',
-                      flex: 1
+                      flex: 1,
+                      display: '-webkit-box',
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden'
                     }}>
-                      {product.description.length > 100 
-                        ? product.description.substring(0, 100) + '...'
-                        : product.description}
+                      {product.description}
                     </p>
                   )}
                   <a
@@ -3784,11 +3848,12 @@ function OverviewSection({ clientInfo, spendData, proposals = [], setSelectedPro
                       fontFamily: "'NeueHaasUnica', sans-serif",
                       fontWeight: '500',
                       textAlign: 'center',
-                      transition: 'all 0.2s ease'
+                      transition: 'all 0.2s ease',
+                      marginTop: 'auto'
                     }}
                     onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = '#F7F6F0';
-                      e.target.style.color = '#000000';
+                      e.target.style.backgroundColor = '#545142';
+                      e.target.style.color = '#FFFFFF';
                     }}
                     onMouseLeave={(e) => {
                       e.target.style.backgroundColor = 'transparent';
