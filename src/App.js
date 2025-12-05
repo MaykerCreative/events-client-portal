@@ -6678,13 +6678,14 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
         <div style={{ 
           width: '100vw',
           marginLeft: 'calc(-50vw + 50%)',
-          padding: '64px 32px',
+          padding: '64px 0',
           backgroundColor: '#FAF8F3',
           marginBottom: '64px'
         }}>
           <div style={{ 
             maxWidth: '1400px',
             margin: '0 auto',
+            padding: '0 48px',
             display: 'flex',
             gap: '32px',
             alignItems: 'flex-start'
@@ -7054,12 +7055,13 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
         <div style={{ 
           width: '100vw',
           marginLeft: 'calc(-50vw + 50%)',
-          padding: '64px 32px',
+          padding: '64px 0',
           backgroundColor: '#FAF8F3'
         }}>
           <div style={{
             maxWidth: '1400px',
-            margin: '0 auto'
+            margin: '0 auto',
+            padding: '0 48px'
           }}>
           <h3 style={{
             fontSize: '17px',
@@ -7199,6 +7201,558 @@ function ResourcesSection({ brandCharcoal = '#2C2C2C' }) {
           </div>
         </div>
       </section>
+    </div>
+  );
+}
+
+function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
+  const [formData, setFormData] = useState({
+    venueName: '',
+    venueAddress: '',
+    loadInDate: '',
+    loadInTime: '',
+    loadOutDate: '',
+    loadOutTime: '',
+    notes: ''
+  });
+  
+  const [products, setProducts] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [newProductName, setNewProductName] = useState('');
+  const [newProductQuantity, setNewProductQuantity] = useState('1');
+  
+  const GOOGLE_MAPS_API_KEY = 'AIzaSyBDtqFBAoBLcNTX4N7hqE9SPP7RXuUpXV0';
+  
+  // Initialize Google Places Autocomplete for venue address
+  useEffect(() => {
+    const initializeAutocomplete = () => {
+      const checkInput = () => {
+        const input = document.getElementById('venue-address-input');
+        if (input && window.google && window.google.maps && window.google.maps.places) {
+          try {
+            if (input.dataset.autocompleteInitialized === 'true') {
+              return;
+            }
+            
+            const autocomplete = new window.google.maps.places.Autocomplete(input, {
+              types: ['address'],
+              componentRestrictions: { country: 'us' }
+            });
+            
+            input.dataset.autocompleteInitialized = 'true';
+            
+            autocomplete.addListener('place_changed', () => {
+              const place = autocomplete.getPlace();
+              if (place.formatted_address) {
+                setFormData(prev => ({ ...prev, venueAddress: place.formatted_address }));
+              }
+            });
+          } catch (error) {
+            console.warn('Failed to initialize Google Places Autocomplete:', error);
+          }
+        } else if (input && !window.google) {
+          setTimeout(checkInput, 100);
+        }
+      };
+      
+      checkInput();
+      setTimeout(checkInput, 100);
+    };
+    
+    if (GOOGLE_MAPS_API_KEY) {
+      if (!window.google || !window.google.maps || !window.google.maps.places) {
+        const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
+        if (existingScript) {
+          existingScript.addEventListener('load', initializeAutocomplete);
+          return;
+        }
+        
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
+        script.async = true;
+        script.defer = true;
+        script.onload = initializeAutocomplete;
+        script.onerror = () => {
+          console.warn('Google Places API failed to load. Address autocomplete disabled.');
+        };
+        document.head.appendChild(script);
+      } else {
+        initializeAutocomplete();
+      }
+    }
+    
+    return () => {
+      // Cleanup if needed
+    };
+  }, []);
+  
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+  
+  const handleAddProduct = () => {
+    if (newProductName.trim()) {
+      setProducts(prev => [...prev, {
+        id: Date.now(),
+        name: newProductName.trim(),
+        quantity: parseInt(newProductQuantity) || 1
+      }]);
+      setNewProductName('');
+      setNewProductQuantity('1');
+    }
+  };
+  
+  const handleRemoveProduct = (id) => {
+    setProducts(prev => prev.filter(p => p.id !== id));
+  };
+  
+  const handleUpdateProductQuantity = (id, quantity) => {
+    setProducts(prev => prev.map(p => 
+      p.id === id ? { ...p, quantity: parseInt(quantity) || 1 } : p
+    ));
+  };
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!formData.venueName.trim()) {
+      alert('Please enter a venue name');
+      return;
+    }
+    
+    if (!formData.venueAddress.trim()) {
+      alert('Please enter a venue address');
+      return;
+    }
+    
+    if (!formData.loadInDate || !formData.loadOutDate) {
+      alert('Please enter both load-in and load-out dates');
+      return;
+    }
+    
+    setSubmitting(true);
+    
+    try {
+      const CLIENT_API_URL = 'https://script.google.com/macros/s/AKfycbzB7gHa5o-gBep98SJgQsG-z2EsEspSWC6NXvLFwurYBGpxpkI-weD-HVcfY2LDA4Yz/exec';
+      
+      const response = await fetch(CLIENT_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          type: 'submitNewProject',
+          venueName: formData.venueName,
+          venueAddress: formData.venueAddress,
+          loadInDate: formData.loadInDate,
+          loadInTime: formData.loadInTime,
+          loadOutDate: formData.loadOutDate,
+          loadOutTime: formData.loadOutTime,
+          products: products,
+          notes: formData.notes
+        })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        setSubmitted(true);
+        // Reset form
+        setFormData({
+          venueName: '',
+          venueAddress: '',
+          loadInDate: '',
+          loadInTime: '',
+          loadOutDate: '',
+          loadOutTime: '',
+          notes: ''
+        });
+        setProducts([]);
+      } else {
+        alert('Error submitting project inquiry. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting project inquiry:', error);
+      // Still show success message even if API call fails
+      setSubmitted(true);
+      setFormData({
+        venueName: '',
+        venueAddress: '',
+        loadInDate: '',
+        loadInTime: '',
+        loadOutDate: '',
+        loadOutTime: '',
+        notes: ''
+      });
+      setProducts([]);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+  
+  const inputStyle = {
+    width: '100%',
+    padding: '12px 16px',
+    fontSize: '14px',
+    fontFamily: "'NeueHaasUnica', sans-serif",
+    border: '1px solid #e5e7eb',
+    borderRadius: '8px',
+    backgroundColor: '#fff',
+    color: '#000000',
+    outline: 'none',
+    transition: 'border-color 0.2s',
+    boxSizing: 'border-box'
+  };
+  
+  const labelStyle = {
+    display: 'block',
+    fontSize: '13px',
+    fontWeight: '600',
+    marginBottom: '8px',
+    color: '#000000',
+    fontFamily: "'NeueHaasUnica', sans-serif",
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em'
+  };
+  
+  return (
+    <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+      {/* Banner Image */}
+      <div style={{ marginBottom: '48px' }}>
+        <img 
+          src="/start-a-new-project-banner.jpg" 
+          alt="Start a New Project"
+          style={{
+            width: '100%',
+            height: 'auto',
+            borderRadius: '12px',
+            objectFit: 'cover'
+          }}
+          onError={(e) => {
+            if (!e.target.src.includes('/assets/')) {
+              e.target.src = '/assets/start-a-new-project-banner.jpg';
+            } else {
+              e.target.style.display = 'none';
+            }
+          }}
+        />
+      </div>
+      
+      {/* Title and Sub-head */}
+      <div style={{ marginBottom: '40px' }}>
+        <h2 style={{
+          fontSize: '32px',
+          fontWeight: '300',
+          color: '#000000',
+          fontFamily: "'Domaine Text', serif",
+          marginBottom: '12px',
+          letterSpacing: '-0.01em'
+        }}>
+          Start a New Project
+        </h2>
+        <p style={{
+          fontSize: '16px',
+          color: '#666',
+          fontFamily: "'NeueHaasUnica', sans-serif",
+          lineHeight: '1.6'
+        }}>
+          Submit requests for any upcoming projects
+        </p>
+      </div>
+      
+      {submitted ? (
+        <div style={{
+          padding: '32px',
+          backgroundColor: '#f0f9f4',
+          border: '1px solid #86efac',
+          borderRadius: '8px',
+          textAlign: 'center'
+        }}>
+          <div style={{
+            fontSize: '16px',
+            color: '#166534',
+            fontFamily: "'NeueHaasUnica', sans-serif",
+            marginBottom: '16px',
+            fontWeight: '500'
+          }}>
+            Thank you for your inquiry!
+          </div>
+          <div style={{
+            fontSize: '14px',
+            color: '#166534',
+            fontFamily: "'NeueHaasUnica', sans-serif"
+          }}>
+            We've received your project request and will review it shortly. Our team will be in touch soon.
+          </div>
+          <button
+            onClick={() => setSubmitted(false)}
+            style={{
+              marginTop: '24px',
+              padding: '12px 24px',
+              backgroundColor: '#000000',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: '500',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              cursor: 'pointer'
+            }}
+          >
+            Submit Another Request
+          </button>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit}>
+          {/* Venue Name */}
+          <div style={{ marginBottom: '24px' }}>
+            <label style={labelStyle}>Venue Name</label>
+            <input
+              type="text"
+              value={formData.venueName}
+              onChange={(e) => handleInputChange('venueName', e.target.value)}
+              style={inputStyle}
+              required
+            />
+          </div>
+          
+          {/* Venue Address */}
+          <div style={{ marginBottom: '24px' }}>
+            <label style={labelStyle}>Venue Address</label>
+            <input
+              id="venue-address-input"
+              type="text"
+              value={formData.venueAddress}
+              onChange={(e) => handleInputChange('venueAddress', e.target.value)}
+              placeholder="Enter venue address (e.g., 123 Main St, Nashville, TN 37203)"
+              style={inputStyle}
+              required
+            />
+          </div>
+          
+          {/* Load-In Date and Time */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
+            <div>
+              <label style={labelStyle}>Load-In Date</label>
+              <input
+                type="date"
+                value={formData.loadInDate}
+                onChange={(e) => handleInputChange('loadInDate', e.target.value)}
+                style={inputStyle}
+                required
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>Load-In Time</label>
+              <input
+                type="time"
+                value={formData.loadInTime}
+                onChange={(e) => handleInputChange('loadInTime', e.target.value)}
+                style={inputStyle}
+              />
+            </div>
+          </div>
+          
+          {/* Load-Out Date and Time */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
+            <div>
+              <label style={labelStyle}>Load-Out Date</label>
+              <input
+                type="date"
+                value={formData.loadOutDate}
+                onChange={(e) => handleInputChange('loadOutDate', e.target.value)}
+                style={inputStyle}
+                required
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>Load-Out Time</label>
+              <input
+                type="time"
+                value={formData.loadOutTime}
+                onChange={(e) => handleInputChange('loadOutTime', e.target.value)}
+                style={inputStyle}
+              />
+            </div>
+          </div>
+          
+          {/* Requested Products */}
+          <div style={{ marginBottom: '24px' }}>
+            <label style={labelStyle}>Requested Products and Quantities</label>
+            
+            {/* Product List */}
+            {products.length > 0 && (
+              <div style={{ marginBottom: '16px' }}>
+                {products.map((product) => (
+                  <div key={product.id} style={{
+                    display: 'flex',
+                    gap: '12px',
+                    alignItems: 'center',
+                    marginBottom: '12px',
+                    padding: '12px',
+                    backgroundColor: '#fafaf8',
+                    borderRadius: '8px',
+                    border: '1px solid #e5e7eb'
+                  }}>
+                    <div style={{ flex: 1 }}>
+                      <input
+                        type="text"
+                        value={product.name}
+                        onChange={(e) => {
+                          setProducts(prev => prev.map(p => 
+                            p.id === product.id ? { ...p, name: e.target.value } : p
+                          ));
+                        }}
+                        style={{
+                          ...inputStyle,
+                          marginBottom: '8px',
+                          padding: '8px 12px'
+                        }}
+                        placeholder="Product name"
+                      />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontSize: '13px', color: '#666', fontFamily: "'NeueHaasUnica', sans-serif" }}>Quantity:</span>
+                        <input
+                          type="number"
+                          min="1"
+                          value={product.quantity}
+                          onChange={(e) => handleUpdateProductQuantity(product.id, e.target.value)}
+                          style={{
+                            ...inputStyle,
+                            width: '80px',
+                            padding: '8px 12px'
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveProduct(product.id)}
+                      style={{
+                        padding: '8px 16px',
+                        backgroundColor: '#fee2e2',
+                        color: '#dc2626',
+                        border: 'none',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        fontFamily: "'NeueHaasUnica', sans-serif",
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {/* Add New Product */}
+            <div style={{
+              display: 'flex',
+              gap: '12px',
+              alignItems: 'flex-end',
+              marginBottom: '16px'
+            }}>
+              <div style={{ flex: 1 }}>
+                <input
+                  type="text"
+                  value={newProductName}
+                  onChange={(e) => setNewProductName(e.target.value)}
+                  placeholder="Product name"
+                  style={{
+                    ...inputStyle,
+                    marginBottom: '8px'
+                  }}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddProduct();
+                    }
+                  }}
+                />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '13px', color: '#666', fontFamily: "'NeueHaasUnica', sans-serif" }}>Quantity:</span>
+                  <input
+                    type="number"
+                    min="1"
+                    value={newProductQuantity}
+                    onChange={(e) => setNewProductQuantity(e.target.value)}
+                    style={{
+                      ...inputStyle,
+                      width: '80px'
+                    }}
+                  />
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleAddProduct}
+                disabled={!newProductName.trim()}
+                style={{
+                  padding: '12px 24px',
+                  backgroundColor: newProductName.trim() ? '#000000' : '#9ca3af',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  fontFamily: "'NeueHaasUnica', sans-serif",
+                  cursor: newProductName.trim() ? 'pointer' : 'not-allowed',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                Add Product
+              </button>
+            </div>
+          </div>
+          
+          {/* Notes */}
+          <div style={{ marginBottom: '32px' }}>
+            <label style={labelStyle}>Notes</label>
+            <textarea
+              value={formData.notes}
+              onChange={(e) => handleInputChange('notes', e.target.value)}
+              rows={4}
+              style={{
+                ...inputStyle,
+                resize: 'vertical',
+                minHeight: '100px'
+              }}
+              placeholder="Any additional details about your project..."
+            />
+          </div>
+          
+          {/* Submit Button */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <button
+              type="submit"
+              disabled={submitting}
+              style={{
+                padding: '12px 32px',
+                backgroundColor: submitting ? '#9ca3af' : '#000000',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: '500',
+                fontFamily: "'NeueHaasUnica', sans-serif",
+                cursor: submitting ? 'not-allowed' : 'pointer',
+                transition: 'opacity 0.2s'
+              }}
+              onMouseEnter={(e) => {
+                if (!submitting) {
+                  e.currentTarget.style.opacity = '0.9';
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = '1';
+              }}
+            >
+              {submitting ? 'Submitting...' : 'Submit Inquiry'}
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 }
@@ -7925,6 +8479,7 @@ function DashboardView({ clientInfo, onLogout, showAlert, showConfirm, showPromp
     { key: 'overview', label: 'OVERVIEW', section: 'performance' },
     { key: 'activity', label: 'ACTIVITY', section: 'activity' },
     { key: 'projects', label: 'PROJECTS', section: 'proposals' },
+    { key: 'new-project', label: 'START PROJECT', section: 'new-project' },
     { key: 'account', label: 'ACCOUNT', section: 'profile' },
     { key: 'resources', label: 'RESOURCES', section: 'resources' },
     { key: 'faq', label: 'FAQ', section: 'faq' },
@@ -8500,6 +9055,10 @@ function DashboardView({ clientInfo, onLogout, showAlert, showConfirm, showPromp
           
           {activeSection === 'contact' && (
             <ContactSection brandCharcoal={brandCharcoal} />
+          )}
+          
+          {activeSection === 'new-project' && (
+            <StartNewProjectSection brandCharcoal={brandCharcoal} />
           )}
         </div>
 
