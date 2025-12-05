@@ -7331,7 +7331,7 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
     loadOutTime: '',
     notes: '',
     resourceLinks: '',
-    scheduleCall: ''
+    scheduleCall: false
   });
   const [uploadedFiles, setUploadedFiles] = useState([]);
   
@@ -7564,7 +7564,7 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
           loadOutTime: '',
           notes: '',
           resourceLinks: '',
-          scheduleCall: ''
+          scheduleCall: false
         });
         setProducts([]);
         setUploadedFiles([]);
@@ -8143,6 +8143,48 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
                 placeholder="Paste links here (one per line or separated by commas)"
               />
             </div>
+          </div>
+          
+          {/* Schedule Call Checkbox */}
+          <div style={{ marginBottom: '32px' }}>
+            <label style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontFamily: "'NeueHaasUnica', sans-serif",
+              color: '#000000'
+            }}>
+              <input
+                type="checkbox"
+                checked={formData.scheduleCall}
+                onChange={(e) => handleInputChange('scheduleCall', e.target.checked)}
+                style={{
+                  width: '18px',
+                  height: '18px',
+                  cursor: 'pointer',
+                  accentColor: brandCharcoal
+                }}
+              />
+              <span>Would you like to schedule a call to discuss your project?</span>
+            </label>
+          </div>
+          
+          {/* Notes */}
+          <div style={{ marginBottom: '32px' }}>
+            <label style={labelStyle}>Notes</label>
+            <textarea
+              value={formData.notes}
+              onChange={(e) => handleInputChange('notes', e.target.value)}
+              rows={4}
+              style={{
+                ...inputStyle,
+                resize: 'vertical',
+                minHeight: '100px'
+              }}
+              placeholder="Any additional details about your project..."
+            />
           </div>
           
           {/* Submit Button */}
