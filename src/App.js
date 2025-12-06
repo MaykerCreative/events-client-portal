@@ -7546,81 +7546,6 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
                                 session?.clientInfo?.companyName || 
                                 session?.clientInfo?.client_name || '';
       
-<<<<<<< Updated upstream
-      // Get client name from session at submission time
-      let clientName = '';
-      try {
-        // Try multiple methods to get client name
-        const session = authService.getSession();
-        console.log('Session retrieved:', session);
-        console.log('Session clientInfo:', session?.clientInfo);
-        
-        if (session && session.clientInfo) {
-          // Try multiple possible field names
-          clientName = session.clientInfo.clientCompanyName || 
-                      session.clientInfo.companyName || 
-                      session.clientInfo.client_name ||
-                      '';
-          console.log('Got client name from session:', clientName);
-        }
-        
-        // If still empty, fallback to localStorage directly
-        if (!clientName) {
-          const clientInfoStr = localStorage.getItem('clientInfo');
-          console.log('clientInfo from localStorage:', clientInfoStr);
-          
-          if (clientInfoStr) {
-            try {
-              const clientInfo = JSON.parse(clientInfoStr);
-              console.log('Parsed clientInfo:', clientInfo);
-              console.log('clientInfo keys:', Object.keys(clientInfo));
-              
-              // Try all possible field names
-              clientName = clientInfo.clientCompanyName || 
-                          clientInfo.companyName || 
-                          clientInfo.client_name ||
-                          clientInfo.name ||
-                          '';
-              console.log('Got client name from localStorage:', clientName);
-            } catch (parseError) {
-              console.error('Error parsing clientInfo:', parseError);
-            }
-          }
-        }
-        
-        // Final check - log what we have
-        if (!clientName) {
-          console.warn('WARNING: No client name found!');
-          console.log('All localStorage keys:', Object.keys(localStorage));
-          const allClientInfo = localStorage.getItem('clientInfo');
-          console.log('Full clientInfo string:', allClientInfo);
-        }
-      } catch (error) {
-        console.error('Error getting client name:', error);
-        console.error('Error stack:', error.stack);
-      }
-      
-      console.log('Final client name being submitted:', clientName || '(empty)');
-      
-      const response = await fetch(CLIENT_API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({
-          type: 'submitNewProject',
-          clientCompanyName: clientName, // Send as clientCompanyName for consistency
-          venueName: formData.venueName,
-          venueAddress: formData.venueAddress,
-          loadInDate: formData.loadInDate,
-          loadInTime: formData.loadInTime,
-          loadOutDate: formData.loadOutDate,
-          loadOutTime: formData.loadOutTime,
-          products: products,
-          notes: formData.notes,
-          resourceLinks: formData.resourceLinks,
-          uploadedFiles: uploadedFiles,
-          scheduleCall: formData.scheduleCall
-        })
-=======
       const payload = {
         type: 'submitNewProject',
         clientCompanyName: clientCompanyName,
@@ -7644,7 +7569,6 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(payload)
->>>>>>> Stashed changes
       });
       
       console.log('Response status:', response.status);
@@ -7674,26 +7598,7 @@ function StartNewProjectSection({ brandCharcoal = '#2C2C2C' }) {
       }
     } catch (error) {
       console.error('Error submitting project inquiry:', error);
-<<<<<<< Updated upstream
-      // Still show success message even if API call fails
-      setSubmitted(true);
-      setFormData({
-        venueName: '',
-        venueAddress: '',
-        loadInDate: '',
-        loadInTime: '',
-        loadOutDate: '',
-        loadOutTime: '',
-        notes: '',
-        resourceLinks: '',
-        scheduleCall: false
-      });
-      setProducts([]);
-      setUploadedFiles([]);
-    } finally {
-=======
       alert('Error submitting project inquiry: ' + (error.message || 'Please try again.'));
->>>>>>> Stashed changes
       setSubmitting(false);
     }
   };
